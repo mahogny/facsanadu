@@ -1,4 +1,4 @@
-package glofacs.gui.panel;
+package glofacs.gui.channel;
 
 import glofacs.io.FCSFile;
 import glofacs.io.FCSFile.DataSegment;

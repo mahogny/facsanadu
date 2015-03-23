@@ -1,8 +1,8 @@
 package glofacs.gui.gateRenderer;
 
 import glofacs.gates.Gate;
-import glofacs.gui.panel.ChannelWidget;
-import glofacs.gui.panel.ViewSettings;
+import glofacs.gui.channel.ChannelWidget;
+import glofacs.gui.channel.ViewSettings;
 
 import com.trolltech.qt.gui.QPainter;
 

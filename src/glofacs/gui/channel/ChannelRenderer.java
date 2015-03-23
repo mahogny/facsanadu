@@ -1,4 +1,4 @@
-package glofacs.gui.panel;
+package glofacs.gui.channel;
 
 import glofacs.gates.Gate;
 import glofacs.gates.GateSet;

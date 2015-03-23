@@ -17,6 +17,8 @@ import com.trolltech.qt.core.QDate;
 import com.trolltech.qt.core.QObject;
 import com.trolltech.qt.core.QRegExp;
 import com.trolltech.qt.core.QTime;
+import com.trolltech.qt.core.Qt.ItemFlag;
+import com.trolltech.qt.core.Qt.ItemFlags;
 import com.trolltech.qt.core.Qt.KeyboardModifier;
 import com.trolltech.qt.gui.QApplication;
 import com.trolltech.qt.gui.QFileDialog;
@@ -29,6 +31,7 @@ import com.trolltech.qt.gui.QImageReader;
 import com.trolltech.qt.gui.QLabel;
 import com.trolltech.qt.gui.QLayout;
 import com.trolltech.qt.gui.QMessageBox;
+import com.trolltech.qt.gui.QTableWidgetItem;
 import com.trolltech.qt.gui.QMessageBox.StandardButton;
 import com.trolltech.qt.gui.QMouseEvent;
 import com.trolltech.qt.gui.QRegExpValidator;
@@ -429,6 +432,16 @@ public class QTutil
 	public static boolean addingKey(QMouseEvent event)
 		{
 		return event.modifiers().isSet(KeyboardModifier.ShiftModifier) || event.modifiers().isSet(KeyboardModifier.ControlModifier);
+		}
+
+	/**
+	 * Create a read-only list item
+	 */
+	public static QTableWidgetItem createReadOnlyItem(String s)
+		{
+		QTableWidgetItem it=new QTableWidgetItem(s);
+		it.setFlags(new ItemFlags(ItemFlag.ItemIsSelectable, ItemFlag.ItemIsEnabled));
+		return it;
 		}
 
 	}

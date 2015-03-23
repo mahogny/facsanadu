@@ -1,0 +1,121 @@
+package glofacs.gui.gatestats;
+
+import java.util.LinkedList;
+
+import glofacs.gates.Gate;
+import glofacs.gates.GatingResult;
+import glofacs.gates.IntArray;
+import glofacs.gui.MainWindow;
+import glofacs.gui.QTutil;
+import glofacs.io.FCSFile;
+
+import com.trolltech.qt.gui.QTableWidget;
+import com.trolltech.qt.gui.QTableWidgetItem;
+import com.trolltech.qt.gui.QVBoxLayout;
+import com.trolltech.qt.gui.QWidget;
+import com.trolltech.qt.gui.QAbstractItemView.SelectionBehavior;
+import com.trolltech.qt.gui.QHeaderView.ResizeMode;
+
+/**
+ * 
+ * Pane showing gating statistics
+ * 
+ * @author Johan Henriksson
+ *
+ */
+public class GateStatsPane extends QWidget
+	{
+	
+	QTableWidget tableStats=new QTableWidget();
+	MainWindow mw;
+	
+	public GateStatsPane(MainWindow mw)
+		{
+		this.mw=mw;
+		
+		
+		QVBoxLayout lay=new QVBoxLayout();
+		lay.addWidget(tableStats);
+		setLayout(lay);
+		
+		
+		
+		}
+	
+	
+	public void updatestats()
+		{
+		tableStats.clear();
+		
+		
+		tableStats.verticalHeader().hide();
+		tableStats.setSelectionBehavior(SelectionBehavior.SelectRows);
+		tableStats.horizontalHeader().setResizeMode(ResizeMode.ResizeToContents);
+		tableStats.horizontalHeader().setStretchLastSection(true);		
+
+
+		LinkedList<Gate> listGates=mw.getSelectedGates();
+
+		
+		tableStats.setColumnCount(listGates.size()+1);
+		LinkedList<String> header=new LinkedList<String>();
+		header.add(tr("Dataset"));
+		for(Gate g:listGates)
+			{
+			System.out.println(g);
+			header.add(g.name); //TODO perc total etc
+			}
+		
+		
+		tableStats.setHorizontalHeaderLabels(header);
+
+		LinkedList<FCSFile.DataSegment> listDatasets=mw.getSelectedDatasets();
+		
+		System.out.println(listDatasets.size()+"    "+listGates.size());
+		tableStats.setRowCount(listGates.size());
+		
+
+		
+		for(int row=0;row<listDatasets.size();row++)
+			{
+			FCSFile.DataSegment dataset=listDatasets.get(row);
+			GatingResult gr=mw.getGatingResult(dataset);
+			
+			for(int col=0;col<listGates.size();col++)
+				{
+				Gate gate=listGates.get(col);
+
+				IntArray arr=gr.acceptedFromGate.get(gate);
+				if(arr==null)
+					arr=new IntArray(); 
+				
+				double percParent=1;
+				if(gate.parent!=null)
+					{
+					IntArray parent=gr.acceptedFromGate.get(gate.parent);
+					if(parent==null)
+						parent=new IntArray(); //saving from problems
+					percParent=arr.size()/(double)parent.size();
+					}
+				
+				//one more reason to have a root gate!
+				double percTotal=percParent; //TODO
+				
+				QTableWidgetItem it=QTutil.createReadOnlyItem(""+percTotal);
+				//it.setData(Qt.ItemDataRole.UserRole, vs);
+				tableStats.setItem(row, col+1, it);
+				}
+
+			QTableWidgetItem it=QTutil.createReadOnlyItem(dataset.source.getName());
+			//it.setData(Qt.ItemDataRole.UserRole, vs);
+			tableStats.setItem(row, 0, it);
+			
+			System.out.println("here");
+			}
+
+		
+		
+		
+		}
+
+	}

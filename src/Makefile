@@ -133,7 +133,7 @@ lupdate:
 
 
 gitaddall:
-	git add \
+	git add --all \
 	*/*java \
 	*/*/*java \
 	*/*/*/*java \

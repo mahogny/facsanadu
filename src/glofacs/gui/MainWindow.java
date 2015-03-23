@@ -3,22 +3,23 @@ package glofacs.gui;
 
 import glofacs.gates.Gate;
 import glofacs.gates.GateSet;
-import glofacs.gui.panel.ChannelWidget;
-import glofacs.gui.panel.EventGatesChanged;
-import glofacs.gui.panel.ViewSettings;
+import glofacs.gates.GatingResult;
+import glofacs.gui.channel.ChannelWidget;
+import glofacs.gui.channel.EventGatesChanged;
+import glofacs.gui.channel.ViewSettings;
+import glofacs.gui.gatestats.GateStatsPane;
 import glofacs.io.FCSFile;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.trolltech.qt.core.QCoreApplication;
 import com.trolltech.qt.core.QModelIndex;
 import com.trolltech.qt.core.Qt;
-import com.trolltech.qt.core.Qt.ItemFlag;
-import com.trolltech.qt.core.Qt.ItemFlags;
 import com.trolltech.qt.gui.QApplication;
 import com.trolltech.qt.gui.QGridLayout;
 import com.trolltech.qt.gui.QHBoxLayout;
@@ -28,6 +29,7 @@ import com.trolltech.qt.gui.QMenuBar;
 import com.trolltech.qt.gui.QPushButton;
 import com.trolltech.qt.gui.QResizeEvent;
 import com.trolltech.qt.gui.QSizePolicy.Policy;
+import com.trolltech.qt.gui.QTabWidget;
 import com.trolltech.qt.gui.QTableWidget;
 import com.trolltech.qt.gui.QTableWidgetItem;
 import com.trolltech.qt.gui.QTreeWidget;
@@ -49,25 +51,28 @@ public class MainWindow extends QMainWindow
 	public LinkedList<FCSFile.DataSegment> datasets=new LinkedList<FCSFile.DataSegment>();
 	public LinkedList<ViewSettings> views=new LinkedList<ViewSettings>();
 	
+	public HashMap<FCSFile.DataSegment, GatingResult> gatingResult=new HashMap<FCSFile.DataSegment, GatingResult>();
+			
 	private QTableWidget tableDatasets=new QTableWidget();
 	private QTableWidget tableViews=new QTableWidget();	
 	private QTreeWidget treeGates=new QTreeWidget();
+	GateStatsPane paneStats;
 
-	QGridLayout layViews=new QGridLayout();
-	LinkedList<ChannelWidget> prevChanWidget=new LinkedList<ChannelWidget>();
+	private QGridLayout layViews=new QGridLayout();
+	private LinkedList<ChannelWidget> prevChanWidget=new LinkedList<ChannelWidget>();
 			
+	private QTabWidget tabwidget=new QTabWidget();
+	
+	public GatingResult getGatingResult(FCSFile.DataSegment segment)
+		{
+		if(gatingResult.get(segment)==null)
+			return new GatingResult();
+		else
+			return gatingResult.get(segment);
+		}
 	
 	QMenuBar menubar=new QMenuBar();
 	
-	/**
-	 * Create a read-only list item
-	 */
-	private QTableWidgetItem createReadOnlyItem(String s)
-		{
-		QTableWidgetItem it=new QTableWidgetItem(s);
-		it.setFlags(new ItemFlags(ItemFlag.ItemIsSelectable, ItemFlag.ItemIsEnabled));
-		return it;
-		}
 
 	
 	public MainWindow()
@@ -130,22 +135,30 @@ public class MainWindow extends QMainWindow
 		
 //		File path=new File("/home/mahogny/javaproj/glofacs/test/Specimen_001_test4 J3 pbabe gfppuro a_D03_009.fcs");
 //		loadFile(path);
+
+		QWidget wGraphs=new QWidget();
+		wGraphs.setLayout(layViews);
 		
-		updateViewsList();
-		updateDatasetList();
-		updateGatesList();
-		dothelayout();
+		paneStats=new GateStatsPane(this);
+		
+		tabwidget.addTab(wGraphs, tr("Graphs"));
+		tabwidget.addTab(paneStats, tr("Statistics"));
 
 		QHBoxLayout lay=new QHBoxLayout();
 		lay.addLayout(layLeft);
-		lay.addLayout(layViews);
+		lay.addWidget(tabwidget);
 		
 		QWidget cent=new QWidget();
 		cent.setLayout(lay);
 		setCentralWidget(cent);
 		
-		
-		setMinimumWidth(200);
+
+		updateViewsList();
+		updateDatasetList();
+		updateGatesList();
+		dothelayout();
+
+		setMinimumWidth(500);
 		setMinimumHeight(200);
 		show();
 		}
@@ -198,7 +211,7 @@ public class MainWindow extends QMainWindow
 
 	
 	
-	private LinkedList<ViewSettings> getSelectedViews()
+	public LinkedList<ViewSettings> getSelectedViews()
 		{
 		LinkedList<ViewSettings> selviews=new LinkedList<ViewSettings>();
 		for(QModelIndex in:tableViews.selectionModel().selectedRows())
@@ -206,12 +219,39 @@ public class MainWindow extends QMainWindow
 		return selviews;
 		}
 
-	private LinkedList<FCSFile.DataSegment> getSelectedDatasets()
+	public LinkedList<FCSFile.DataSegment> getSelectedDatasets()
 		{
 		LinkedList<FCSFile.DataSegment> selviews=new LinkedList<FCSFile.DataSegment>();
 		for(QModelIndex in:tableDatasets.selectionModel().selectedRows())
 			selviews.add((FCSFile.DataSegment)tableDatasets.item(in.row(),0).data(Qt.ItemDataRole.UserRole));
 		return selviews;
+		}
+	
+	public LinkedList<Gate> getSelectedGates()
+		{
+		LinkedList<Gate> selviews=new LinkedList<Gate>();
+		for(QTreeWidgetItem it:treeGates.selectedItems())
+			selviews.add((Gate)it.data(0,Qt.ItemDataRole.UserRole));
+		return selviews;
+		}
+
+	
+	/**
+	 * Update gating results
+	 */
+	public void dogating()
+		{
+		//For speed, only do selected ones
+		LinkedList<FCSFile.DataSegment> listDatasets=getSelectedDatasets();
+
+		gatingResult.clear();
+		for(FCSFile.DataSegment ds:listDatasets)
+			{
+			GatingResult gr=new GatingResult();
+			gr.perform(gateset, ds);
+			gatingResult.put(ds, gr);
+			}
+		
 		}
 
 	
@@ -220,6 +260,9 @@ public class MainWindow extends QMainWindow
 	 */
 	public void dothelayout()
 		{
+		dogating();
+		
+		
 		for(ChannelWidget lab:prevChanWidget)
 			{
 			layViews.removeWidget(lab);
@@ -259,7 +302,7 @@ public class MainWindow extends QMainWindow
 		for(ChannelWidget w:prevChanWidget)
 			w.render();
 		
-		
+		paneStats.updatestats();
 		}
 	
 	
@@ -274,7 +317,7 @@ public class MainWindow extends QMainWindow
 		int row=0;
 		for(ViewSettings vs:views)
 			{
-			QTableWidgetItem it=createReadOnlyItem(vs.name);
+			QTableWidgetItem it=QTutil.createReadOnlyItem(vs.name);
 			it.setData(Qt.ItemDataRole.UserRole, vs);
 			tableViews.setItem(row, 0, it);
 			row++;
@@ -287,7 +330,7 @@ public class MainWindow extends QMainWindow
 		int row=0;
 		for(FCSFile.DataSegment ds:datasets)
 			{
-			QTableWidgetItem it=createReadOnlyItem(ds.source.getName());
+			QTableWidgetItem it=QTutil.createReadOnlyItem(ds.source.getName());
 			it.setData(Qt.ItemDataRole.UserRole, ds);
 			tableDatasets.setItem(row, 0, it);
 			row++;
@@ -302,6 +345,7 @@ public class MainWindow extends QMainWindow
 		for(Gate g:gateset.mapIdGate.values())
 			{			
 			QTreeWidgetItem item=new QTreeWidgetItem(treeGates);  //if root level?
+			item.setData(0,Qt.ItemDataRole.UserRole, g);
 			item.setText(0, g.name);
 			}
 		}

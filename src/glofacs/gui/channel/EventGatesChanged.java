@@ -1,4 +1,4 @@
-package glofacs.gui.panel;
+package glofacs.gui.channel;
 
 public class EventGatesChanged
 	{
