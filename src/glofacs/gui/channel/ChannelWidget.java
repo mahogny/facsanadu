@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import glofacs.gates.Gate;
 import glofacs.gates.GateRect;
+import glofacs.gates.GatingResult;
 import glofacs.gui.ChannelInfo;
 import glofacs.gui.MainWindow;
 import glofacs.io.FCSFile;
@@ -30,7 +31,7 @@ public class ChannelWidget extends QWidget
 	{
 	private FCSFile.DataSegment segment;
 	ChannelRenderer r=new ChannelRenderer();
-
+	
 	MainWindow mw;
 	
 	public ChannelWidget(MainWindow mw)
@@ -54,8 +55,9 @@ public class ChannelWidget extends QWidget
 	@Override
 	protected void paintEvent(QPaintEvent pe)
 		{
+		GatingResult gr=mw.gatingResult.get(segment);
 		QPainter pm=new QPainter(this);
-		r.render(this, contentsRect().width(), contentsRect().height());
+		r.render(gr, this, contentsRect().width(), contentsRect().height());
 		pm.drawImage(0, 0, r.img);
 		pm.end();
 		}
@@ -76,6 +78,7 @@ public class ChannelWidget extends QWidget
 			grect.indexY=r.viewsettings.indexY;
 			grect.x1=grect.x2=p.x();
 			grect.y1=grect.y2=p.y();
+			grect.updateInternal();
 			isDrawing=grect;
 			
 
@@ -105,12 +108,12 @@ public class ChannelWidget extends QWidget
 			
 			grect.x2=p.x();
 			grect.y2=p.y();
-			
+			grect.updateInternal();
 			render();
 			}
 		}
 	
-	public QPointF mapScreenToFacs(QPointF pos) //might even be a bit wrong
+	public QPointF mapScreenToFacs(QPointF pos)
 		{
 		QPointF p=new QPointF(
 				(pos.x())/r.viewsettings.scaleX,
@@ -119,13 +122,23 @@ public class ChannelWidget extends QWidget
 		return p;
 		}
 
-	public QPointF mapFacsToScreen(QPointF pos) //might even be a bit wrong
+	public QPointF mapFacsToScreen(QPointF pos)
 		{
 		QPointF p=new QPointF(
 				pos.x()*r.viewsettings.scaleX,
-				height()-pos.y()*r.viewsettings.scaleY
+				height()-pos.y()*r.viewsettings.scaleY-1
 				);
 		return p;
+		}
+
+	public int mapFacsToScreenX(double x)
+		{
+		return (int)(r.viewsettings.scaleX*x);
+		}
+
+	public int mapFacsToScreenY(double y)
+		{
+		return height()-((int)(r.viewsettings.scaleY*y))-1;
 		}
 
 	
@@ -158,6 +171,23 @@ public class ChannelWidget extends QWidget
 			
 			menu.exec(ev.globalPos());
 			}
+		else
+			{
+			QMenu menu=new QMenu();
+
+			QMenu mSetSource=menu.addMenu(tr("Set source population"));
+			
+			setgate.clear();
+			for(Gate g:mw.gateset.getGates())
+				{
+				SetGate sg=new SetGate();
+				sg.g=g;
+				setgate.add(sg);
+				mSetSource.addAction(g.name, sg, "actionSet()");
+				}
+			
+			menu.exec(ev.globalPos());
+			}
 		}
 
 	
@@ -178,6 +208,20 @@ public class ChannelWidget extends QWidget
 			}
 		}
 
+	
+
+	private LinkedList<SetGate> setgate=new LinkedList<SetGate>();
+	public class SetGate
+		{
+		Gate g;
+		public void actionSet()
+			{
+			r.viewsettings.fromGate=g;
+			r.autoscale(); 
+			render();
+			}
+		}
+	
 	public void setChannels(int indexX, int indexY)
 		{
 		r.viewsettings.indexX=indexX;
@@ -195,5 +239,6 @@ public class ChannelWidget extends QWidget
 		super.resizeEvent(arg__1);
 		repaint(); //obvious?
 		}
-	
+
+
 	}

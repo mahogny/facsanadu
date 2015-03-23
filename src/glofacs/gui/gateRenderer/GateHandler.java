@@ -1,6 +1,8 @@
 package glofacs.gui.gateRenderer;
 
 import glofacs.gates.Gate;
+import glofacs.gates.GateRect;
+import glofacs.gates.GateRoot;
 
 /**
  * 
@@ -10,8 +12,13 @@ import glofacs.gates.Gate;
 public class GateHandler
 	{
 
-	public static GateRendererRect getGateRenderer(Gate g)
+	public static GateRenderer getGateRenderer(Gate g)
 		{
-		return new GateRendererRect();
+		if(g instanceof GateRect)
+			return new GateRendererRect();
+		else if(g instanceof GateRoot)
+			return new GateRendererRoot();
+		else
+			throw new RuntimeException("no renderer");
 		}
 	}

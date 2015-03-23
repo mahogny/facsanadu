@@ -1,5 +1,6 @@
 package glofacs.gui.channel;
 
+import glofacs.gates.Gate;
 import glofacs.io.FCSFile;
 import glofacs.io.FCSFile.DataSegment;
 
@@ -7,7 +8,7 @@ public class ViewSettings
 	{
 	public String name="";
 	
-	public int fromGateID;
+	public Gate fromGate;
 	
 	public int indexX=7;
 	public int indexY=6;

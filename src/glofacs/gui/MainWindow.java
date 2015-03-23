@@ -11,8 +11,8 @@ import glofacs.gui.gatestats.GateStatsPane;
 import glofacs.io.FCSFile;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -20,9 +20,13 @@ import java.util.LinkedList;
 import com.trolltech.qt.core.QCoreApplication;
 import com.trolltech.qt.core.QModelIndex;
 import com.trolltech.qt.core.Qt;
+import com.trolltech.qt.gui.QAbstractItemView.SelectionBehavior;
 import com.trolltech.qt.gui.QApplication;
+import com.trolltech.qt.gui.QFileDialog;
+import com.trolltech.qt.gui.QFileDialog.FileMode;
 import com.trolltech.qt.gui.QGridLayout;
 import com.trolltech.qt.gui.QHBoxLayout;
+import com.trolltech.qt.gui.QHeaderView.ResizeMode;
 import com.trolltech.qt.gui.QMainWindow;
 import com.trolltech.qt.gui.QMenu;
 import com.trolltech.qt.gui.QMenuBar;
@@ -36,8 +40,6 @@ import com.trolltech.qt.gui.QTreeWidget;
 import com.trolltech.qt.gui.QTreeWidgetItem;
 import com.trolltech.qt.gui.QVBoxLayout;
 import com.trolltech.qt.gui.QWidget;
-import com.trolltech.qt.gui.QAbstractItemView.SelectionBehavior;
-import com.trolltech.qt.gui.QHeaderView.ResizeMode;
 
 /**
  * 
@@ -56,13 +58,18 @@ public class MainWindow extends QMainWindow
 	private QTableWidget tableDatasets=new QTableWidget();
 	private QTableWidget tableViews=new QTableWidget();	
 	private QTreeWidget treeGates=new QTreeWidget();
-	GateStatsPane paneStats;
-
-	private QGridLayout layViews=new QGridLayout();
-	private LinkedList<ChannelWidget> prevChanWidget=new LinkedList<ChannelWidget>();
-			
+	private GateStatsPane paneStats;
 	private QTabWidget tabwidget=new QTabWidget();
+	private QMenuBar menubar=new QMenuBar();
+	private QGridLayout layViews=new QGridLayout();
 	
+
+	private File lastDirectory=new File(".");
+
+	
+	/**
+	 * Get gating result for dataset
+	 */
 	public GatingResult getGatingResult(FCSFile.DataSegment segment)
 		{
 		if(gatingResult.get(segment)==null)
@@ -71,18 +78,21 @@ public class MainWindow extends QMainWindow
 			return gatingResult.get(segment);
 		}
 	
-	QMenuBar menubar=new QMenuBar();
 	
 
-	
+	/**
+	 * Constructor
+	 */
 	public MainWindow()
 		{
 		
 		setMenuBar(menubar);
 
 		QMenu mFile=menubar.addMenu(tr("File"));
-		mFile.addAction(tr("Open"));
-		mFile.addAction(tr("Exit"));
+		//mFile.addAction(tr("New project"));
+		mFile.addAction(tr("Add datasets"), this, "actionAddDatasets()");
+		mFile.addSeparator();
+		mFile.addAction(tr("Exit"), this, "close()");
 		
 		tableDatasets.setColumnCount(1);
 		tableDatasets.verticalHeader().hide();
@@ -99,6 +109,9 @@ public class MainWindow extends QMainWindow
 		tableViews.selectionModel().selectionChanged.connect(this,"dothelayout()");
 	
 		treeGates.setHeaderLabels(Arrays.asList(tr("Gate")));
+		treeGates.setSelectionBehavior(SelectionBehavior.SelectRows);
+		treeGates.selectionModel().selectionChanged.connect(this,"dothelayout()");
+
 		
 
 		QPushButton bNewView=new QPushButton(tr("New view"));
@@ -119,19 +132,7 @@ public class MainWindow extends QMainWindow
 		
 		/// Load all files from directory
 		for(File path:new File("/home/mahogny/javaproj/glofacs/test/").listFiles())
-			{
-			try
-				{
-				if(FCSFile.isFCSfile(path))
-					{
-					loadFile(path);
-					}
-				}
-			catch (FileNotFoundException e)
-				{
-				e.printStackTrace();
-				}
-			}
+			loadFile(path);
 		
 //		File path=new File("/home/mahogny/javaproj/glofacs/test/Specimen_001_test4 J3 pbabe gfppuro a_D03_009.fcs");
 //		loadFile(path);
@@ -163,6 +164,40 @@ public class MainWindow extends QMainWindow
 		show();
 		}
 	
+	
+	
+	/**
+	 * Action: Add/import datasets
+	 */
+	public void actionAddDatasets()
+		{
+		QFileDialog dia=new QFileDialog();
+		dia.setFileMode(FileMode.ExistingFiles);
+		dia.setDirectory(lastDirectory.getAbsolutePath());
+		dia.setNameFilter(tr("FACS files (*.fcs)"));
+		if(dia.exec()!=0)
+			{
+			try
+				{
+				for(String sf:dia.selectedFiles())
+					{
+					File f=new File(sf);
+					lastDirectory=f.getParentFile();
+					if(FCSFile.isFCSfile(f))
+						loadFile(f);
+					else
+						QTutil.showNotice(this, "Not a FACS file: "+f);
+					}
+				}
+			catch (IOException e)
+				{
+				QTutil.showNotice(this, e.getMessage());
+				e.printStackTrace();
+				}
+			}		
+		}
+	
+	
 	public void addGate(Gate g)
 		{
 		int id=gateset.addNewGate(g);
@@ -170,10 +205,14 @@ public class MainWindow extends QMainWindow
 		updateGatesList();
 		}
 	
-	
+
+	/**
+	 * Action: Create a new view
+	 */
 	public void actionNewView()
 		{
 		ViewSettings vs=new ViewSettings();
+		vs.fromGate=gateset.getRootGate();
 		vs.indexX=7;
 		vs.indexY=6;
 		vs.name=""+Math.random();
@@ -205,12 +244,12 @@ public class MainWindow extends QMainWindow
 			{
 			e.printStackTrace();
 			}
-
-	
 		}
 
 	
-	
+	/**
+	 * Get selected views
+	 */
 	public LinkedList<ViewSettings> getSelectedViews()
 		{
 		LinkedList<ViewSettings> selviews=new LinkedList<ViewSettings>();
@@ -219,6 +258,9 @@ public class MainWindow extends QMainWindow
 		return selviews;
 		}
 
+	/**
+	 * Get selected datasets
+	 */
 	public LinkedList<FCSFile.DataSegment> getSelectedDatasets()
 		{
 		LinkedList<FCSFile.DataSegment> selviews=new LinkedList<FCSFile.DataSegment>();
@@ -226,7 +268,10 @@ public class MainWindow extends QMainWindow
 			selviews.add((FCSFile.DataSegment)tableDatasets.item(in.row(),0).data(Qt.ItemDataRole.UserRole));
 		return selviews;
 		}
-	
+
+	/**
+	 * Get selected gates
+	 */
 	public LinkedList<Gate> getSelectedGates()
 		{
 		LinkedList<Gate> selviews=new LinkedList<Gate>();
@@ -254,21 +299,15 @@ public class MainWindow extends QMainWindow
 		
 		}
 
-	
+
+	private ArrayList<ArrayList<ChannelWidget>> prevChanWidget=new ArrayList<ArrayList<ChannelWidget>>();
+			
 	/**
 	 * Update the layout of everything
 	 */
 	public void dothelayout()
 		{
 		dogating();
-		
-		
-		for(ChannelWidget lab:prevChanWidget)
-			{
-			layViews.removeWidget(lab);
-			lab.setVisible(false);
-			}
-		prevChanWidget.clear();
 
 		LinkedList<FCSFile.DataSegment> selds=getSelectedDatasets();
 		LinkedList<ViewSettings> selviews=getSelectedViews();
@@ -277,6 +316,51 @@ public class MainWindow extends QMainWindow
 		if(!selds.isEmpty())
 			for(ViewSettings vs:selviews)
 				vs.autoscale(selds.get(0), 300, 300);
+
+		int numrow=selds.size();
+		int numcol=selviews.size();
+		
+	
+		//Adjust number of rows
+		while(prevChanWidget.size()<numrow)
+			prevChanWidget.add(new ArrayList<ChannelWidget>());
+		while(prevChanWidget.size()>numrow)
+			{
+			int row=prevChanWidget.size()-1;
+			ArrayList<ChannelWidget> onerow=prevChanWidget.get(row);
+			for(;onerow.size()>=0;)
+				{
+				int col=onerow.size()-1;
+				ChannelWidget lab=onerow.get(col);
+				lab.setVisible(false);
+				layViews.removeWidget(lab);
+				onerow.remove(col);
+				}
+			prevChanWidget.remove(row);
+			}
+		
+		//Fix number of columns
+		for(int row=0;row<prevChanWidget.size();row++)
+			{
+			//Add columns
+			ArrayList<ChannelWidget> onerow=prevChanWidget.get(row);
+			for(;onerow.size()<numcol;)
+				{
+				int col=onerow.size();
+				ChannelWidget lab=new ChannelWidget(this);
+				onerow.add(lab);
+				layViews.addWidget(lab, row, col);
+				}
+			//Remove columns
+			for(;onerow.size()>numcol;)
+				{
+				int col=onerow.size()-1;
+				ChannelWidget lab=onerow.get(col);
+				lab.setVisible(false);
+				layViews.removeWidget(lab);
+				onerow.remove(col);
+				}
+			}
 		
 		int currow=0;
 		for(FCSFile.DataSegment ds:selds)
@@ -284,8 +368,8 @@ public class MainWindow extends QMainWindow
 			int curcol=0;
 			for(ViewSettings vs:selviews)
 				{
-				ChannelWidget lab=new ChannelWidget(this);
-				prevChanWidget.add(lab);
+				ChannelWidget lab=prevChanWidget.get(currow).get(curcol);//new ChannelWidget(this);
+				//prevChanWidget.add(lab);
 				lab.setSettings(vs);
 				//lab.setChannels(0,4);
 
@@ -299,13 +383,17 @@ public class MainWindow extends QMainWindow
 			}
 		
 		//Get the size of one. rescale. then rerender all
-		for(ChannelWidget w:prevChanWidget)
-			w.render();
+		for(ArrayList<ChannelWidget> row:prevChanWidget)
+			for(ChannelWidget w:row)
+				w.render();
 		
 		paneStats.updatestats();
 		}
 	
 	
+	/**
+	 * Update list with views
+	 */
 	private void updateViewsList()
 		{
 		tableViews.clear(); //clears title?
@@ -324,6 +412,9 @@ public class MainWindow extends QMainWindow
 			}
 		}
 	
+	/**
+	 * Update list with datasets
+	 */
 	private void updateDatasetList()
 		{
 		tableDatasets.setRowCount(datasets.size());
@@ -335,20 +426,30 @@ public class MainWindow extends QMainWindow
 			tableDatasets.setItem(row, 0, it);
 			row++;
 			}
-		
 		}
-	
+
+	/**
+	 * Update list with gates
+	 */
 	private void updateGatesList()
 		{
 		treeGates.clear();
-		System.out.println("here "+gateset.mapIdGate.values());
-		for(Gate g:gateset.mapIdGate.values())
-			{			
-			QTreeWidgetItem item=new QTreeWidgetItem(treeGates);  //if root level?
-			item.setData(0,Qt.ItemDataRole.UserRole, g);
-			item.setText(0, g.name);
-			}
+		updateGatesListRecursive(null, gateset.getRootGate());
+		treeGates.expandAll();
 		}
+	private void updateGatesListRecursive(QTreeWidgetItem parentItem, Gate g)
+		{
+		QTreeWidgetItem item;
+		if(parentItem==null)
+			item=new QTreeWidgetItem(treeGates);
+		else
+			item=new QTreeWidgetItem(parentItem);
+		item.setData(0,Qt.ItemDataRole.UserRole, g);
+		item.setText(0, g.name);
+		for(Gate child:g.children)
+			updateGatesListRecursive(item, child);
+		}
+
 	
 	/**
 	 * Entry point
@@ -357,7 +458,7 @@ public class MainWindow extends QMainWindow
 		{
 		QApplication.initialize(QtProgramInfo.programName, args);
 		QCoreApplication.setApplicationName(QtProgramInfo.programName);
-		/*MainWindow w=*/new MainWindow();
+		new MainWindow();
 		QTutil.execStaticQApplication();		
 		}
 
@@ -365,9 +466,9 @@ public class MainWindow extends QMainWindow
 	/**
 	 * Event bus
 	 */
-	public void handleEvent(EventGatesChanged eventGatesChanged)
+	public void handleEvent(EventGatesChanged event)
 		{
-		updateGatesList();
+		dothelayout();
 		}
 
 	
@@ -375,7 +476,6 @@ public class MainWindow extends QMainWindow
 	protected void resizeEvent(QResizeEvent arg__1)
 		{
 		super.resizeEvent(arg__1);
-		
 		dothelayout();
 		}
 	}

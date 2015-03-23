@@ -3,7 +3,6 @@ package glofacs.gates;
 import glofacs.io.FCSFile;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 
 /**
  * 
@@ -16,23 +15,22 @@ public class GatingResult
 
 	public HashMap<Gate, IntArray> acceptedFromGate=new HashMap<Gate, IntArray>();
 	
+	GateSet gating;
 
 	/**
 	 * Perform gating for all gates
 	 */
 	public void perform(GateSet gating, FCSFile.DataSegment segment)
 		{
-		LinkedList<Gate> roots=gating.getRootGates();
-		for(Gate g:roots)
-			{
-			IntArray res=new IntArray(segment.getNumObservations());
-			for(int i=0;i<segment.getNumObservations();i++)
-				if(g.classify(segment.eventsFloat.get(i)))
-					res.add(i);
-			acceptedFromGate.put(g, res);
-			for(Gate child:g.children)
-				dogate(g,child, segment);
-			}
+		this.gating=gating;
+		Gate g=gating.getRootGate();
+		IntArray res=new IntArray(segment.getNumObservations());
+		for(int i=0;i<segment.getNumObservations();i++)
+			if(g.classify(segment.eventsFloat.get(i)))
+				res.add(i);
+		acceptedFromGate.put(g, res);
+		for(Gate child:g.children)
+			dogate(g,child, segment);
 		}
 	
 	/**
@@ -52,4 +50,10 @@ public class GatingResult
 	
 	
 	
+
+	public int getTotalCount()
+		{
+		return acceptedFromGate.get(gating.getRootGate()).size();
+		}
+
 	}
