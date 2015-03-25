@@ -47,7 +47,7 @@ public class GlofacsXML
 		
 		
 		//Store dataset references
-		for(FCSFile.DataSegment ds:proj.datasets)
+		for(Dataset ds:proj.datasets)
 			{
 			Element eSeq=new Element("dataset");
 			eSeq.setAttribute("path",ds.source.getAbsolutePath());
@@ -172,7 +172,7 @@ public class GlofacsXML
 				else if(one.getName().equals("dataset"))
 					{
 					String n=one.getAttributeValue("path");
-					FCSFile.DataSegment ds=new FCSFile(new File(n)).data.get(0);
+					Dataset ds=new FCSFile(new File(n)).data.get(0);
 					mw.datasets.add(ds);
 					}
 				}

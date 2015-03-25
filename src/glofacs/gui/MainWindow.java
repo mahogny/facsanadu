@@ -4,6 +4,7 @@ package glofacs.gui;
 import glofacs.gates.Gate;
 import glofacs.gui.channel.EventGatesChanged;
 import glofacs.gui.channel.ViewSettings;
+import glofacs.io.Dataset;
 import glofacs.io.FCSFile;
 import glofacs.io.GlofacsXML;
 
@@ -415,7 +416,7 @@ public class MainWindow extends QMainWindow
 			FCSFile f=new FCSFile(path);
 			//f=new FCSFile(new File("/home/mahogny/javaproj/glofacs/test/Specimen_001_C10_C10_008.fcs"));
 			
-			FCSFile.DataSegment segment=f.data.get(0);
+			Dataset segment=f.data.get(0);
 
 			project.datasets.add(segment);
 			updateDatasetList();
@@ -441,11 +442,11 @@ public class MainWindow extends QMainWindow
 	/**
 	 * Get selected datasets
 	 */
-	public LinkedList<FCSFile.DataSegment> getSelectedDatasets()
+	public LinkedList<Dataset> getSelectedDatasets()
 		{
-		LinkedList<FCSFile.DataSegment> selviews=new LinkedList<FCSFile.DataSegment>();
+		LinkedList<Dataset> selviews=new LinkedList<Dataset>();
 		for(QModelIndex in:tableDatasets.selectionModel().selectedRows())
-			selviews.add((FCSFile.DataSegment)tableDatasets.item(in.row(),0).data(Qt.ItemDataRole.UserRole));
+			selviews.add((Dataset)tableDatasets.item(in.row(),0).data(Qt.ItemDataRole.UserRole));
 		return selviews;
 		}
 
@@ -492,7 +493,7 @@ public class MainWindow extends QMainWindow
 			String showname=vs.fromGate.name+": ";
 			if(!project.datasets.isEmpty())
 				{
-				FCSFile.DataSegment ds=project.datasets.get(0);
+				Dataset ds=project.datasets.get(0);
 				showname+=ds.getChannelInfo().get(vs.indexX).getShortestName()+" / "+ds.getChannelInfo().get(vs.indexY).getShortestName();
 				}
 			
@@ -514,7 +515,7 @@ public class MainWindow extends QMainWindow
 		isUpdating=false;
 		tableDatasets.setRowCount(project.datasets.size());
 		int row=0;
-		for(FCSFile.DataSegment ds:project.datasets)
+		for(Dataset ds:project.datasets)
 			{
 			System.out.println(ds.source);
 			QTableWidgetItem it=QTutil.createReadOnlyItem(ds.source.getName());

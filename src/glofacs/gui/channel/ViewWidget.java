@@ -9,7 +9,7 @@ import glofacs.gates.GateRect;
 import glofacs.gates.GatingResult;
 import glofacs.gui.GlofacsProject;
 import glofacs.gui.MainWindow;
-import glofacs.io.FCSFile;
+import glofacs.io.Dataset;
 
 import com.trolltech.qt.core.QPointF;
 import com.trolltech.qt.core.Qt.MouseButton;
@@ -31,7 +31,7 @@ import com.trolltech.qt.gui.QSizePolicy.Policy;
  */
 public class ViewWidget extends QWidget
 	{
-	private FCSFile.DataSegment segment;
+	private Dataset segment;
 	private ViewRenderer r=new ViewRenderer();
 	private MainWindow mw;
 	public static int graphOffsetXY=30;
@@ -43,7 +43,7 @@ public class ViewWidget extends QWidget
 		setSizePolicy(Policy.Expanding, Policy.Expanding);
 		}
 	
-	public void setDataset(FCSFile.DataSegment segment)
+	public void setDataset(Dataset segment)
 		{
 		this.segment=segment;
 		r.setSegment(segment, mw.project);

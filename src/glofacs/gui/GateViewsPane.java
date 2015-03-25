@@ -3,7 +3,7 @@ package glofacs.gui;
 import glofacs.gates.Gate;
 import glofacs.gui.channel.ViewWidget;
 import glofacs.gui.channel.ViewSettings;
-import glofacs.io.FCSFile;
+import glofacs.io.Dataset;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -47,7 +47,7 @@ public class GateViewsPane extends QWidget
 	public void updateViews()
 		{
 		GlofacsProject project=mw.project;
-		LinkedList<FCSFile.DataSegment> selds=mw.getSelectedDatasets();
+		LinkedList<Dataset> selds=mw.getSelectedDatasets();
 		LinkedList<ViewSettings> selviews=mw.getSelectedViews();
 		
 		//autoscale all views to the same size
@@ -155,7 +155,7 @@ public class GateViewsPane extends QWidget
 			}
 		
 		int indexA=0;
-		for(FCSFile.DataSegment ds:selds)
+		for(Dataset ds:selds)
 			{
 			for(int indexB=0;indexB<selviews.size();indexB++)
 				{

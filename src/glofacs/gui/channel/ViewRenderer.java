@@ -7,7 +7,7 @@ import glofacs.gates.IntArray;
 import glofacs.gui.GlofacsProject;
 import glofacs.gui.gateRenderer.GateHandler;
 import glofacs.gui.gateRenderer.GateRenderer;
-import glofacs.io.FCSFile;
+import glofacs.io.Dataset;
 
 import java.util.ArrayList;
 
@@ -29,10 +29,10 @@ public class ViewRenderer
 	{
 	public QImage img;
 	public ViewSettings viewsettings=new ViewSettings();
-	private FCSFile.DataSegment segment;
+	private Dataset segment;
 	GlofacsProject proj;
 	
-	public void setSegment(FCSFile.DataSegment segment, GlofacsProject proj)
+	public void setSegment(Dataset segment, GlofacsProject proj)
 		{
 		this.segment=segment;
 		this.proj=proj;

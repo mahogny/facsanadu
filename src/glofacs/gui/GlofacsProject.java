@@ -3,8 +3,7 @@ package glofacs.gui;
 import glofacs.gates.GateSet;
 import glofacs.gates.GatingResult;
 import glofacs.gui.channel.ViewSettings;
-import glofacs.io.FCSFile;
-import glofacs.io.FCSFile.DataSegment;
+import glofacs.io.Dataset;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -19,15 +18,15 @@ public class GlofacsProject
 	{
 
 	public GateSet gateset=new GateSet();
-	public LinkedList<FCSFile.DataSegment> datasets=new LinkedList<FCSFile.DataSegment>();
+	public LinkedList<Dataset> datasets=new LinkedList<Dataset>();
 	public LinkedList<ViewSettings> views=new LinkedList<ViewSettings>();
 
-	public HashMap<FCSFile.DataSegment, GatingResult> gatingResult=new HashMap<FCSFile.DataSegment, GatingResult>();
+	public HashMap<Dataset, GatingResult> gatingResult=new HashMap<Dataset, GatingResult>();
 	
 	/**
 	 * Get gating result for dataset
 	 */
-	public GatingResult getGatingResult(FCSFile.DataSegment segment)
+	public GatingResult getGatingResult(Dataset segment)
 		{
 		if(gatingResult.get(segment)==null)
 			return new GatingResult();
@@ -39,10 +38,10 @@ public class GlofacsProject
 	/**
 	 * Update gating results
 	 */
-	public void dogating(LinkedList<DataSegment> listDatasets)
+	public void dogating(LinkedList<Dataset> listDatasets)
 		{
 		gatingResult.clear();
-		for(FCSFile.DataSegment ds:listDatasets)
+		for(Dataset ds:listDatasets)
 			{
 			GatingResult gr=new GatingResult();
 			gr.perform(gateset, ds);

@@ -1,6 +1,6 @@
 package glofacs.gates;
 
-import glofacs.io.FCSFile;
+import glofacs.io.Dataset;
 
 import java.util.HashMap;
 
@@ -20,7 +20,7 @@ public class GatingResult
 	/**
 	 * Perform gating for all gates
 	 */
-	public void perform(GateSet gating, FCSFile.DataSegment segment)
+	public void perform(GateSet gating, Dataset segment)
 		{
 		this.gating=gating;
 		Gate g=gating.getRootGate();
@@ -36,7 +36,7 @@ public class GatingResult
 	/**
 	 * Do gating for a gate with a parent
 	 */
-	private void dogate(Gate parent, Gate g, FCSFile.DataSegment segment)
+	private void dogate(Gate parent, Gate g, Dataset segment)
 		{
 		IntArray prevres=acceptedFromGate.get(parent);
 		IntArray res=new IntArray(prevres.size());

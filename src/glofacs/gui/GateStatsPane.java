@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import glofacs.gates.Gate;
 import glofacs.gates.GatingResult;
 import glofacs.gates.IntArray;
-import glofacs.io.FCSFile;
+import glofacs.io.Dataset;
 
 import com.trolltech.qt.gui.QTableWidget;
 import com.trolltech.qt.gui.QTableWidgetItem;
@@ -51,7 +51,7 @@ public class GateStatsPane extends QWidget
 
 
 		LinkedList<Gate> listGates=mw.getSelectedGates();
-		LinkedList<FCSFile.DataSegment> listDatasets=mw.getSelectedDatasets();
+		LinkedList<Dataset> listDatasets=mw.getSelectedDatasets();
 
 		
 		tableStats.setColumnCount(listGates.size()+1);
@@ -65,7 +65,7 @@ public class GateStatsPane extends QWidget
 		tableStats.setRowCount(listDatasets.size());
 		for(int row=0;row<listDatasets.size();row++)
 			{
-			FCSFile.DataSegment dataset=listDatasets.get(row);
+			Dataset dataset=listDatasets.get(row);
 			GatingResult gr=mw.project.getGatingResult(dataset);
 
 			int totalcount=gr.getTotalCount();

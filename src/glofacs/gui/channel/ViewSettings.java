@@ -1,8 +1,7 @@
 package glofacs.gui.channel;
 
 import glofacs.gates.Gate;
-import glofacs.io.FCSFile;
-import glofacs.io.FCSFile.DataSegment;
+import glofacs.io.Dataset;
 
 public class ViewSettings
 	{
@@ -16,7 +15,7 @@ public class ViewSettings
 	public double scaleY=1;
 	
 	
-	public void autoscale(DataSegment segment)
+	public void autoscale(Dataset segment)
 		{
 		double maxx=getMaxForChannel(segment,indexX);
 		double maxy=getMaxForChannel(segment,indexY);
@@ -27,7 +26,7 @@ public class ViewSettings
 		} 
 
 
-	public static double getMaxForChannel(FCSFile.DataSegment segment, int chanid)
+	public static double getMaxForChannel(Dataset segment, int chanid)
 		{
 		//faster to check all channels in parallel
 		double max=-Double.MAX_VALUE;
