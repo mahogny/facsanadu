@@ -7,6 +7,7 @@ import glofacs.gates.GatingResult;
 import glofacs.gui.channel.EventGatesChanged;
 import glofacs.gui.channel.ViewSettings;
 import glofacs.io.FCSFile;
+import glofacs.io.GlofacsXML;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +23,7 @@ import com.trolltech.qt.core.Qt.ScrollBarPolicy;
 import com.trolltech.qt.gui.QAbstractItemView.SelectionBehavior;
 import com.trolltech.qt.gui.QApplication;
 import com.trolltech.qt.gui.QFileDialog;
+import com.trolltech.qt.gui.QFileDialog.AcceptMode;
 import com.trolltech.qt.gui.QFileDialog.FileMode;
 import com.trolltech.qt.gui.QHBoxLayout;
 import com.trolltech.qt.gui.QHeaderView.ResizeMode;
@@ -61,12 +63,12 @@ public class MainWindow extends QMainWindow
 	private QTabWidget tabwidget=new QTabWidget();
 	private QMenuBar menubar=new QMenuBar();
 	
-
-	GateViewsPane vpane;
-	
-	QScrollArea scrollArea=new QScrollArea();
+	private GateViewsPane vpane;
+	private QScrollArea scrollArea=new QScrollArea();
 	
 	private File lastDirectory=new File(".");
+	
+	private boolean isUpdating=false;
 
 	
 	/**
@@ -92,7 +94,11 @@ public class MainWindow extends QMainWindow
 		vpane=new GateViewsPane(this);
 		
 		QMenu mFile=menubar.addMenu(tr("File"));
-		//mFile.addAction(tr("New project"));
+		mFile.addAction(tr("New project"), this, "actionNewProject()");
+		mFile.addAction(tr("Open project"), this, "actionOpenProject()");
+		mFile.addAction(tr("Save project"), this, "actionSaveProject()");
+		mFile.addAction(tr("Save project as"), this, "actionSaveProjectAs()");
+		mFile.addSeparator();
 		mFile.addAction(tr("Add datasets"), this, "actionAddDatasets()");
 		mFile.addSeparator();
 		mFile.addAction(tr("Exit"), this, "close()");
@@ -197,6 +203,94 @@ public class MainWindow extends QMainWindow
 		show();
 		}
 	
+	
+	/**
+	 * Action: New project
+	 */
+	public void actionNewProject()
+		{
+		datasets.clear();
+		views.clear();
+		gateset=new GateSet();
+		updateall();
+		}
+	
+	private void updateall()
+		{
+		updateViewsList();
+		updateGatesList();
+		updateDatasetList();
+		dothelayout();
+		}
+	
+	File currentProjectFile=null;
+
+	public void actionOpenProject()
+		{
+		QFileDialog dia=new QFileDialog();
+		dia.setFileMode(FileMode.ExistingFile);
+		dia.setDirectory(lastDirectory.getAbsolutePath());
+		dia.setNameFilter(tr("Project files (*.glofacs)"));
+		if(dia.exec()!=0)
+			{
+			File f=new File(dia.selectedFiles().get(0));
+			lastDirectory=f.getParentFile();
+			try
+				{
+				//proj=GlofacsXML.loadProject(f);
+				GlofacsXML.importXML(this, f);
+				currentProjectFile=f;
+				}
+			catch (IOException e)
+				{
+				QTutil.showNotice(this, e.getMessage());
+				e.printStackTrace();
+				}
+			updateall();
+			}		
+		}
+	
+	
+	/**
+	 * Action: Save project
+	 */
+	public void actionSaveProject()
+		{
+		if(currentProjectFile==null)
+			actionSaveProjectAs();
+		if(currentProjectFile!=null)
+			try
+				{
+				GlofacsXML.export(this, currentProjectFile);
+				}
+			catch (IOException e)
+				{
+				QTutil.showNotice(this, e.getMessage());
+				e.printStackTrace();
+				}
+		}
+
+	
+	/**
+	 * Action: Save as... file
+	 */
+	public void actionSaveProjectAs()
+		{
+		QFileDialog dia=new QFileDialog();
+		dia.setFileMode(FileMode.AnyFile);
+		dia.setAcceptMode(AcceptMode.AcceptSave);
+		dia.setDirectory(lastDirectory.getAbsolutePath());
+		dia.setDefaultSuffix("glofacs");
+		dia.setNameFilter(tr("Project files (*.glofacs)"));
+		if(dia.exec()!=0)
+			{
+			File f=new File(dia.selectedFiles().get(0));
+			lastDirectory=f.getParentFile();
+			currentProjectFile=f;
+			actionSaveProject();
+			}
+		}
+
 	
 	/**
 	 * Action: Remove selected datasets
@@ -412,6 +506,8 @@ public class MainWindow extends QMainWindow
 	 */
 	private void updateViewsList()
 		{
+		boolean wasUpdating=isUpdating;
+		isUpdating=false;
 		tableViews.clear(); //clears title?
 		
 		tableViews.setColumnCount(1);
@@ -434,6 +530,7 @@ public class MainWindow extends QMainWindow
 			tableViews.setItem(row, 0, it);
 			row++;
 			}
+		isUpdating=wasUpdating;
 		}
 	
 	/**
@@ -441,6 +538,8 @@ public class MainWindow extends QMainWindow
 	 */
 	private void updateDatasetList()
 		{
+		boolean wasUpdating=isUpdating;
+		isUpdating=false;
 		tableDatasets.setRowCount(datasets.size());
 		int row=0;
 		for(FCSFile.DataSegment ds:datasets)
@@ -450,6 +549,7 @@ public class MainWindow extends QMainWindow
 			tableDatasets.setItem(row, 0, it);
 			row++;
 			}
+		isUpdating=wasUpdating;
 		}
 
 	/**
@@ -457,9 +557,12 @@ public class MainWindow extends QMainWindow
 	 */
 	private void updateGatesList()
 		{
+		boolean wasUpdating=isUpdating;
+		isUpdating=false;
 		treeGates.clear();
 		updateGatesListRecursive(null, gateset.getRootGate());
 		treeGates.expandAll();
+		isUpdating=wasUpdating;
 		}
 	private void updateGatesListRecursive(QTreeWidgetItem parentItem, Gate g)
 		{
@@ -505,8 +608,11 @@ public class MainWindow extends QMainWindow
 	
 	public void dothelayout()
 		{
-		dogating();
-		vpane.updateViews();
-		paneStats.updateStats();
+		if(!isUpdating)
+			{
+			dogating();
+			vpane.updateViews();
+			paneStats.updateStats();
+			}
 		}
 	}

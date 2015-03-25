@@ -55,10 +55,27 @@ public class GateSet
 			prevnames.add(otherGate.name);
 		
 		int i=0;
-		while(prevnames.contains(""+i))
+		while(prevnames.contains("gate "+i))
 			i++;
-		return ""+i;
+		return "gate "+i;
 		}
-	
+
+	public Gate getGate(String name)
+		{
+		return getGate(name, getRootGate());
+		}
+
+	private static Gate getGate(String name, Gate parent)
+		{
+		if(parent.name.equals(name))
+			return parent;
+		for(Gate g:parent.children)
+			{
+			Gate got=getGate(name, g);
+			if(got!=null)
+				return got;
+			}
+		return null;
+		}
 	
 	}

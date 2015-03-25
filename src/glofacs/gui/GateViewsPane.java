@@ -84,6 +84,7 @@ public class GateViewsPane extends QWidget
 			headerHorizontal.remove(i);
 			}
 
+
 		//Adjust vertical header size
 		//Add rows
 		for(;headerVertical.size()<numrow;)
@@ -180,10 +181,8 @@ public class GateViewsPane extends QWidget
 			headerHorizontal.get(i).setText(mw.datasets.get(i).source.getName());
 		for(int i=0;i<headerVertical.size();i++)
 			{
-			//System.out.println("v "+i+" "+headerVertical.get(i));
 			Gate g=selviews.get(i).fromGate;
 			headerVertical.get(i).setText(g.name);
-			System.out.println("+++ "+g.name);
 			}
 		
 		//Get the size of one. rescale. then rerender all
