@@ -1,8 +1,5 @@
 # GloFACS
 
-
-# MadGene
-
 ## Description
 
 This is a simple piece of software for FACS, written in Java + QT
@@ -13,6 +10,20 @@ This is a simple piece of software for FACS, written in Java + QT
    * Linux
    * Mac
    * Windows
+
+* Gating
+   * Rectangular
+   * Polygon (TODO)
+
+* Rendering
+   * XY scatter plots
+   * Hisograms (TODO)
+
+* Summaries
+   * Percent gated, total and of parent
+   * Export tables to CSV (TODO)
+   * Export graphs to PNG (TODO)
+
 
 ## License
 

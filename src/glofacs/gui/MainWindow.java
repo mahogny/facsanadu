@@ -6,7 +6,7 @@ import glofacs.gui.channel.EventGatesChanged;
 import glofacs.gui.channel.ViewSettings;
 import glofacs.io.Dataset;
 import glofacs.io.FCSFile;
-import glofacs.io.GlofacsXML;
+import glofacs.io.QuickfacsXML;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,7 +48,7 @@ import com.trolltech.qt.gui.QWidget;
  */
 public class MainWindow extends QMainWindow
 	{
-	public GlofacsProject project=new GlofacsProject();
+	public QuickfacsProject project=new QuickfacsProject();
 		
 	private QTableWidget tableDatasets=new QTableWidget();
 	private QTableWidget tableViews=new QTableWidget();	
@@ -150,7 +150,7 @@ public class MainWindow extends QMainWindow
 		tableViews.setSizePolicy(Policy.Minimum, Policy.Expanding);
 		
 		/// Load all files from directory
-		for(File path:new File("/home/mahogny/javaproj/glofacs/test").listFiles())
+		for(File path:new File("/home/mahogny/javaproj/quickfacs/test").listFiles())
 			loadFile(path);
 //		loadFile(new File("/home/mahogny/javaproj/glofacs/test/Specimen_001_test4 J3 pbabe gfppuro a_D03_009.fcs"));
 
@@ -193,7 +193,7 @@ public class MainWindow extends QMainWindow
 	 */
 	public void actionNewProject()
 		{
-		project=new GlofacsProject();
+		project=new QuickfacsProject();
 		updateall();
 		}
 	
@@ -215,14 +215,14 @@ public class MainWindow extends QMainWindow
 		QFileDialog dia=new QFileDialog();
 		dia.setFileMode(FileMode.ExistingFile);
 		dia.setDirectory(lastDirectory.getAbsolutePath());
-		dia.setNameFilter(tr("Project files (*.glofacs)"));
+		dia.setNameFilter(tr("Project files (*.qfacs)"));
 		if(dia.exec()!=0)
 			{
 			File f=new File(dia.selectedFiles().get(0));
 			lastDirectory=f.getParentFile();
 			try
 				{
-				project=GlofacsXML.importXML(f);
+				project=QuickfacsXML.importXML(f);
 				currentProjectFile=f;
 				}
 			catch (IOException e)
@@ -245,7 +245,7 @@ public class MainWindow extends QMainWindow
 		if(currentProjectFile!=null)
 			try
 				{
-				GlofacsXML.export(project, currentProjectFile);
+				QuickfacsXML.export(project, currentProjectFile);
 				}
 			catch (IOException e)
 				{
@@ -264,8 +264,8 @@ public class MainWindow extends QMainWindow
 		dia.setFileMode(FileMode.AnyFile);
 		dia.setAcceptMode(AcceptMode.AcceptSave);
 		dia.setDirectory(lastDirectory.getAbsolutePath());
-		dia.setDefaultSuffix("glofacs");
-		dia.setNameFilter(tr("Project files (*.glofacs)"));
+		dia.setDefaultSuffix("qfacs");
+		dia.setNameFilter(tr("Project files (*.qfacs)"));
 		if(dia.exec()!=0)
 			{
 			File f=new File(dia.selectedFiles().get(0));
@@ -480,7 +480,7 @@ public class MainWindow extends QMainWindow
 	private void updateViewsList()
 		{
 		boolean wasUpdating=isUpdating;
-		isUpdating=false;
+		isUpdating=true;
 		tableViews.clear(); //clears title?
 		
 		tableViews.setColumnCount(1);

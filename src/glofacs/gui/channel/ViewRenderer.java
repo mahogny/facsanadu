@@ -4,7 +4,7 @@ import glofacs.data.ChannelInfo;
 import glofacs.gates.Gate;
 import glofacs.gates.GatingResult;
 import glofacs.gates.IntArray;
-import glofacs.gui.GlofacsProject;
+import glofacs.gui.QuickfacsProject;
 import glofacs.gui.gateRenderer.GateHandler;
 import glofacs.gui.gateRenderer.GateRenderer;
 import glofacs.io.Dataset;
@@ -30,9 +30,9 @@ public class ViewRenderer
 	public QImage img;
 	public ViewSettings viewsettings=new ViewSettings();
 	private Dataset segment;
-	GlofacsProject proj;
+	QuickfacsProject proj;
 	
-	public void setSegment(Dataset segment, GlofacsProject proj)
+	public void setSegment(Dataset segment, QuickfacsProject proj)
 		{
 		this.segment=segment;
 		this.proj=proj;

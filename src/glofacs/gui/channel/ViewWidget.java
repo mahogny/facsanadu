@@ -7,7 +7,7 @@ import glofacs.data.ChannelInfo;
 import glofacs.gates.Gate;
 import glofacs.gates.GateRect;
 import glofacs.gates.GatingResult;
-import glofacs.gui.GlofacsProject;
+import glofacs.gui.QuickfacsProject;
 import glofacs.gui.MainWindow;
 import glofacs.io.Dataset;
 
@@ -58,7 +58,7 @@ public class ViewWidget extends QWidget
 	@Override
 	protected void paintEvent(QPaintEvent pe)
 		{
-		GlofacsProject project=mw.project;
+		QuickfacsProject project=mw.project;
 		GatingResult gr=project.gatingResult.get(segment);
 		QPainter pm=new QPainter(this);
 		r.render(gr, this, contentsRect().width(), contentsRect().height());
@@ -161,7 +161,7 @@ public class ViewWidget extends QWidget
 	@Override
 	protected void contextMenuEvent(QContextMenuEvent ev)
 		{
-		GlofacsProject proj=mw.project;
+		QuickfacsProject proj=mw.project;
 		super.contextMenuEvent(ev);
 		int invy=height()-ev.pos().y();
 		if(ev.pos().x()<50 || invy<50)

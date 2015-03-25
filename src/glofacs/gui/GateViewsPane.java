@@ -16,6 +16,7 @@ import com.trolltech.qt.gui.QSizePolicy.Policy;
 
 /**
  * 
+ * Pane showing a grid of views X datasets
  * 
  * @author Johan Henriksson
  *
@@ -46,7 +47,7 @@ public class GateViewsPane extends QWidget
 	 */
 	public void updateViews()
 		{
-		GlofacsProject project=mw.project;
+		QuickfacsProject project=mw.project;
 		LinkedList<Dataset> selds=mw.getSelectedDatasets();
 		LinkedList<ViewSettings> selviews=mw.getSelectedViews();
 		

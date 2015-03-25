@@ -14,7 +14,7 @@ import java.util.LinkedList;
  * @author Johan Henriksson
  *
  */
-public class GlofacsProject
+public class QuickfacsProject
 	{
 
 	public GateSet gateset=new GateSet();

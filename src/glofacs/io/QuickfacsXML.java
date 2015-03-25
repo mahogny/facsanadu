@@ -2,7 +2,7 @@ package glofacs.io;
 
 import glofacs.gates.Gate;
 import glofacs.gates.GateRect;
-import glofacs.gui.GlofacsProject;
+import glofacs.gui.QuickfacsProject;
 import glofacs.gui.channel.ViewSettings;
 
 import java.io.File;
@@ -25,13 +25,13 @@ import org.jdom2.output.XMLOutputter;
  * @author Johan Henriksson
  *
  */
-public class GlofacsXML
+public class QuickfacsXML
 	{
 	
 	/**
 	 * Export a project
 	 */
-	public static void export(GlofacsProject proj,File f) throws IOException
+	public static void export(QuickfacsProject proj,File f) throws IOException
 		{
 		Element e=export(proj);
 		XMLOutputter xmlOutputter = new XMLOutputter(Format.getPrettyFormat());
@@ -40,7 +40,7 @@ public class GlofacsXML
 	
 	
 	
-	public static Element export(GlofacsProject proj) throws IOException
+	public static Element export(QuickfacsProject proj) throws IOException
 		{
 		Element etot=new Element("glofacs");
 		
@@ -151,7 +151,7 @@ public class GlofacsXML
 	/**
 	 * Import from native format
 	 */
-	public static void importXML(GlofacsProject mw, Element etot, File basepath) throws IOException
+	public static void importXML(QuickfacsProject mw, Element etot, File basepath) throws IOException
 		{
 		try
 			{
@@ -188,9 +188,9 @@ public class GlofacsXML
 	/**
 	 * Import from XML
 	 */
-	public static GlofacsProject importXML(File f) throws IOException
+	public static QuickfacsProject importXML(File f) throws IOException
 		{
-		GlofacsProject proj=new GlofacsProject();
+		QuickfacsProject proj=new QuickfacsProject();
 		try
 			{
 			FileInputStream is=new FileInputStream(f);
