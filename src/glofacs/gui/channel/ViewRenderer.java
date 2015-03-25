@@ -2,9 +2,9 @@ package glofacs.gui.channel;
 
 import glofacs.data.ChannelInfo;
 import glofacs.gates.Gate;
-import glofacs.gates.GateSet;
 import glofacs.gates.GatingResult;
 import glofacs.gates.IntArray;
+import glofacs.gui.GlofacsProject;
 import glofacs.gui.gateRenderer.GateHandler;
 import glofacs.gui.gateRenderer.GateRenderer;
 import glofacs.io.FCSFile;
@@ -25,17 +25,17 @@ import com.trolltech.qt.gui.QImage.Format;
  * @author Johan Henriksson
  *
  */
-public class ChannelRenderer
+public class ViewRenderer
 	{
 	public QImage img;
 	public ViewSettings viewsettings=new ViewSettings();
 	private FCSFile.DataSegment segment;
-	GateSet gs;
+	GlofacsProject proj;
 	
-	public void setSegment(FCSFile.DataSegment segment, GateSet gs)
+	public void setSegment(FCSFile.DataSegment segment, GlofacsProject proj)
 		{
 		this.segment=segment;
-		this.gs=gs;
+		this.proj=proj;
 		}
 	
 	public void autoscale()
@@ -44,7 +44,7 @@ public class ChannelRenderer
 		}
 	
 	
-	public void render(GatingResult gr, ChannelWidget w, int width, int height)
+	public void render(GatingResult gr, ViewWidget w, int width, int height)
 		{
 		//Clear image
 		img=new QImage(new QSize(width, height), Format.Format_RGB32);
@@ -89,8 +89,13 @@ public class ChannelRenderer
 		
 		//Draw separating lines
 		pm.setPen(QColor.fromRgb(0,0,0));
-		pm.drawLine(ChannelWidget.offsetXY,0, ChannelWidget.offsetXY, w.height());
-		pm.drawLine(0, height-ChannelWidget.offsetXY, width, height-ChannelWidget.offsetXY);
+		int off2=5;
+		pm.drawLine(
+				ViewWidget.graphOffsetXY,off2, 
+				ViewWidget.graphOffsetXY, w.height()-ViewWidget.graphOffsetXY);
+		pm.drawLine(
+				ViewWidget.graphOffsetXY, height-ViewWidget.graphOffsetXY, 
+				width-off2, height-ViewWidget.graphOffsetXY);
 		
 		
 		//Draw all gates
@@ -100,7 +105,7 @@ public class ChannelRenderer
 		}
 	
 
-	private void drawgatesRecursive(QPainter pm, ChannelWidget w, Gate parent)
+	private void drawgatesRecursive(QPainter pm, ViewWidget w, Gate parent)
 		{
 		for(Gate g:parent.children)
 			{

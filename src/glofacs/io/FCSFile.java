@@ -608,6 +608,7 @@ public class FCSFile
 		while(nextData!=null)
 			{
 			DataSegment dataSegment=new DataSegment();
+			dataSegment.source=f;
 			data.add(dataSegment);
 			nextData=dataSegment.parse(f, 0);
 			}

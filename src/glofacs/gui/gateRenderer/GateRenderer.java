@@ -1,7 +1,7 @@
 package glofacs.gui.gateRenderer;
 
 import glofacs.gates.Gate;
-import glofacs.gui.channel.ChannelWidget;
+import glofacs.gui.channel.ViewWidget;
 import glofacs.gui.channel.ViewSettings;
 
 import com.trolltech.qt.gui.QPainter;
@@ -14,6 +14,6 @@ import com.trolltech.qt.gui.QPainter;
 public interface GateRenderer
 	{
 
-	public void render(Gate gate, QPainter p, ChannelWidget w, ViewSettings viewsettings);
+	public void render(Gate gate, QPainter p, ViewWidget w, ViewSettings viewsettings);
 
 	}

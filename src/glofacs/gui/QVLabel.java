@@ -2,6 +2,7 @@ package glofacs.gui;
 
 import com.trolltech.qt.core.QPoint;
 import com.trolltech.qt.gui.QColor;
+import com.trolltech.qt.gui.QFont;
 import com.trolltech.qt.gui.QFontMetrics;
 import com.trolltech.qt.gui.QPaintEvent;
 import com.trolltech.qt.gui.QPainter;
@@ -38,6 +39,9 @@ public class QVLabel extends QWidget
 		
 		QPainter painter=new QPainter(this);
 		QFontMetrics fm=new QFontMetrics(painter.font());
+		QFont font=painter.font();
+		font.setBold(true);
+		painter.setFont(font);
     painter.setPen(QColor.black);
     painter.rotate(-90);
     painter.drawText(new QPoint(-(height()-fm.width(text))/2,10), text);

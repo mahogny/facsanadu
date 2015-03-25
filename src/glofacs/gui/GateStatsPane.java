@@ -66,7 +66,7 @@ public class GateStatsPane extends QWidget
 		for(int row=0;row<listDatasets.size();row++)
 			{
 			FCSFile.DataSegment dataset=listDatasets.get(row);
-			GatingResult gr=mw.getGatingResult(dataset);
+			GatingResult gr=mw.project.getGatingResult(dataset);
 
 			int totalcount=gr.getTotalCount();
 

@@ -2,7 +2,7 @@ package glofacs.gui.gateRenderer;
 
 import glofacs.gates.Gate;
 import glofacs.gates.GateRect;
-import glofacs.gui.channel.ChannelWidget;
+import glofacs.gui.channel.ViewWidget;
 import glofacs.gui.channel.ViewSettings;
 
 import com.trolltech.qt.core.QPointF;
@@ -21,7 +21,7 @@ public class GateRendererRect implements GateRenderer
 	
 	
 	
-	public void render(Gate gate, QPainter p, ChannelWidget w, ViewSettings viewsettings)
+	public void render(Gate gate, QPainter p, ViewWidget w, ViewSettings viewsettings)
 		{
 		GateRect cg=(GateRect)gate;
 		

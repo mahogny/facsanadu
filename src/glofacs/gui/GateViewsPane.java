@@ -1,13 +1,14 @@
 package glofacs.gui;
 
 import glofacs.gates.Gate;
-import glofacs.gui.channel.ChannelWidget;
+import glofacs.gui.channel.ViewWidget;
 import glofacs.gui.channel.ViewSettings;
 import glofacs.io.FCSFile;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import com.trolltech.qt.gui.QFont;
 import com.trolltech.qt.gui.QGridLayout;
 import com.trolltech.qt.gui.QLabel;
 import com.trolltech.qt.gui.QWidget;
@@ -26,13 +27,14 @@ public class GateViewsPane extends QWidget
 
 	private LinkedList<QLabel> headerHorizontal=new LinkedList<QLabel>();
 	private LinkedList<QVLabel> headerVertical=new LinkedList<QVLabel>();
-	private ArrayList<ArrayList<ChannelWidget>> prevChanWidget=new ArrayList<ArrayList<ChannelWidget>>();
+	private ArrayList<ArrayList<ViewWidget>> prevChanWidget=new ArrayList<ArrayList<ViewWidget>>();
 	private boolean orderDataset=false;
 
 
 	public GateViewsPane(MainWindow mw)
 		{
 		this.mw=mw;
+		setStyleSheet("QWidget {background: white;}");
 		setLayout(layViews);
 		}
 
@@ -44,6 +46,7 @@ public class GateViewsPane extends QWidget
 	 */
 	public void updateViews()
 		{
+		GlofacsProject project=mw.project;
 		LinkedList<FCSFile.DataSegment> selds=mw.getSelectedDatasets();
 		LinkedList<ViewSettings> selviews=mw.getSelectedViews();
 		
@@ -71,6 +74,9 @@ public class GateViewsPane extends QWidget
 			{
 			int i=headerHorizontal.size();
 			QLabel lab=new QLabel(this);
+			QFont font=new QFont();
+			font.setBold(true);
+			lab.setFont(font);
 			headerHorizontal.add(lab);
 			layViews.addWidget(lab, 0, i+1);
 			}
@@ -106,15 +112,15 @@ public class GateViewsPane extends QWidget
 		
 		//Adjust number of view rows
 		while(prevChanWidget.size()<numrow)
-			prevChanWidget.add(new ArrayList<ChannelWidget>());
+			prevChanWidget.add(new ArrayList<ViewWidget>());
 		while(prevChanWidget.size()>numrow)
 			{
 			int row=prevChanWidget.size()-1;
-			ArrayList<ChannelWidget> onerow=prevChanWidget.get(row);
+			ArrayList<ViewWidget> onerow=prevChanWidget.get(row);
 			for(;onerow.size()>0;)
 				{
 				int col=onerow.size()-1;
-				ChannelWidget lab=onerow.get(col);
+				ViewWidget lab=onerow.get(col);
 				lab.setVisible(false);
 				layViews.removeWidget(lab);
 				onerow.remove(col);
@@ -126,11 +132,11 @@ public class GateViewsPane extends QWidget
 		for(int row=0;row<prevChanWidget.size();row++)
 			{
 			//Add columns
-			ArrayList<ChannelWidget> onerow=prevChanWidget.get(row);
+			ArrayList<ViewWidget> onerow=prevChanWidget.get(row);
 			for(;onerow.size()<numcol;)
 				{
 				int col=onerow.size();
-				ChannelWidget lab=new ChannelWidget(mw);
+				ViewWidget lab=new ViewWidget(mw);
 				lab.setSizePolicy(Policy.Expanding, Policy.Expanding);
 				lab.setMinimumHeight(200);
 				lab.setMinimumWidth(200);
@@ -141,7 +147,7 @@ public class GateViewsPane extends QWidget
 			for(;onerow.size()>numcol;)
 				{
 				int col=onerow.size()-1;
-				ChannelWidget lab=onerow.get(col);
+				ViewWidget lab=onerow.get(col);
 				lab.setVisible(false);
 				layViews.removeWidget(lab);
 				onerow.remove(col);
@@ -166,7 +172,7 @@ public class GateViewsPane extends QWidget
 					posRow=indexB;
 					}
 						
-				ChannelWidget lab=prevChanWidget.get(posRow).get(posCol);
+				ViewWidget lab=prevChanWidget.get(posRow).get(posCol);
 				lab.setSettings(vs);
 
 				//First selection: do FSC-A  vs  SSC-A
@@ -178,7 +184,7 @@ public class GateViewsPane extends QWidget
 
 		//Update headers
 		for(int i=0;i<headerHorizontal.size();i++)
-			headerHorizontal.get(i).setText(mw.datasets.get(i).source.getName());
+			headerHorizontal.get(i).setText(project.datasets.get(i).source.getName());
 		for(int i=0;i<headerVertical.size();i++)
 			{
 			Gate g=selviews.get(i).fromGate;
@@ -186,8 +192,8 @@ public class GateViewsPane extends QWidget
 			}
 		
 		//Get the size of one. rescale. then rerender all
-		for(ArrayList<ChannelWidget> row:prevChanWidget)
-			for(ChannelWidget w:row)
+		for(ArrayList<ViewWidget> row:prevChanWidget)
+			for(ViewWidget w:row)
 				w.render();
 		}
 

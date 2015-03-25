@@ -2,8 +2,6 @@ package glofacs.gui;
 
 
 import glofacs.gates.Gate;
-import glofacs.gates.GateSet;
-import glofacs.gates.GatingResult;
 import glofacs.gui.channel.EventGatesChanged;
 import glofacs.gui.channel.ViewSettings;
 import glofacs.io.FCSFile;
@@ -13,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.trolltech.qt.core.QCoreApplication;
@@ -50,12 +47,8 @@ import com.trolltech.qt.gui.QWidget;
  */
 public class MainWindow extends QMainWindow
 	{
-	public GateSet gateset=new GateSet();
-	public LinkedList<FCSFile.DataSegment> datasets=new LinkedList<FCSFile.DataSegment>();
-	public LinkedList<ViewSettings> views=new LinkedList<ViewSettings>();
-	
-	public HashMap<FCSFile.DataSegment, GatingResult> gatingResult=new HashMap<FCSFile.DataSegment, GatingResult>();
-			
+	public GlofacsProject project=new GlofacsProject();
+		
 	private QTableWidget tableDatasets=new QTableWidget();
 	private QTableWidget tableViews=new QTableWidget();	
 	private QTreeWidget treeGates=new QTreeWidget();
@@ -71,16 +64,6 @@ public class MainWindow extends QMainWindow
 	private boolean isUpdating=false;
 
 	
-	/**
-	 * Get gating result for dataset
-	 */
-	public GatingResult getGatingResult(FCSFile.DataSegment segment)
-		{
-		if(gatingResult.get(segment)==null)
-			return new GatingResult();
-		else
-			return gatingResult.get(segment);
-		}
 	
 	
 
@@ -209,17 +192,18 @@ public class MainWindow extends QMainWindow
 	 */
 	public void actionNewProject()
 		{
-		datasets.clear();
-		views.clear();
-		gateset=new GateSet();
+		project=new GlofacsProject();
 		updateall();
 		}
 	
 	private void updateall()
 		{
+		boolean wasUpdating=isUpdating;
+		isUpdating=true;
 		updateViewsList();
 		updateGatesList();
 		updateDatasetList();
+		isUpdating=wasUpdating;
 		dothelayout();
 		}
 	
@@ -237,8 +221,7 @@ public class MainWindow extends QMainWindow
 			lastDirectory=f.getParentFile();
 			try
 				{
-				//proj=GlofacsXML.loadProject(f);
-				GlofacsXML.importXML(this, f);
+				project=GlofacsXML.importXML(f);
 				currentProjectFile=f;
 				}
 			catch (IOException e)
@@ -261,7 +244,7 @@ public class MainWindow extends QMainWindow
 		if(currentProjectFile!=null)
 			try
 				{
-				GlofacsXML.export(this, currentProjectFile);
+				GlofacsXML.export(project, currentProjectFile);
 				}
 			catch (IOException e)
 				{
@@ -297,7 +280,7 @@ public class MainWindow extends QMainWindow
 	 */
 	public void actionRemoveDataset()
 		{
-		datasets.removeAll(getSelectedDatasets());
+		project.datasets.removeAll(getSelectedDatasets());
 		updateDatasetList();
 		dothelayout();
 		}
@@ -355,15 +338,15 @@ public class MainWindow extends QMainWindow
 	public void actionRemoveGates()
 		{
 		Collection<Gate> gates=getSelectedGates();
-		gates.remove(gateset.getRootGate());
+		gates.remove(project.gateset.getRootGate());
 		//Should include gates recursively!
 
 		for(Gate g:gates)
 			g.detachParent();
 
-		for(ViewSettings vs:new LinkedList<ViewSettings>(views))
+		for(ViewSettings vs:new LinkedList<ViewSettings>(project.views))
 			if(gates.contains(vs.fromGate))
-				views.remove(vs);
+				project.views.remove(vs);
 		updateGatesList();
 		updateViewsList();
 		dothelayout();
@@ -374,10 +357,10 @@ public class MainWindow extends QMainWindow
 	 */
 	public void addGate(Gate g)
 		{
-		g.name=gateset.getFreeName();
+		g.name=project.gateset.getFreeName();
 		Gate parent=getCurrentGate();
 		if(parent==null)
-			parent=gateset.getRootGate();
+			parent=project.gateset.getRootGate();
 		parent.attachChild(g);
 		
 		updateGatesList();
@@ -402,7 +385,7 @@ public class MainWindow extends QMainWindow
 	 */
 	public void actionRemoveView()
 		{
-		views.removeAll(getSelectedViews());
+		project.views.removeAll(getSelectedViews());
 		updateViewsList();
 		}
 
@@ -412,15 +395,13 @@ public class MainWindow extends QMainWindow
 	public void actionNewView()
 		{
 		ViewSettings vs=new ViewSettings();
-		vs.fromGate=gateset.getRootGate();
-		vs.indexX=7;
-		vs.indexY=6;
-		vs.name=""+Math.random();
-		
+		vs.fromGate=project.gateset.getRootGate();
+		vs.indexX=1;
+		vs.indexY=2;                                                     //TODO remove this later
 		
 		//autoscale here the first time?
 		
-		views.add(vs);
+		project.views.add(vs);
 		updateViewsList();
 		}
 	
@@ -436,8 +417,7 @@ public class MainWindow extends QMainWindow
 			
 			FCSFile.DataSegment segment=f.data.get(0);
 
-			segment.source=path;
-			datasets.add(segment);
+			project.datasets.add(segment);
 			updateDatasetList();
 			}
 		catch (IOException e)
@@ -480,24 +460,16 @@ public class MainWindow extends QMainWindow
 		return selviews;
 		}
 
-	
+
 	/**
 	 * Update gating results
 	 */
 	public void dogating()
 		{
 		//For speed, only do selected ones
-		LinkedList<FCSFile.DataSegment> listDatasets=getSelectedDatasets();
-
-		gatingResult.clear();
-		for(FCSFile.DataSegment ds:listDatasets)
-			{
-			GatingResult gr=new GatingResult();
-			gr.perform(gateset, ds);
-			gatingResult.put(ds, gr);
-			}
-		
+		project.dogating(getSelectedDatasets());
 		}
+	
 
 	
 	
@@ -513,14 +485,14 @@ public class MainWindow extends QMainWindow
 		tableViews.setColumnCount(1);
 		tableViews.setHorizontalHeaderLabels(Arrays.asList(tr("View")));
 
-		tableViews.setRowCount(views.size());
+		tableViews.setRowCount(project.views.size());
 		int row=0;
-		for(ViewSettings vs:views)
+		for(ViewSettings vs:project.views)
 			{
 			String showname=vs.fromGate.name+": ";
-			if(!datasets.isEmpty())
+			if(!project.datasets.isEmpty())
 				{
-				FCSFile.DataSegment ds=datasets.get(0);
+				FCSFile.DataSegment ds=project.datasets.get(0);
 				showname+=ds.getChannelInfo().get(vs.indexX).getShortestName()+" / "+ds.getChannelInfo().get(vs.indexY).getShortestName();
 				}
 			
@@ -540,10 +512,11 @@ public class MainWindow extends QMainWindow
 		{
 		boolean wasUpdating=isUpdating;
 		isUpdating=false;
-		tableDatasets.setRowCount(datasets.size());
+		tableDatasets.setRowCount(project.datasets.size());
 		int row=0;
-		for(FCSFile.DataSegment ds:datasets)
+		for(FCSFile.DataSegment ds:project.datasets)
 			{
+			System.out.println(ds.source);
 			QTableWidgetItem it=QTutil.createReadOnlyItem(ds.source.getName());
 			it.setData(Qt.ItemDataRole.UserRole, ds);
 			tableDatasets.setItem(row, 0, it);
@@ -560,7 +533,7 @@ public class MainWindow extends QMainWindow
 		boolean wasUpdating=isUpdating;
 		isUpdating=false;
 		treeGates.clear();
-		updateGatesListRecursive(null, gateset.getRootGate());
+		updateGatesListRecursive(null, project.gateset.getRootGate());
 		treeGates.expandAll();
 		isUpdating=wasUpdating;
 		}

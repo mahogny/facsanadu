@@ -2,7 +2,7 @@ package glofacs.io;
 
 import glofacs.gates.Gate;
 import glofacs.gates.GateRect;
-import glofacs.gui.MainWindow;
+import glofacs.gui.GlofacsProject;
 import glofacs.gui.channel.ViewSettings;
 
 import java.io.File;
@@ -27,19 +27,27 @@ import org.jdom2.output.XMLOutputter;
  */
 public class GlofacsXML
 	{
-	public static void export(MainWindow mw,File f) throws IOException
+	
+	/**
+	 * Export a project
+	 */
+	public static void export(GlofacsProject proj,File f) throws IOException
 		{
-		Element e=export(mw);
+		Element e=export(proj);
 		XMLOutputter xmlOutputter = new XMLOutputter(Format.getPrettyFormat());
     xmlOutputter.output(e, new FileOutputStream(f));
 		}
 	
-	public static Element export(MainWindow mw) throws IOException
+	
+	
+	public static Element export(GlofacsProject proj) throws IOException
 		{
 		Element etot=new Element("glofacs");
 		
+		
+		
 		//Store dataset references
-		for(FCSFile.DataSegment ds:mw.datasets)
+		for(FCSFile.DataSegment ds:proj.datasets)
 			{
 			Element eSeq=new Element("dataset");
 			eSeq.setAttribute("path",ds.source.getAbsolutePath());
@@ -48,10 +56,10 @@ public class GlofacsXML
 		
 		//Store gates
 		Element egate=new Element("gateset");
-		storeGate(mw.gateset.getRootGate(), egate);
+		storeGate(proj.gateset.getRootGate(), egate);
 		
 		//Store views
-		for(ViewSettings vs:mw.views)
+		for(ViewSettings vs:proj.views)
 			{
 			Element eview=new Element("view");
 			eview.setAttribute("indexX",""+vs.indexX);
@@ -143,7 +151,7 @@ public class GlofacsXML
 	/**
 	 * Import from native format
 	 */
-	public static void importXML(MainWindow mw, Element etot, File basepath) throws IOException
+	public static void importXML(GlofacsProject mw, Element etot, File basepath) throws IOException
 		{
 		try
 			{
@@ -180,20 +188,22 @@ public class GlofacsXML
 	/**
 	 * Import from XML
 	 */
-	public static void importXML(MainWindow mw, File f) throws IOException
+	public static GlofacsProject importXML(File f) throws IOException
 		{
+		GlofacsProject proj=new GlofacsProject();
 		try
 			{
 			FileInputStream is=new FileInputStream(f);
 			SAXBuilder sax = new SAXBuilder();
 			Document doc = sax.build(is);
-			importXML(mw, doc.getRootElement(), f.getParentFile());
+			importXML(proj, doc.getRootElement(), f.getParentFile());
 			is.close();
 			}
 		catch (Exception e)
 			{
 			throw new IOException(e.getMessage());
 			}
+		return proj;
 		}
 	
 	}

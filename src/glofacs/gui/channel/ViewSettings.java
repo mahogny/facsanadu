@@ -6,8 +6,6 @@ import glofacs.io.FCSFile.DataSegment;
 
 public class ViewSettings
 	{
-	public String name="";
-	
 	public Gate fromGate;
 	
 	public int indexX=7;

@@ -7,6 +7,7 @@ import glofacs.data.ChannelInfo;
 import glofacs.gates.Gate;
 import glofacs.gates.GateRect;
 import glofacs.gates.GatingResult;
+import glofacs.gui.GlofacsProject;
 import glofacs.gui.MainWindow;
 import glofacs.io.FCSFile;
 
@@ -23,18 +24,20 @@ import com.trolltech.qt.gui.QSizePolicy.Policy;
 
 /**
  * 
+ * Widget showing one view
  * 
  * @author Johan Henriksson
  *
  */
-public class ChannelWidget extends QWidget
+public class ViewWidget extends QWidget
 	{
 	private FCSFile.DataSegment segment;
-	ChannelRenderer r=new ChannelRenderer();
+	private ViewRenderer r=new ViewRenderer();
+	private MainWindow mw;
+	public static int graphOffsetXY=30;
+
 	
-	MainWindow mw;
-	
-	public ChannelWidget(MainWindow mw)
+	public ViewWidget(MainWindow mw)
 		{
 		this.mw=mw;
 		setSizePolicy(Policy.Expanding, Policy.Expanding);
@@ -43,7 +46,7 @@ public class ChannelWidget extends QWidget
 	public void setDataset(FCSFile.DataSegment segment)
 		{
 		this.segment=segment;
-		r.setSegment(segment, mw.gateset);
+		r.setSegment(segment, mw.project);
 		//r.autoscale();
 		}
 	
@@ -55,7 +58,8 @@ public class ChannelWidget extends QWidget
 	@Override
 	protected void paintEvent(QPaintEvent pe)
 		{
-		GatingResult gr=mw.gatingResult.get(segment);
+		GlofacsProject project=mw.project;
+		GatingResult gr=project.gatingResult.get(segment);
 		QPainter pm=new QPainter(this);
 		r.render(gr, this, contentsRect().width(), contentsRect().height());
 		pm.drawImage(0, 0, r.img);
@@ -124,9 +128,9 @@ public class ChannelWidget extends QWidget
 
 	public QPointF mapScreenToFacs(QPointF pos)
 		{
-		int h=height()-offsetXY-1;
+		int h=height()-graphOffsetXY-1;
 		QPointF p=new QPointF(
-				(pos.x()-offsetXY)/getTotalScaleX(),
+				(pos.x()-graphOffsetXY)/getTotalScaleX(),
 				(h -pos.y())/getTotalScaleY()
 				);
 		return p;
@@ -134,23 +138,22 @@ public class ChannelWidget extends QWidget
 
 	public QPointF mapFacsToScreen(QPointF pos)
 		{
-		int h=height()-offsetXY-1;
+		int h=height()-graphOffsetXY-1;
 		QPointF p=new QPointF(
-				pos.x()*getTotalScaleX()+offsetXY,
+				pos.x()*getTotalScaleX()+graphOffsetXY,
 				h - pos.y()*getTotalScaleY()
 				);
 		return p;
 		}
 
-	public static int offsetXY=30;
 	public int mapFacsToScreenX(double x)
 		{
-		return offsetXY+(int)(getTotalScaleX()*x);
+		return graphOffsetXY+(int)(getTotalScaleX()*x);
 		}
 
 	public int mapFacsToScreenY(double y)
 		{
-		int h=height()-offsetXY-1;
+		int h=height()-graphOffsetXY-1;
 		return h-((int)(getTotalScaleY()*y));
 		}
 
@@ -158,6 +161,7 @@ public class ChannelWidget extends QWidget
 	@Override
 	protected void contextMenuEvent(QContextMenuEvent ev)
 		{
+		GlofacsProject proj=mw.project;
 		super.contextMenuEvent(ev);
 		int invy=height()-ev.pos().y();
 		if(ev.pos().x()<50 || invy<50)
@@ -189,9 +193,9 @@ public class ChannelWidget extends QWidget
 			QMenu menu=new QMenu();
 
 			QMenu mSetSource=menu.addMenu(tr("Set source population"));
-			
+
 			setgate.clear();
-			for(Gate g:mw.gateset.getGates())
+			for(Gate g:proj.gateset.getGates())
 				{
 				SetGate sg=new SetGate();
 				sg.g=g;
@@ -205,7 +209,7 @@ public class ChannelWidget extends QWidget
 
 	
 	
-	private LinkedList<SetChannel> setchans=new LinkedList<ChannelWidget.SetChannel>();
+	private LinkedList<SetChannel> setchans=new LinkedList<ViewWidget.SetChannel>();
 	public class SetChannel
 		{
 		public boolean forx;
