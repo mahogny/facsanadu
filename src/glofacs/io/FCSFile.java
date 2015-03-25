@@ -1,6 +1,6 @@
 package glofacs.io;
 
-import glofacs.gui.ChannelInfo;
+import glofacs.data.ChannelInfo;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -161,8 +161,8 @@ public class FCSFile
 			for(int id=1;id<=numchan;id++)
 				{
 				ChannelInfo ch=new ChannelInfo();
-				ch.name=nameForPar.get(id);
-				ch.shortName=shortNameForPar.get(id);
+				ch.label=nameForPar.get(id);
+				ch.name=shortNameForPar.get(id);
 				list.add(ch);
 				}
 			return list;

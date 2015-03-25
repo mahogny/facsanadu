@@ -1,10 +1,10 @@
 package glofacs.gui.channel;
 
+import glofacs.data.ChannelInfo;
 import glofacs.gates.Gate;
 import glofacs.gates.GateSet;
 import glofacs.gates.GatingResult;
 import glofacs.gates.IntArray;
-import glofacs.gui.ChannelInfo;
 import glofacs.gui.gateRenderer.GateHandler;
 import glofacs.gui.gateRenderer.GateRenderer;
 import glofacs.io.FCSFile;
@@ -16,6 +16,7 @@ import com.trolltech.qt.gui.QColor;
 import com.trolltech.qt.gui.QFontMetrics;
 import com.trolltech.qt.gui.QImage;
 import com.trolltech.qt.gui.QPainter;
+import com.trolltech.qt.gui.QPen;
 import com.trolltech.qt.gui.QImage.Format;
 
 /**
@@ -39,7 +40,7 @@ public class ChannelRenderer
 	
 	public void autoscale()
 		{
-		viewsettings.autoscale(segment, img.width(), img.height());
+		viewsettings.autoscale(segment);
 		}
 	
 	
@@ -51,9 +52,10 @@ public class ChannelRenderer
 		QPainter pm=new QPainter(img);
 	
 		ArrayList<ChannelInfo> chans=segment.getChannelInfo();
-	//	int numobs=segment.getNumObservations();
-		
-		pm.setPen(QColor.fromRgb(0,0,255));
+
+		QPen pen=new QPen(QColor.fromRgb(0,0,255));
+		pen.setWidth(2);
+		pm.setPen(pen);
 		
 		IntArray accepted=gr.acceptedFromGate.get(viewsettings.fromGate);
 		if(accepted!=null)
@@ -84,6 +86,12 @@ public class ChannelRenderer
 		pm.rotate(-90);
 		pm.drawText(0, 0, labelY);
 		pm.restore();
+		
+		//Draw separating lines
+		pm.setPen(QColor.fromRgb(0,0,0));
+		pm.drawLine(ChannelWidget.offsetXY,0, ChannelWidget.offsetXY, w.height());
+		pm.drawLine(0, height-ChannelWidget.offsetXY, width, height-ChannelWidget.offsetXY);
+		
 		
 		//Draw all gates
 		drawgatesRecursive(pm, w, viewsettings.fromGate);

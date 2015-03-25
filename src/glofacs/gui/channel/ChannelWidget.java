@@ -3,10 +3,10 @@ package glofacs.gui.channel;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import glofacs.data.ChannelInfo;
 import glofacs.gates.Gate;
 import glofacs.gates.GateRect;
 import glofacs.gates.GatingResult;
-import glofacs.gui.ChannelInfo;
 import glofacs.gui.MainWindow;
 import glofacs.io.FCSFile;
 
@@ -112,33 +112,46 @@ public class ChannelWidget extends QWidget
 			render();
 			}
 		}
-	
+
+	public double getTotalScaleX()
+		{
+		return r.viewsettings.scaleX*width();
+		}
+	public double getTotalScaleY()
+		{
+		return r.viewsettings.scaleY*height();
+		}
+
 	public QPointF mapScreenToFacs(QPointF pos)
 		{
+		int h=height()-offsetXY-1;
 		QPointF p=new QPointF(
-				(pos.x())/r.viewsettings.scaleX,
-				(height()-pos.y())/r.viewsettings.scaleY
+				(pos.x()-offsetXY)/getTotalScaleX(),
+				(h -pos.y())/getTotalScaleY()
 				);
 		return p;
 		}
 
 	public QPointF mapFacsToScreen(QPointF pos)
 		{
+		int h=height()-offsetXY-1;
 		QPointF p=new QPointF(
-				pos.x()*r.viewsettings.scaleX,
-				height()-pos.y()*r.viewsettings.scaleY-1
+				pos.x()*getTotalScaleX()+offsetXY,
+				h - pos.y()*getTotalScaleY()
 				);
 		return p;
 		}
 
+	public static int offsetXY=30;
 	public int mapFacsToScreenX(double x)
 		{
-		return (int)(r.viewsettings.scaleX*x);
+		return offsetXY+(int)(getTotalScaleX()*x);
 		}
 
 	public int mapFacsToScreenY(double y)
 		{
-		return height()-((int)(r.viewsettings.scaleY*y))-1;
+		int h=height()-offsetXY-1;
+		return h-((int)(getTotalScaleY()*y));
 		}
 
 	

@@ -17,12 +17,13 @@ public class ViewSettings
 	public double scaleX=1;
 	public double scaleY=1;
 	
-	public void autoscale(DataSegment segment, int width, int height)
+	
+	public void autoscale(DataSegment segment)
 		{
 		double maxx=getMaxForChannel(segment,indexX);
 		double maxy=getMaxForChannel(segment,indexY);
-		scaleX=width/maxx;
-		scaleY=height/maxy;
+		scaleX=1.0/maxx;
+		scaleY=1.0/maxy;
 		
 //		System.out.println("autoscale -- "+maxx+"   "+maxy);
 		} 
@@ -33,9 +34,7 @@ public class ViewSettings
 		//faster to check all channels in parallel
 		double max=-Double.MAX_VALUE;
 		for(int i=0;i<segment.eventsFloat.size();i++)
-			{
 			max=Math.max(max,segment.eventsFloat.get(i)[chanid]);
-			}
 		return max;
 		}
 	}

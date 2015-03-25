@@ -1,12 +1,11 @@
-package glofacs.gui.gatestats;
+package glofacs.gui;
 
+import java.text.NumberFormat;
 import java.util.LinkedList;
 
 import glofacs.gates.Gate;
 import glofacs.gates.GatingResult;
 import glofacs.gates.IntArray;
-import glofacs.gui.MainWindow;
-import glofacs.gui.QTutil;
 import glofacs.io.FCSFile;
 
 import com.trolltech.qt.gui.QTableWidget;
@@ -32,8 +31,7 @@ public class GateStatsPane extends QWidget
 	
 	public GateStatsPane(MainWindow mw)
 		{
-		this.mw=mw;
-		
+		this.mw=mw;		
 		
 		QVBoxLayout lay=new QVBoxLayout();
 		lay.addWidget(tableStats);
@@ -41,7 +39,7 @@ public class GateStatsPane extends QWidget
 		}
 	
 	
-	public void updatestats()
+	public void updateStats()
 		{
 		tableStats.clear();
 		
@@ -103,18 +101,19 @@ public class GateStatsPane extends QWidget
 				}
 
 			QTableWidgetItem it=QTutil.createReadOnlyItem(dataset.source.getName());
-			//it.setData(Qt.ItemDataRole.UserRole, vs);
 			tableStats.setItem(row, 0, it);
 			}
-
-		
-		
 		
 		}
 
 	private static String formatPerc(double d)
 		{
-		return ""+d*100;
+		NumberFormat nf=NumberFormat.getInstance();
+		if(d>5)
+			nf.setMaximumFractionDigits(1);
+		else
+			nf.setMaximumFractionDigits(3);
+		return nf.format(d*100)+"%";
 		}
 	
 	}

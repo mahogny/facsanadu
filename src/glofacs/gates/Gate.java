@@ -29,4 +29,10 @@ public abstract class Gate
 		this.parent=parent;
 		parent.children.add(this);
 		}
+
+	public void detachParent()
+		{
+		parent.children.remove(this);
+		parent=null;
+		}
 	}

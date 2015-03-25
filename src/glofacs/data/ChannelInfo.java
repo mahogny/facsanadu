@@ -1,4 +1,4 @@
-package glofacs.gui;
+package glofacs.data;
 
 /**
  * 
@@ -9,18 +9,26 @@ package glofacs.gui;
  */
 public class ChannelInfo
 	{
+	public String label="";
 	public String name="";
-	public String shortName="";
 	
 	public String formatName()
 		{
-		if(shortName!=null)
+		if(name!=null)
 			{
-			if(name!=null)
-				return name+" - "+shortName;
+			if(label!=null)
+				return label+" - "+name;
 			else
-				return shortName;
+				return name;
 			}
+		else
+			return label;
+		}
+
+	public String getShortestName()
+		{
+		if(label!=null)
+			return label;
 		else
 			return name;
 		}

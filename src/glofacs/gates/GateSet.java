@@ -1,7 +1,8 @@
 package glofacs.gates;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 
 /**
  * 
@@ -12,35 +13,52 @@ import java.util.HashMap;
  */
 public class GateSet
 	{
-	public HashMap<Integer, Gate> mapIdGate=new HashMap<Integer, Gate>();
-
+	private Gate rootgate=new GateRoot();
+	
+	
 	public GateSet()
 		{
-		Gate g=new GateRoot();
-		g.name="root";
-		mapIdGate.put(0, g);
+		rootgate.name="root";
 		}
-	
-	//an artificial root with id=0 would be handy
 	
 	public Gate getRootGate()
 		{
-		return mapIdGate.get(0);
+		return rootgate;
 		}
 
-	public int addNewGate(Gate g)
+	public void addNewGate(Gate g)
 		{
-		int id=1;
-		for(;mapIdGate.containsKey(id);id++);
-		mapIdGate.put(id, g);
-		if(g.parent==null)
-			g.setParent(getRootGate());
-		return id;
+		rootgate.attachChild(g);
 		}
 
 	public Collection<Gate> getGates()
 		{
-		return mapIdGate.values();
+		LinkedList<Gate> list=new LinkedList<Gate>();
+		getGatesRecursively(rootgate,list);
+		return list;
 		}
+
+	private void getGatesRecursively(Gate parent, LinkedList<Gate> list)
+		{
+		list.add(parent);
+		for(Gate g:parent.children)
+			getGatesRecursively(g, list);
+		}
+
+	/**
+	 * Get a free name for a gate
+	 */
+	public String getFreeName()
+		{
+		HashSet<String> prevnames=new HashSet<String>();
+		for(Gate otherGate:getGates())
+			prevnames.add(otherGate.name);
+		
+		int i=0;
+		while(prevnames.contains(""+i))
+			i++;
+		return ""+i;
+		}
+	
 	
 	}
