@@ -161,7 +161,7 @@ public class ViewWidget extends QWidget
 	private boolean mousePosInBoundary(QPoint pos)
 		{
 		int invy=height()-pos.y();
-		return pos.x()<50 || invy<50;
+		return pos.x()<trans.graphOffsetXY || invy<trans.graphOffsetXY;
 		}
 	
 

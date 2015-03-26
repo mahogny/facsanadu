@@ -39,7 +39,7 @@
 		<string>-d32 -XstartOnFirstThread -Xmx400m</string>
 		<key>ClassPath</key>
 		<array>
-			<string>$APP_PACKAGE/quickgene.jar</string>
+			<string>$APP_PACKAGE/quickfacs.jar</string>
 
 			<string>$APP_PACKAGE/jdom-2.0.4.jar</string>
 

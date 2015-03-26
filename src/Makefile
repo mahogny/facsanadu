@@ -2,9 +2,9 @@ all:
 
 loc:
 	wc -l \
-	*/*java \
 	*/*/*java \
-	*/*/*/*java
+	*/*/*/*java \
+	*/*/*/*/*java
 
 
 
@@ -15,6 +15,7 @@ jars:
 	cd ../bin; jar cfvm ../quickfacs.jar ../src/MANIFEST.STARTQTCLIENT \
 	*/*/*.class \
 	*/*/*/*.class \
+	*/*/*/*/*.class \
 	*/*/*.png
 
 ############################################################################################

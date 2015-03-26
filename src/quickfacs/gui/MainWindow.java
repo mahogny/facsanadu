@@ -163,8 +163,10 @@ public class MainWindow extends QMainWindow
 		tableViews.setSizePolicy(Policy.Minimum, Policy.Expanding);
 		
 		/// Load all files from directory
-		for(File path:new File("/home/mahogny/javaproj/quickfacs/test").listFiles())
-			loadFile(path);
+		File getfrom=new File("/home/mahogny/javaproj/quickfacs/test");
+		if(getfrom.exists())
+			for(File path:getfrom.listFiles())
+				loadFile(path);
 
 
 		scrollArea.setWidgetResizable(true);

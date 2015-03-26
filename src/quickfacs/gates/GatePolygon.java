@@ -3,6 +3,7 @@ package quickfacs.gates;
 import java.util.ArrayList;
 
 import com.trolltech.qt.core.QPointF;
+import com.trolltech.qt.core.Qt.FillRule;
 import com.trolltech.qt.gui.QPolygonF;
 
 /**
@@ -24,13 +25,13 @@ public class GatePolygon extends Gate
 	public void updateInternal()
 		{
 		poly=new QPolygonF();
-		for(int i=0;i<arrX.size();i++)
+		for(int i=0;i<getNumPoints();i++)
 			poly.add(arrX.get(i), arrY.get(i));
 		}
 	
 	public boolean classify(double[] obs)
 		{
-		return poly.contains(new QPointF(obs[indexX], obs[indexY]));
+		return poly.containsPoint(new QPointF(obs[indexX], obs[indexY]),FillRule.WindingFill);
 		}
 
 	public void addPoint(double x, double y)
