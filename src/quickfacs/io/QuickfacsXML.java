@@ -14,6 +14,7 @@ import org.jdom2.output.XMLOutputter;
 
 import quickfacs.data.Dataset;
 import quickfacs.gates.Gate;
+import quickfacs.gates.GatePolygon;
 import quickfacs.gates.GateRect;
 import quickfacs.gui.QuickfacsProject;
 import quickfacs.gui.view.ViewSettings;
@@ -44,8 +45,6 @@ public class QuickfacsXML
 	private static Element exportXML(QuickfacsProject proj, File root) throws IOException
 		{
 		Element etot=new Element("quickfacs");
-		
-		
 		
 		//Store dataset references
 		for(Dataset ds:proj.datasets)
@@ -98,6 +97,22 @@ public class QuickfacsXML
 				ge.setAttribute("y1",""+gr.y1);
 				ge.setAttribute("y2",""+gr.y2);
 				}
+			else if(g instanceof GatePolygon)
+				{
+				GatePolygon gr=(GatePolygon)g;
+				type="poly";
+				
+				ge.setAttribute("ix",""+gr.indexX);
+				ge.setAttribute("iy",""+gr.indexY);
+
+				for(int i=0;i<gr.getNumPoints();i++)
+					{
+					Element epoint=new Element("point");
+					epoint.setAttribute("x",""+gr.arrX.get(i));
+					epoint.setAttribute("x",""+gr.arrY.get(i));
+					e.addContent(epoint);
+					}
+				}
 
 			if(type==null)
 				throw new IOException("gate cannot be stored "+g);
@@ -132,11 +147,24 @@ public class QuickfacsXML
 						gr.y1=one.getAttribute("y1").getDoubleValue();
 						gr.y2=one.getAttribute("y2").getDoubleValue();
 						}
+					else if(type.equals("poly"))
+						{
+						GatePolygon gr=new GatePolygon();
+						g=gr;
+						gr.indexX=one.getAttribute("ix").getIntValue();
+						gr.indexY=one.getAttribute("iy").getIntValue();
+						for(Element epoint:e.getChildren())
+							gr.addPoint(
+									epoint.getAttribute("x").getDoubleValue(),
+									epoint.getAttribute("y").getDoubleValue());
+						}
+						
 					
 					if(g==null)
 						throw new IOException("Unknown gate type "+type);
 					g.name=one.getAttributeValue("name");
 					parent.attachChild(g);
+					g.updateInternal();
 					
 					loadGate(g, one);
 					}
