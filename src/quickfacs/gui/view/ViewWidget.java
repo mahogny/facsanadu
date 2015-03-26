@@ -11,6 +11,7 @@ import quickfacs.gates.GatingResult;
 import quickfacs.gui.MainWindow;
 import quickfacs.gui.QuickfacsProject;
 import quickfacs.gui.events.EventGatesChanged;
+import quickfacs.gui.events.EventViewsChanged;
 
 import com.trolltech.qt.core.QPointF;
 import com.trolltech.qt.core.Qt.MouseButton;
@@ -32,23 +33,27 @@ import com.trolltech.qt.gui.QSizePolicy.Policy;
  */
 public class ViewWidget extends QWidget
 	{
-	private Dataset segment;
+	private Dataset dataset;
 	private ViewRenderer r=new ViewRenderer();
 	private MainWindow mw;
-	public static int graphOffsetXY=30;
+
+	private LinkedList<CallbackSetChannel> setchans=new LinkedList<ViewWidget.CallbackSetChannel>();
+	private LinkedList<CallbackSetGate> setgate=new LinkedList<CallbackSetGate>();
+	private Gate isDrawing=null;
 
 	
+	ViewTransform trans=new ViewTransform();
+
 	public ViewWidget(MainWindow mw)
 		{
 		this.mw=mw;
 		setSizePolicy(Policy.Expanding, Policy.Expanding);
 		}
 	
-	public void setDataset(Dataset segment)
+	public void setDataset(Dataset ds)
 		{
-		this.segment=segment;
-		r.setSegment(segment, mw.project);
-		//r.autoscale();
+		this.dataset=ds;
+		r.setDataset(ds, mw.project);
 		}
 	
 	public void render()
@@ -60,15 +65,20 @@ public class ViewWidget extends QWidget
 	protected void paintEvent(QPaintEvent pe)
 		{
 		QuickfacsProject project=mw.project;
-		GatingResult gr=project.gatingResult.get(segment);
+		GatingResult gr=project.gatingResult.get(dataset);
+		
+		trans.height=contentsRect().height();
+		trans.width=contentsRect().width();
+		trans.viewsettings=r.viewsettings;
+		
+		
 		QPainter pm=new QPainter(this);
-		r.render(gr, this, contentsRect().width(), contentsRect().height());
+		r.render(gr, trans);
 		pm.drawImage(0, 0, r.img);
 		pm.end();
 		}
 	
 
-	private Gate isDrawing=null;
 	
 	@Override
 	protected void mousePressEvent(QMouseEvent event)
@@ -76,7 +86,7 @@ public class ViewWidget extends QWidget
 		super.mousePressEvent(event);
 		if(event.button()==MouseButton.LeftButton)
 			{
-			QPointF p = mapScreenToFacs(event.posF()); 
+			QPointF p = trans.mapScreenToFacs(event.posF()); 
 			
 			GateRect grect=new GateRect();
 			grect.indexX=r.viewsettings.indexX;
@@ -109,7 +119,7 @@ public class ViewWidget extends QWidget
 			{
 			GateRect grect=(GateRect)isDrawing;
 			
-			QPointF p = mapScreenToFacs(event.posF()); 
+			QPointF p = trans.mapScreenToFacs(event.posF()); 
 			
 			grect.x2=p.x();
 			grect.y2=p.y();
@@ -118,45 +128,6 @@ public class ViewWidget extends QWidget
 			}
 		}
 
-	public double getTotalScaleX()
-		{
-		return r.viewsettings.scaleX*width();
-		}
-	public double getTotalScaleY()
-		{
-		return r.viewsettings.scaleY*height();
-		}
-
-	public QPointF mapScreenToFacs(QPointF pos)
-		{
-		int h=height()-graphOffsetXY-1;
-		QPointF p=new QPointF(
-				(pos.x()-graphOffsetXY)/getTotalScaleX(),
-				(h -pos.y())/getTotalScaleY()
-				);
-		return p;
-		}
-
-	public QPointF mapFacsToScreen(QPointF pos)
-		{
-		int h=height()-graphOffsetXY-1;
-		QPointF p=new QPointF(
-				pos.x()*getTotalScaleX()+graphOffsetXY,
-				h - pos.y()*getTotalScaleY()
-				);
-		return p;
-		}
-
-	public int mapFacsToScreenX(double x)
-		{
-		return graphOffsetXY+(int)(getTotalScaleX()*x);
-		}
-
-	public int mapFacsToScreenY(double y)
-		{
-		int h=height()-graphOffsetXY-1;
-		return h-((int)(getTotalScaleY()*y));
-		}
 
 	
 	@Override
@@ -174,15 +145,15 @@ public class ViewWidget extends QWidget
 			else
 				lastwasx=false;
 						
-			ArrayList<ChannelInfo> chans=segment.getChannelInfo();
+			ArrayList<ChannelInfo> chans=dataset.getChannelInfo();
 			setchans.clear();
 			for(int i=0;i<chans.size();i++)
 				{
 				ChannelInfo ci=chans.get(i);
-				SetChannel set=new SetChannel();
+				CallbackSetChannel set=new CallbackSetChannel();
 				set.chanid=i;
 				set.forx=lastwasx;
-				menu.addAction(ci.formatName(), set, "actionSetChannel()");
+				menu.addAction(ci.formatName(), set, "actionSet()");
 				setchans.add(set);
 				}
 			
@@ -198,7 +169,7 @@ public class ViewWidget extends QWidget
 			setgate.clear();
 			for(Gate g:proj.gateset.getGates())
 				{
-				SetGate sg=new SetGate();
+				CallbackSetGate sg=new CallbackSetGate();
 				sg.g=g;
 				setgate.add(sg);
 				mSetSource.addAction(g.name, sg, "actionSet()");
@@ -209,36 +180,8 @@ public class ViewWidget extends QWidget
 		}
 
 	
-	
-	private LinkedList<SetChannel> setchans=new LinkedList<ViewWidget.SetChannel>();
-	public class SetChannel
-		{
-		public boolean forx;
-		int chanid;
-		public void actionSetChannel()
-			{
-			if(forx)
-				r.viewsettings.indexX=chanid;
-			else
-				r.viewsettings.indexY=chanid;
-			r.autoscale(); 
-			render();
-			}
-		}
 
 	
-
-	private LinkedList<SetGate> setgate=new LinkedList<SetGate>();
-	public class SetGate
-		{
-		Gate g;
-		public void actionSet()
-			{
-			r.viewsettings.fromGate=g;
-			r.autoscale(); 
-			render();
-			}
-		}
 	
 	public void setChannels(int indexX, int indexY)
 		{
@@ -250,13 +193,44 @@ public class ViewWidget extends QWidget
 		{
 		r.viewsettings=vs;
 		}
-
+/*
 	@Override
 	protected void resizeEvent(QResizeEvent arg__1)
 		{
 		super.resizeEvent(arg__1);
 		repaint(); //obvious?
+		}*/
+
+
+	/**
+	 * Callback: Set channel
+	 */
+	public class CallbackSetChannel
+		{
+		public boolean forx;
+		int chanid;
+		public void actionSet()
+			{
+			if(forx)
+				r.viewsettings.indexX=chanid;
+			else
+				r.viewsettings.indexY=chanid;
+			mw.handleEvent(new EventViewsChanged());
+			}
 		}
 
+	
+	/**
+	 * Callback: set displayed gate
+	 */
+	public class CallbackSetGate
+		{
+		Gate g;
+		public void actionSet()
+			{
+			r.viewsettings.fromGate=g;
+			mw.handleEvent(new EventViewsChanged());
+			}
+		}
 
 	}

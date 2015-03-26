@@ -30,4 +30,13 @@ public class Dataset
 		{
 		return eventsFloat.size();
 		}
+
+
+	public int getNumChannels()
+		{
+		if(getNumObservations()>0)
+			return eventsFloat.get(0).length;
+		else
+			return 0;
+		}
 	}

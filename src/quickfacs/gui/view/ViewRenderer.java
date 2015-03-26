@@ -32,22 +32,23 @@ public class ViewRenderer
 	private Dataset segment;
 	QuickfacsProject proj;
 	
-	public void setSegment(Dataset segment, QuickfacsProject proj)
+	public void setDataset(Dataset segment, QuickfacsProject proj)
 		{
 		this.segment=segment;
 		this.proj=proj;
 		}
 	
+	/*
 	public void autoscale()
 		{
 		viewsettings.autoscale(segment);
-		}
+		}*/
 	
 	
-	public void render(GatingResult gr, ViewWidget w, int width, int height)
+	public void render(GatingResult gr, ViewTransform trans)
 		{
 		//Clear image
-		img=new QImage(new QSize(width, height), Format.Format_RGB32);
+		img=new QImage(new QSize(trans.width, trans.height), Format.Format_RGB32);
 		img.fill(0xFFFFFF);
 		QPainter pm=new QPainter(img);
 	
@@ -65,8 +66,8 @@ public class ViewRenderer
 				double chanX=segment.eventsFloat.get(ind)[viewsettings.indexX];
 				double chanY=segment.eventsFloat.get(ind)[viewsettings.indexY];
 				
-				int x=w.mapFacsToScreenX(chanX);
-				int y=w.mapFacsToScreenY(chanY);
+				int x=trans.mapFacsToScreenX(chanX);
+				int y=trans.mapFacsToScreenY(chanY);
 				pm.drawPoint(x, y);			
 				}
 		else
@@ -80,9 +81,9 @@ public class ViewRenderer
 		String labelY=chans.get(viewsettings.indexY).formatName();
 		
 		pm.setPen(QColor.fromRgb(0,0,0));
-		pm.drawText((width-fm.boundingRect(labelX).width())/2, img.height()-labelOffset, labelX);
+		pm.drawText((trans.width-fm.boundingRect(labelX).width())/2, img.height()-labelOffset, labelX);
 		pm.save();
-		pm.translate(labelOffset, (height+fm.boundingRect(labelY).width())/2);
+		pm.translate(labelOffset, (trans.height+fm.boundingRect(labelY).width())/2);
 		pm.rotate(-90);
 		pm.drawText(0, 0, labelY);
 		pm.restore();
@@ -91,28 +92,28 @@ public class ViewRenderer
 		pm.setPen(QColor.fromRgb(0,0,0));
 		int off2=5;
 		pm.drawLine(
-				ViewWidget.graphOffsetXY,off2, 
-				ViewWidget.graphOffsetXY, w.height()-ViewWidget.graphOffsetXY);
+				trans.graphOffsetXY,off2, 
+				trans.graphOffsetXY, trans.height-trans.graphOffsetXY);
 		pm.drawLine(
-				ViewWidget.graphOffsetXY, height-ViewWidget.graphOffsetXY, 
-				width-off2, height-ViewWidget.graphOffsetXY);
+				trans.graphOffsetXY, trans.height-trans.graphOffsetXY, 
+				trans.width-off2, trans.height-trans.graphOffsetXY);
 		
 		
 		//Draw all gates
-		drawgatesRecursive(pm, w, viewsettings.fromGate);
+		drawgatesRecursive(pm, trans, viewsettings.fromGate);
 		
 		pm.end();
 		}
 	
 
-	private void drawgatesRecursive(QPainter pm, ViewWidget w, Gate parent)
+	private void drawgatesRecursive(QPainter pm, ViewTransform trans, Gate parent)
 		{
 		for(Gate g:parent.children)
 			{
 			pm.setPen(QColor.fromRgb(255,0,0));
 			GateRenderer rend=GateHandler.getGateRenderer(g);
-			rend.render(g, pm, w, viewsettings);
-			drawgatesRecursive(pm, w, g);
+			rend.render(g, pm, trans, viewsettings);
+			drawgatesRecursive(pm, trans, g);
 			}
 		
 		}

@@ -1,6 +1,6 @@
 package quickfacs.gui.events;
 
-public class EventGatesChanged
+public class EventGatesChanged implements QuickfacsEvent
 	{
 
 	}

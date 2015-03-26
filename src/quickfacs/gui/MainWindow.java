@@ -10,6 +10,8 @@ import java.util.LinkedList;
 import quickfacs.data.Dataset;
 import quickfacs.gates.Gate;
 import quickfacs.gui.events.EventGatesChanged;
+import quickfacs.gui.events.EventViewsChanged;
+import quickfacs.gui.events.QuickfacsEvent;
 import quickfacs.gui.qt.QTutil;
 import quickfacs.gui.view.GateViewsPane;
 import quickfacs.gui.view.ViewSettings;
@@ -67,7 +69,6 @@ public class MainWindow extends QMainWindow
 	
 	private boolean isUpdating=false;
 
-	
 	
 	
 
@@ -570,9 +571,16 @@ public class MainWindow extends QMainWindow
 	/**
 	 * Event bus
 	 */
-	public void handleEvent(EventGatesChanged event)
+	public void handleEvent(QuickfacsEvent event)
 		{
-		dothelayout();
+		if(event instanceof EventGatesChanged)
+			dothelayout();
+		else if(event instanceof EventViewsChanged)
+			{
+			dothelayout();
+			}
+		else
+			throw new RuntimeException("!!!");
 		}
 
 	

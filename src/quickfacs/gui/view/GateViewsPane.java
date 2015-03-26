@@ -9,6 +9,7 @@ import quickfacs.gui.MainWindow;
 import quickfacs.gui.QuickfacsProject;
 import quickfacs.gui.qt.QVLabel;
 
+import com.trolltech.qt.core.Qt.AlignmentFlag;
 import com.trolltech.qt.gui.QFont;
 import com.trolltech.qt.gui.QGridLayout;
 import com.trolltech.qt.gui.QLabel;
@@ -52,10 +53,13 @@ public class GateViewsPane extends QWidget
 		LinkedList<Dataset> selds=mw.getSelectedDatasets();
 		LinkedList<ViewSettings> selviews=mw.getSelectedViews();
 		
-		//autoscale all views to the same size
+		//Autoscale all views to the same size
 		if(!selds.isEmpty())
+			{
+			double[] max=ViewSettings.getMaxForChannels(selds);
 			for(ViewSettings vs:selviews)
-				vs.autoscale(selds.get(0));
+				vs.autoscale(max);
+			}
 
 		int numrow=selds.size();
 		int numcol=selviews.size();
@@ -76,6 +80,7 @@ public class GateViewsPane extends QWidget
 			{
 			int i=headerHorizontal.size();
 			QLabel lab=new QLabel(this);
+			lab.setAlignment(AlignmentFlag.AlignCenter);
 			QFont font=new QFont();
 			font.setBold(true);
 			lab.setFont(font);
@@ -176,10 +181,7 @@ public class GateViewsPane extends QWidget
 						
 				ViewWidget lab=prevChanWidget.get(posRow).get(posCol);
 				lab.setSettings(vs);
-
-				//First selection: do FSC-A  vs  SSC-A
 				lab.setDataset(ds);
-				//layViews.addWidget(lab, posRow+1, posCol+1);
 				}
 			indexA++;
 			}

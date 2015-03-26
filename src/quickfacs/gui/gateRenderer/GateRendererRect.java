@@ -3,8 +3,7 @@ package quickfacs.gui.gateRenderer;
 import quickfacs.gates.Gate;
 import quickfacs.gates.GateRect;
 import quickfacs.gui.view.ViewSettings;
-import quickfacs.gui.view.ViewWidget;
-
+import quickfacs.gui.view.ViewTransform;
 import com.trolltech.qt.core.QPointF;
 import com.trolltech.qt.core.QRectF;
 import com.trolltech.qt.gui.QPainter;
@@ -21,7 +20,7 @@ public class GateRendererRect implements GateRenderer
 	
 	
 	
-	public void render(Gate gate, QPainter p, ViewWidget w, ViewSettings viewsettings)
+	public void render(Gate gate, QPainter p, ViewTransform w, ViewSettings viewsettings)
 		{
 		GateRect cg=(GateRect)gate;
 		
