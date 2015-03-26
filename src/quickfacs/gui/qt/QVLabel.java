@@ -22,7 +22,7 @@ public class QVLabel extends QWidget
 	public QVLabel(QWidget parent)
 		{
 		super(parent);
-		setMinimumWidth(10);
+		setMinimumWidth(15);
 		}
 	
 	public void setText(String text)
@@ -44,7 +44,7 @@ public class QVLabel extends QWidget
 		painter.setFont(font);
     painter.setPen(QColor.black);
     painter.rotate(-90);
-    painter.drawText(new QPoint(-(height()-fm.width(text))/2,10), text);
+    painter.drawText(new QPoint(-(height()-fm.width(text))/2,11), text);
 		}
 
 	

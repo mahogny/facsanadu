@@ -32,26 +32,28 @@ public class QuickfacsXML
 	/**
 	 * Export a project
 	 */
-	public static void export(QuickfacsProject proj,File f) throws IOException
+	public static void exportToFile(QuickfacsProject proj,File f) throws IOException
 		{
-		Element e=export(proj);
+		Element e=exportXML(proj, f.getParentFile());
 		XMLOutputter xmlOutputter = new XMLOutputter(Format.getPrettyFormat());
     xmlOutputter.output(e, new FileOutputStream(f));
 		}
 	
 	
 	
-	public static Element export(QuickfacsProject proj) throws IOException
+	private static Element exportXML(QuickfacsProject proj, File root) throws IOException
 		{
-		Element etot=new Element("glofacs");
+		Element etot=new Element("quickfacs");
 		
 		
 		
 		//Store dataset references
 		for(Dataset ds:proj.datasets)
 			{
+			String relpath=getRelativePath(root.getAbsolutePath(), ds.source.getAbsolutePath());
+			
 			Element eSeq=new Element("dataset");
-			eSeq.setAttribute("path",ds.source.getAbsolutePath());
+			eSeq.setAttribute("path",relpath);
 			etot.addContent(eSeq);
 			}
 		
@@ -152,7 +154,7 @@ public class QuickfacsXML
 	/**
 	 * Import from native format
 	 */
-	public static void importXML(QuickfacsProject proj, Element etot, File basepath) throws IOException
+	public static void importXML(QuickfacsProject proj, Element etot, File root) throws IOException
 		{
 		try
 			{
@@ -173,7 +175,12 @@ public class QuickfacsXML
 				else if(one.getName().equals("dataset"))
 					{
 					String n=one.getAttributeValue("path");
-					proj.addDataset(new File(n));
+					File f;
+					if(n.startsWith("./") || n.startsWith("../"))
+						f=new File(root.getAbsolutePath(), n);
+					else
+						f=new File(n);
+					proj.addDataset(f);
 					}
 				}
 			}
@@ -204,6 +211,40 @@ public class QuickfacsXML
 			throw new IOException(e.getMessage());
 			}
 		return proj;
+		}
+
+
+	/**
+	 * Construct relative path. 
+	 * From http://stackoverflow.com/questions/204784/how-to-construct-a-relative-path-in-java-from-two-absolute-paths-or-urls
+	 */
+	public static String getRelativePath (String baseDir, String targetPath) 
+		{
+		String[] base = baseDir.replace('\\', '/').split("\\/");
+		targetPath = targetPath.replace('\\', '/');
+		String[] target = targetPath.split("\\/");
+
+		// Count common elements and their length.
+		int commonCount = 0, commonLength = 0, maxCount = Math.min(target.length, base.length);
+		while (commonCount < maxCount) 
+			{
+			String targetElement = target[commonCount];
+			if (!targetElement.equals(base[commonCount])) 
+				break;
+			commonCount++;
+			commonLength += targetElement.length() + 1; // Directory name length plus slash.
+			}
+		if (commonCount == 0)
+			return targetPath; // No common path element.
+
+		int targetLength = targetPath.length();
+		int dirsUp = base.length - commonCount;
+		StringBuilder relative = new StringBuilder(dirsUp * 3 + targetLength - commonLength + 1);
+		for (int i = 0; i < dirsUp; i++)
+			relative.append("../");
+		if (commonLength < targetLength) 
+			relative.append(targetPath.substring(commonLength));
+		return "./"+relative.toString();
 		}
 	
 	}

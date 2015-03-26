@@ -39,6 +39,8 @@ public class GateViewsPane extends QWidget
 		this.mw=mw;
 		setStyleSheet("QWidget {background: white;}");
 		setLayout(layViews);
+		layViews.setMargin(2);
+		layViews.setSpacing(2);
 		}
 
 
@@ -57,8 +59,9 @@ public class GateViewsPane extends QWidget
 		if(!selds.isEmpty())
 			{
 			double[] max=ViewSettings.getMaxForChannels(selds);
+			double[] min=ViewSettings.getMinForChannels(selds);
 			for(ViewSettings vs:selviews)
-				vs.autoscale(max);
+				vs.autoscale(max,min);
 			}
 
 		int numrow=selds.size();

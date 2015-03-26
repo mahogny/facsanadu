@@ -3,6 +3,7 @@ package quickfacs.gates;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 /**
  * 
@@ -45,14 +46,20 @@ public class GateSet
 			getGatesRecursively(g, list);
 		}
 
+	public Set<String> getGateNames()
+		{
+		HashSet<String> prevnames=new HashSet<String>();
+		for(Gate otherGate:getGates())
+			prevnames.add(otherGate.name);
+		return prevnames;
+		}
+	
 	/**
 	 * Get a free name for a gate
 	 */
 	public String getFreeName()
 		{
-		HashSet<String> prevnames=new HashSet<String>();
-		for(Gate otherGate:getGates())
-			prevnames.add(otherGate.name);
+		Set<String> prevnames=getGateNames();
 		
 		int i=0;
 		while(prevnames.contains("gate "+i))

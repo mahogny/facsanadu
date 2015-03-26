@@ -8,8 +8,8 @@ import quickfacs.gates.Gate;
 import quickfacs.gates.GatingResult;
 import quickfacs.gates.IntArray;
 import quickfacs.gui.QuickfacsProject;
-import quickfacs.gui.gateRenderer.GateHandler;
-import quickfacs.gui.gateRenderer.GateRenderer;
+import quickfacs.gui.view.gate.GateHandler;
+import quickfacs.gui.view.gate.GateRenderer;
 
 import com.trolltech.qt.core.QSize;
 import com.trolltech.qt.gui.QColor;

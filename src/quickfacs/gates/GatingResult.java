@@ -41,8 +41,11 @@ public class GatingResult
 		IntArray prevres=acceptedFromGate.get(parent);
 		IntArray res=new IntArray(prevres.size());
 		for(int i=0;i<prevres.size();i++)
-			if(g.classify(segment.eventsFloat.get(prevres.get(i))))
-				res.add(i);
+			{
+			int id=prevres.get(i);
+			if(g.classify(segment.eventsFloat.get(id)))
+				res.add(id);
+			}
 		acceptedFromGate.put(g, res);
 		for(Gate child:g.children)
 			dogate(g, child, segment);
@@ -54,6 +57,11 @@ public class GatingResult
 	public int getTotalCount()
 		{
 		return acceptedFromGate.get(gating.getRootGate()).size();
+		}
+
+	public Gate getRootGate()
+		{
+		return gating.getRootGate();
 		}
 
 	}

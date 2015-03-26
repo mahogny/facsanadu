@@ -6,21 +6,21 @@ import java.util.LinkedList;
 import quickfacs.data.ChannelInfo;
 import quickfacs.data.Dataset;
 import quickfacs.gates.Gate;
-import quickfacs.gates.GateRect;
 import quickfacs.gates.GatingResult;
 import quickfacs.gui.MainWindow;
 import quickfacs.gui.QuickfacsProject;
-import quickfacs.gui.events.EventGatesChanged;
+import quickfacs.gui.events.EventGatesMoved;
 import quickfacs.gui.events.EventViewsChanged;
+import quickfacs.gui.events.QuickfacsEvent;
+import quickfacs.gui.view.tool.ViewTool;
+import quickfacs.gui.view.tool.ViewToolDrawPoly;
 
-import com.trolltech.qt.core.QPointF;
+import com.trolltech.qt.core.QPoint;
 import com.trolltech.qt.core.Qt.MouseButton;
-import com.trolltech.qt.gui.QContextMenuEvent;
 import com.trolltech.qt.gui.QMenu;
 import com.trolltech.qt.gui.QMouseEvent;
 import com.trolltech.qt.gui.QPaintEvent;
 import com.trolltech.qt.gui.QPainter;
-import com.trolltech.qt.gui.QResizeEvent;
 import com.trolltech.qt.gui.QWidget;
 import com.trolltech.qt.gui.QSizePolicy.Policy;
 
@@ -35,18 +35,19 @@ public class ViewWidget extends QWidget
 	{
 	private Dataset dataset;
 	private ViewRenderer r=new ViewRenderer();
-	private MainWindow mw;
+	public MainWindow mw;
 
 	private LinkedList<CallbackSetChannel> setchans=new LinkedList<ViewWidget.CallbackSetChannel>();
 	private LinkedList<CallbackSetGate> setgate=new LinkedList<CallbackSetGate>();
-	private Gate isDrawing=null;
+	private ViewTool tool=new ViewToolDrawPoly(this);
 
 	
-	ViewTransform trans=new ViewTransform();
+	public ViewTransform trans=new ViewTransform();
 
 	public ViewWidget(MainWindow mw)
 		{
 		this.mw=mw;
+		setMouseTracking(true);
 		setSizePolicy(Policy.Expanding, Policy.Expanding);
 		}
 	
@@ -86,99 +87,82 @@ public class ViewWidget extends QWidget
 		super.mousePressEvent(event);
 		if(event.button()==MouseButton.LeftButton)
 			{
-			QPointF p = trans.mapScreenToFacs(event.posF()); 
-			
-			GateRect grect=new GateRect();
-			grect.indexX=r.viewsettings.indexX;
-			grect.indexY=r.viewsettings.indexY;
-			grect.x1=grect.x2=p.x();
-			grect.y1=grect.y2=p.y();
-			grect.updateInternal();
-			isDrawing=grect;
-			
+			if(mousePosInBoundary(event.pos()))
+				{
+				QuickfacsProject proj=mw.project;
+				int invy=height()-event.pos().y();
+				QMenu menu=new QMenu();
+				
+				//Menu to set axis
+				QMenu menu2=menu.addMenu(tr("Set axis"));
+				boolean lastwasx=true;
+				if(event.pos().x()>invy)
+					lastwasx=true;
+				else
+					lastwasx=false;
+							
+				ArrayList<ChannelInfo> chans=dataset.getChannelInfo();
+				setchans.clear();
+				for(int i=0;i<chans.size();i++)
+					{
+					ChannelInfo ci=chans.get(i);
+					CallbackSetChannel set=new CallbackSetChannel();
+					set.chanid=i;
+					set.forx=lastwasx;
+					menu2.addAction(ci.formatName(), set, "actionSet()");
+					setchans.add(set);
+					}
 
-			mw.addGate(grect);
-			mw.handleEvent(new EventGatesChanged());
-			render();
+				//Menu to set source population
+				QMenu mSetSource=menu.addMenu(tr("Set source population"));
+				setgate.clear();
+				for(Gate g:proj.gateset.getGates())
+					{
+					CallbackSetGate sg=new CallbackSetGate();
+					sg.g=g;
+					setgate.add(sg);
+					mSetSource.addAction(g.name, sg, "actionSet()");
+					}
+				menu.exec(event.globalPos());
+				}
+			else
+				{
+				tool.mousePressEvent(event);
+				}
 			}
 		
 		}
+	
+	@Override
+	protected void mouseDoubleClickEvent(QMouseEvent arg__1)
+		{
+		super.mouseDoubleClickEvent(arg__1);
+		tool.mouseDoubleClickEvent(arg__1);
+		}
+	
 	@Override
 	protected void mouseReleaseEvent(QMouseEvent ev)
 		{
 		super.mouseReleaseEvent(ev);
-		isDrawing=null;
-		render();
+		tool.mouseReleaseEvent(ev);
+		mw.handleEvent(new EventGatesMoved());
 		}
 
+	
 	@Override
 	protected void mouseMoveEvent(QMouseEvent event)
 		{
 		super.mouseMoveEvent(event);
-		if(isDrawing!=null)
-			{
-			GateRect grect=(GateRect)isDrawing;
-			
-			QPointF p = trans.mapScreenToFacs(event.posF()); 
-			
-			grect.x2=p.x();
-			grect.y2=p.y();
-			grect.updateInternal();
-			render();
-			}
+		tool.mouseMoveEvent(event);
 		}
 
 
 	
-	@Override
-	protected void contextMenuEvent(QContextMenuEvent ev)
+	private boolean mousePosInBoundary(QPoint pos)
 		{
-		QuickfacsProject proj=mw.project;
-		super.contextMenuEvent(ev);
-		int invy=height()-ev.pos().y();
-		if(ev.pos().x()<50 || invy<50)
-			{
-			QMenu menu=new QMenu();
-			boolean lastwasx=true;
-			if(ev.pos().x()>invy)
-				lastwasx=true;
-			else
-				lastwasx=false;
-						
-			ArrayList<ChannelInfo> chans=dataset.getChannelInfo();
-			setchans.clear();
-			for(int i=0;i<chans.size();i++)
-				{
-				ChannelInfo ci=chans.get(i);
-				CallbackSetChannel set=new CallbackSetChannel();
-				set.chanid=i;
-				set.forx=lastwasx;
-				menu.addAction(ci.formatName(), set, "actionSet()");
-				setchans.add(set);
-				}
-			
-			
-			menu.exec(ev.globalPos());
-			}
-		else
-			{
-			QMenu menu=new QMenu();
-
-			QMenu mSetSource=menu.addMenu(tr("Set source population"));
-
-			setgate.clear();
-			for(Gate g:proj.gateset.getGates())
-				{
-				CallbackSetGate sg=new CallbackSetGate();
-				sg.g=g;
-				setgate.add(sg);
-				mSetSource.addAction(g.name, sg, "actionSet()");
-				}
-			
-			menu.exec(ev.globalPos());
-			}
+		int invy=height()-pos.y();
+		return pos.x()<50 || invy<50;
 		}
-
 	
 
 	
@@ -193,13 +177,6 @@ public class ViewWidget extends QWidget
 		{
 		r.viewsettings=vs;
 		}
-/*
-	@Override
-	protected void resizeEvent(QResizeEvent arg__1)
-		{
-		super.resizeEvent(arg__1);
-		repaint(); //obvious?
-		}*/
 
 
 	/**
@@ -231,6 +208,21 @@ public class ViewWidget extends QWidget
 			r.viewsettings.fromGate=g;
 			mw.handleEvent(new EventViewsChanged());
 			}
+		}
+
+
+	public int getIndexX()
+		{
+		return r.viewsettings.indexX;
+		}
+	public int getIndexY()
+		{
+		return r.viewsettings.indexY;
+		}
+
+	public void sendEvent(QuickfacsEvent event)
+		{
+		mw.handleEvent(event);
 		}
 
 	}

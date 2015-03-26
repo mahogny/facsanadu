@@ -1,4 +1,4 @@
-package quickfacs.io;
+package quickfacs.io.util;
 
 /**
  *  libFLAC - Free Lossless Audio Codec library

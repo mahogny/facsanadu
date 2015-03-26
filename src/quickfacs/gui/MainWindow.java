@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import quickfacs.data.Dataset;
 import quickfacs.gates.Gate;
 import quickfacs.gui.events.EventGatesChanged;
+import quickfacs.gui.events.EventGatesMoved;
 import quickfacs.gui.events.EventViewsChanged;
 import quickfacs.gui.events.QuickfacsEvent;
 import quickfacs.gui.qt.QTutil;
@@ -23,12 +24,14 @@ import com.trolltech.qt.core.QModelIndex;
 import com.trolltech.qt.core.Qt;
 import com.trolltech.qt.core.Qt.ScrollBarPolicy;
 import com.trolltech.qt.gui.QAbstractItemView.SelectionBehavior;
+import com.trolltech.qt.gui.QAbstractItemView.SelectionMode;
 import com.trolltech.qt.gui.QApplication;
 import com.trolltech.qt.gui.QFileDialog;
 import com.trolltech.qt.gui.QFileDialog.AcceptMode;
 import com.trolltech.qt.gui.QFileDialog.FileMode;
 import com.trolltech.qt.gui.QHBoxLayout;
 import com.trolltech.qt.gui.QHeaderView.ResizeMode;
+import com.trolltech.qt.gui.QLineEdit.EchoMode;
 import com.trolltech.qt.gui.QMainWindow;
 import com.trolltech.qt.gui.QMenu;
 import com.trolltech.qt.gui.QMenuBar;
@@ -36,6 +39,7 @@ import com.trolltech.qt.gui.QPushButton;
 import com.trolltech.qt.gui.QResizeEvent;
 import com.trolltech.qt.gui.QScrollArea;
 import com.trolltech.qt.gui.QSizePolicy.Policy;
+import com.trolltech.qt.gui.QInputDialog;
 import com.trolltech.qt.gui.QTabWidget;
 import com.trolltech.qt.gui.QTableWidget;
 import com.trolltech.qt.gui.QTableWidgetItem;
@@ -117,20 +121,25 @@ public class MainWindow extends QMainWindow
 	
 		treeGates.setHeaderLabels(Arrays.asList(tr("Gate")));
 		treeGates.setSelectionBehavior(SelectionBehavior.SelectRows);
+		treeGates.setSelectionMode(SelectionMode.MultiSelection);
 		treeGates.selectionModel().selectionChanged.connect(this,"dothelayout()");
 
 		QPushButton bSelectAllDataset=new QPushButton(tr("Select all"));
-		QPushButton bSelectAllGates=new QPushButton(tr("Select all"));
-		QPushButton bSelectAllViews=new QPushButton(tr("Select all"));
+		QPushButton bRemoveDataset=new QPushButton(tr("Remove dataset"));
 		
+		QPushButton bSelectAllGates=new QPushButton(tr("Select all"));
+		QPushButton bRenameGate=new QPushButton(tr("Rename gate"));
+		QPushButton bRemoveGate=new QPushButton(tr("Remove gate"));
+		
+		QPushButton bSelectAllViews=new QPushButton(tr("Select all"));
 		QPushButton bNewView=new QPushButton(tr("New view"));
 		QPushButton bRemoveView=new QPushButton(tr("Remove view"));
 
-		QPushButton bRemoveGate=new QPushButton(tr("Remove gate"));
-		QPushButton bRemoveDataset=new QPushButton(tr("Remove dataset"));
 
 		bNewView.clicked.connect(this,"actionNewView()");
 		bRemoveView.clicked.connect(this,"actionRemoveView()");
+
+		bRenameGate.clicked.connect(this,"actionRenameGate()");
 
 		bRemoveDataset.clicked.connect(this,"actionRemoveDataset()");
 		bRemoveGate.clicked.connect(this,"actionRemoveGates()");
@@ -145,7 +154,7 @@ public class MainWindow extends QMainWindow
 		layLeft.addWidget(tableViews);
 		layLeft.addLayout(QTutil.layoutHorizontal(bSelectAllViews, bNewView, bRemoveView));
 		layLeft.addWidget(treeGates);
-		layLeft.addLayout(QTutil.layoutHorizontal(bSelectAllGates, bRemoveGate));
+		layLeft.addLayout(QTutil.layoutHorizontal(bSelectAllGates, bRenameGate, bRemoveGate));
 
 		actionNewView();
 
@@ -176,6 +185,7 @@ public class MainWindow extends QMainWindow
 		QWidget cent=new QWidget();
 		cent.setLayout(lay);
 		setCentralWidget(cent);
+
 		
 
 		updateViewsList();
@@ -183,8 +193,6 @@ public class MainWindow extends QMainWindow
 		updateGatesList();
 		dothelayout();
 
-		setMinimumWidth(500);
-		setMinimumHeight(200);
 		show();
 		}
 	
@@ -245,7 +253,7 @@ public class MainWindow extends QMainWindow
 		if(currentProjectFile!=null)
 			try
 				{
-				QuickfacsXML.export(project, currentProjectFile);
+				QuickfacsXML.exportToFile(project, currentProjectFile);
 				}
 			catch (IOException e)
 				{
@@ -298,6 +306,23 @@ public class MainWindow extends QMainWindow
 	public void actionSelectAllGates()
 		{
 		treeGates.selectAll();
+		}
+
+	public void actionRenameGate()
+		{
+		Gate g=getCurrentGate();
+		if(g!=null && g!=project.gateset.getRootGate())
+			{
+			String newname=QInputDialog.getText(this, tr("Rename gate"), tr("New name:"), EchoMode.Normal, g.name);
+			if(!newname.equals("") && (newname.equals(g.name) || !project.gateset.getGateNames().contains(newname)))
+				{
+				g.name=newname;
+				handleEvent(new EventGatesChanged());
+				}
+			else
+				QTutil.showNotice(this, tr("Invalid name"));
+			}
+		
 		}
 	
 	/**
@@ -574,8 +599,11 @@ public class MainWindow extends QMainWindow
 	public void handleEvent(QuickfacsEvent event)
 		{
 		if(event instanceof EventGatesChanged)
+			{
+			updateGatesList();
 			dothelayout();
-		else if(event instanceof EventViewsChanged)
+			}
+		else if(event instanceof EventViewsChanged || event instanceof EventGatesMoved)
 			{
 			dothelayout();
 			}

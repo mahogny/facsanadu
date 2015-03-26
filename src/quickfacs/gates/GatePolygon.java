@@ -38,5 +38,28 @@ public class GatePolygon extends Gate
 		arrX.add(x);
 		arrY.add(y);
 		}
+
+	public int getNumPoints()
+		{
+		return arrX.size();
+		}
+
+	public void setPoint(int i, double x, double y)
+		{
+		arrX.set(i, x);
+		arrY.set(i, y);
+		}
+
+	public void removeRedundantPoints()
+		{
+		for(int i=1;i<getNumPoints();)
+			if(arrX.get(i)==arrX.get(i-1) && arrY.get(i)==arrY.get(i-1))
+				{
+				arrX.remove(i);
+				arrY.remove(i);
+				}
+			else
+				i++;
+		}
 	
 	}

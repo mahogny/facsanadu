@@ -23,16 +23,8 @@ public class ViewSettings
 	public double scaleX=1;
 	public double scaleY=1;
 	
-	/*
-	public void autoscale(Dataset segment)
-		{
-		double maxx=getMaxForChannel(segment,indexX);
-		double maxy=getMaxForChannel(segment,indexY);
-		scaleX=1.0/maxx;
-		scaleY=1.0/maxy;
-		} */
 
-	public void autoscale(double[] max)
+	public void autoscale(double[] max, double[] min)
 		{
 		double maxx=max[indexX];
 		double maxy=max[indexY];
@@ -41,13 +33,6 @@ public class ViewSettings
 		} 
 
 
-	public static double getMaxForChannel(Dataset segment, int chanid)
-		{
-		double max=-Double.MAX_VALUE;
-		for(int i=0;i<segment.eventsFloat.size();i++)
-			max=Math.max(max,segment.eventsFloat.get(i)[chanid]);
-		return max;
-		}
 	
 	public static double[] getMaxForChannel(Dataset dataset)
 		{
@@ -60,7 +45,18 @@ public class ViewSettings
 		return max;
 		}
 
-	
+
+	public static double[] getMinForChannel(Dataset dataset)
+		{
+		double val[]=new double[dataset.getNumChannels()];
+		for(int i=0;i<val.length;i++)
+			val[i]=Double.MAX_VALUE;
+		for(int i=0;i<dataset.eventsFloat.size();i++)
+			for(int j=0;j<val.length;j++)
+					val[j]=Math.min(val[j],dataset.eventsFloat.get(i)[j]);
+		return val;
+		}
+
 	public static double[] getMaxForChannels(Collection<Dataset> dataset)
 		{
 		if(dataset.size()==0)
@@ -69,18 +65,42 @@ public class ViewSettings
 			{
 			int numchan=dataset.iterator().next().getNumChannels();
 			
-			double max[]=new double[numchan];
-			for(int i=0;i<max.length;i++)
-				max[i]=-Double.MAX_VALUE;
+			double val[]=new double[numchan];
+			for(int i=0;i<val.length;i++)
+				val[i]=-Double.MAX_VALUE;
 			for(Dataset ds:dataset)
 				{
 				double[] cmax=getMaxForChannel(ds);
 				for(int j=0;j<numchan;j++)
-					max[j]=Math.max(max[j],cmax[j]);
+					val[j]=Math.max(val[j],cmax[j]);
 				}
-			return max;
+			return val;
 			}
 		}
+	
+	
+	public static double[] getMinForChannels(Collection<Dataset> dataset)
+		{
+		if(dataset.size()==0)
+			return new double[0];
+		else
+			{
+			int numchan=dataset.iterator().next().getNumChannels();
+			
+			double val[]=new double[numchan];
+			for(int i=0;i<val.length;i++)
+				val[i]=Double.MAX_VALUE;
+			for(Dataset ds:dataset)
+				{
+				double[] cmax=getMinForChannel(ds);
+				for(int j=0;j<numchan;j++)
+					val[j]=Math.min(val[j],cmax[j]);
+				}
+			return val;
+			}
+		}
+	
+	
 	
 	
 	}

@@ -7,13 +7,14 @@ import quickfacs.data.Dataset;
 import quickfacs.gates.Gate;
 import quickfacs.gates.GatingResult;
 import quickfacs.gates.IntArray;
+import quickfacs.gui.qt.QTableWidgetWithCSVcopy;
 import quickfacs.gui.qt.QTutil;
 
-import com.trolltech.qt.gui.QTableWidget;
+import com.trolltech.qt.gui.QCheckBox;
+import com.trolltech.qt.gui.QPushButton;
 import com.trolltech.qt.gui.QTableWidgetItem;
 import com.trolltech.qt.gui.QVBoxLayout;
 import com.trolltech.qt.gui.QWidget;
-import com.trolltech.qt.gui.QAbstractItemView.SelectionBehavior;
 import com.trolltech.qt.gui.QHeaderView.ResizeMode;
 
 /**
@@ -25,17 +26,29 @@ import com.trolltech.qt.gui.QHeaderView.ResizeMode;
  */
 public class GateStatsPane extends QWidget
 	{
-	private QTableWidget tableStats=new QTableWidget();
+	private QTableWidgetWithCSVcopy tableStats=new QTableWidgetWithCSVcopy();
+	
 	private MainWindow mw;
 	
-	boolean showOfParent=true;
+	private QCheckBox cbShowParent=new QCheckBox(tr("Show % of parent"));
+	private QCheckBox cbShowTotal=new QCheckBox(tr("Show % of total"));
+	private QPushButton bCopyCSV=new QPushButton(tr("Copy all"));
 	
 	public GateStatsPane(MainWindow mw)
 		{
 		this.mw=mw;		
 		
+		cbShowParent.setChecked(true);
+		cbShowTotal.setChecked(false);
+		
+		cbShowParent.stateChanged.connect(this,"updateStats()");
+		cbShowTotal.stateChanged.connect(this,"updateStats()");
+		bCopyCSV.clicked.connect(this,"actionCopyToClipboard()");
+		
 		QVBoxLayout lay=new QVBoxLayout();
 		lay.addWidget(tableStats);
+		lay.addLayout(QTutil.layoutHorizontal(cbShowParent, cbShowTotal, bCopyCSV));
+		lay.setMargin(0);
 		setLayout(lay);
 		}
 	
@@ -46,7 +59,6 @@ public class GateStatsPane extends QWidget
 		
 		
 		tableStats.verticalHeader().hide();
-		tableStats.setSelectionBehavior(SelectionBehavior.SelectRows);
 		tableStats.horizontalHeader().setResizeMode(ResizeMode.ResizeToContents);
 		tableStats.horizontalHeader().setStretchLastSection(true);		
 
@@ -54,12 +66,21 @@ public class GateStatsPane extends QWidget
 		LinkedList<Gate> listGates=mw.getSelectedGates();
 		LinkedList<Dataset> listDatasets=mw.getSelectedDatasets();
 
-		
-		tableStats.setColumnCount(listGates.size()+1);
+		int perg=0;
+		if(cbShowParent.isChecked())
+			perg++;
+		if(cbShowTotal.isChecked())
+			perg++;
+		tableStats.setColumnCount(listGates.size()*perg+1);
 		LinkedList<String> header=new LinkedList<String>();
 		header.add(tr("Dataset"));
 		for(Gate g:listGates)
-			header.add(g.name); //TODO perc total etc
+			{
+			if(cbShowParent.isChecked())
+				header.add(g.name+ " (parent)");
+			if(cbShowTotal.isChecked())
+				header.add(g.name+" (total)");
+			}
 		
 		
 		tableStats.setHorizontalHeaderLabels(header);
@@ -69,36 +90,38 @@ public class GateStatsPane extends QWidget
 			Dataset dataset=listDatasets.get(row);
 			GatingResult gr=mw.project.getGatingResult(dataset);
 
-			int totalcount=gr.getTotalCount();
-
-			for(int col=0;col<listGates.size();col++)
+			int curcol=1;
+			for(int igate=0;igate<listGates.size();igate++)
 				{
-				Gate gate=listGates.get(col);
+				Gate gate=listGates.get(igate);
 
 				IntArray arr=gr.acceptedFromGate.get(gate);
 				if(arr==null)
 					arr=new IntArray(); 
 
 				
+				//Compute percent of parent
+				Gate gparent=gate.parent;
+				if(gparent==null)
+					gparent=gr.getRootGate();
+				IntArray arrParent=gr.acceptedFromGate.get(gparent);
+				double percParent=arr.size()/(double)arrParent.size();
 				
-				double percParent=1;
-				if(gate.parent!=null)
+				//Compute percent of total
+				double percTotal=arr.size()/(double)gr.getTotalCount(); 
+				
+				if(cbShowParent.isChecked())
 					{
-					IntArray parent=gr.acceptedFromGate.get(gate.parent);
-					if(parent==null)
-						parent=new IntArray(); //saving from problems
-					percParent=arr.size()/(double)parent.size();
+					QTableWidgetItem it=QTutil.createReadOnlyItem(formatPerc(percParent));
+					tableStats.setItem(row, curcol, it);
+					curcol++;
 					}
-				
-				//one more reason to have a root gate!
-				double percTotal=arr.size()/(double)totalcount; 
-				
-				QTableWidgetItem it;
-				if(showOfParent)
-					it=QTutil.createReadOnlyItem(formatPerc(percParent));
-				else
-					it=QTutil.createReadOnlyItem(formatPerc(percTotal));
-				tableStats.setItem(row, col+1, it);
+				if(cbShowTotal.isChecked())
+					{
+					QTableWidgetItem it=QTutil.createReadOnlyItem(formatPerc(percTotal));
+					tableStats.setItem(row, curcol, it);
+					curcol++;
+					}
 				}
 
 			QTableWidgetItem it=QTutil.createReadOnlyItem(dataset.source.getName());
@@ -116,5 +139,13 @@ public class GateStatsPane extends QWidget
 			nf.setMaximumFractionDigits(3);
 		return nf.format(d*100)+"%";
 		}
+
 	
+	/**
+	 * Copy all of table to clipboard
+	 */
+	public void actionCopyToClipboard()
+		{
+		tableStats.copyAll();
+		}
 	}

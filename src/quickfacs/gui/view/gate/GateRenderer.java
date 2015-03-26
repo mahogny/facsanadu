@@ -1,4 +1,4 @@
-package quickfacs.gui.gateRenderer;
+package quickfacs.gui.view.gate;
 
 import quickfacs.gates.Gate;
 import quickfacs.gui.view.ViewSettings;
@@ -7,18 +7,12 @@ import com.trolltech.qt.gui.QPainter;
 
 /**
  * 
- * 
+ * Renderer of one type of gates
  * 
  * @author Johan Henriksson
  *
  */
-public class GateRendererRoot implements GateRenderer
+public interface GateRenderer
 	{
-	
-	
-	
-	public void render(Gate gate, QPainter p, ViewTransform w, ViewSettings viewsettings)
-		{
-		}
-
+	public void render(Gate gate, QPainter p, ViewTransform w, ViewSettings viewsettings);
 	}
