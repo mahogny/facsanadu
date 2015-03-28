@@ -72,7 +72,6 @@ public class ViewWidget extends QWidget
 		trans.width=contentsRect().width();
 		trans.viewsettings=r.viewsettings;
 		
-		
 		QPainter pm=new QPainter(this);
 		r.render(gr, trans);
 		pm.drawImage(0, 0, r.img);
@@ -106,11 +105,14 @@ public class ViewWidget extends QWidget
 				for(int i=0;i<chans.size();i++)
 					{
 					ChannelInfo ci=chans.get(i);
-					CallbackSetChannel set=new CallbackSetChannel();
-					set.chanid=i;
-					set.forx=lastwasx;
-					menu2.addAction(ci.formatName(), set, "actionSet()");
-					setchans.add(set);
+					if(!ci.isProfile)
+						{
+						CallbackSetChannel set=new CallbackSetChannel();
+						set.chanid=i;
+						set.forx=lastwasx;
+						menu2.addAction(ci.formatName(), set, "actionSet()");
+						setchans.add(set);
+						}
 					}
 
 				//Menu to set source population

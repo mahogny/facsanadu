@@ -6,12 +6,7 @@ loc:
 	*/*/*/*java \
 	*/*/*/*/*java
 
-
-
-######################## todo include R-light in jar
-
 jars: 
-	#todo separate qt from core
 	cd ../bin; jar cfvm ../quickfacs.jar ../src/MANIFEST.STARTQTCLIENT \
 	*/*/*.class \
 	*/*/*/*.class \
@@ -97,7 +92,7 @@ cleanports:
 
 
 upload:
-	cd ../release; scp *.dmg *.zip *.deb quickfacs_winjre.exe qtversion.txt 177655_mahogny@ssh.binero.se:/storage/content/55/177655/labstory.se/public_html/release/
+	cd ../release; scp *.dmg *.zip *.deb quickfacs_winjre.exe qtversion.txt mahogny@www.endrov.net:/home/mahogny/hp/other
 
 uploadwin:
 	cd ../release; scp *.exe 177655_mahogny@ssh.binero.se:/storage/content/55/177655/labstory.se/public_html/release/

@@ -9,6 +9,6 @@ package quickfacs.gui;
  */
 public class QtProgramInfo
 	{
-	public static final String programName="QuickFACS";
+	public static final String programName="FACSanadu";
 	public static final String programVersion="0.1.0";
 	}

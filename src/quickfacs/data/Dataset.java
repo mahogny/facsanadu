@@ -14,11 +14,12 @@ import java.util.ArrayList;
  */
 public class Dataset
 	{
-	public ArrayList<int[]> eventsInt;
-	public ArrayList<double[]> eventsFloat;
+	public ArrayList<int[]> eventsInt=new ArrayList<int[]>();
+	public ArrayList<double[]> eventsFloat=new ArrayList<double[]>();
 	public ArrayList<ChannelInfo> ci=new ArrayList<ChannelInfo>();
 	public File source;
 	
+	public ArrayList<LengthProfile> lengthprofs=new ArrayList<LengthProfile>();
 	
 	public ArrayList<ChannelInfo> getChannelInfo()
 		{

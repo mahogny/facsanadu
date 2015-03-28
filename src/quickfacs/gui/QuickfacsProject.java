@@ -9,6 +9,7 @@ import quickfacs.data.Dataset;
 import quickfacs.gates.GateSet;
 import quickfacs.gates.GatingResult;
 import quickfacs.gui.view.ViewSettings;
+import quickfacs.io.CopasIO;
 import quickfacs.io.FCSFile;
 
 /**
@@ -55,7 +56,16 @@ public class QuickfacsProject
 
 	public void addDataset(File path) throws IOException
 		{
-		datasets.add(FCSFile.load(path));
+		if(path.getName().endsWith(".fcs"))
+			{
+			//Assume it is an FCS file
+			datasets.add(FCSFile.load(path));
+			}
+		else
+			{
+			//Assume COPAS file
+			datasets.add(CopasIO.readAll(path));
+			}
 		}
 
 

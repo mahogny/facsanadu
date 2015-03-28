@@ -13,7 +13,9 @@ import quickfacs.gui.events.EventGatesChanged;
 import quickfacs.gui.events.EventGatesMoved;
 import quickfacs.gui.events.EventViewsChanged;
 import quickfacs.gui.events.QuickfacsEvent;
+import quickfacs.gui.length.ProfilePane;
 import quickfacs.gui.qt.QTutil;
+import quickfacs.gui.resource.ImgResource;
 import quickfacs.gui.view.GateViewsPane;
 import quickfacs.gui.view.ViewSettings;
 import quickfacs.io.FCSFile;
@@ -64,9 +66,10 @@ public class MainWindow extends QMainWindow
 	private QTreeWidget treeGates=new QTreeWidget();
 	private QTabWidget tabwidget=new QTabWidget();
 	private QMenuBar menubar=new QMenuBar();
-	private GateViewsPane vpane;
-	private QScrollArea scrollArea=new QScrollArea();
+	
+	private GateViewsPane paneViews;
 	private GateStatsPane paneStats;
+	private ProfilePane paneProfile;
 	
 	private File lastDirectory=new File(".");
 	private File currentProjectFile=null;
@@ -83,7 +86,11 @@ public class MainWindow extends QMainWindow
 		{
 		setMenuBar(menubar);
 
-		vpane=new GateViewsPane(this);
+		ImgResource.setWindowIcon(this);
+		
+		paneViews=new GateViewsPane(this);
+		paneStats=new GateStatsPane(this);
+		paneProfile=new ProfilePane(this);
 		
 		QMenu mFile=menubar.addMenu(tr("File"));
 		mFile.addAction(tr("New project"), this, "actionNewProject()");
@@ -163,22 +170,24 @@ public class MainWindow extends QMainWindow
 		tableViews.setSizePolicy(Policy.Minimum, Policy.Expanding);
 		
 		/// Load all files from directory
+		/*
 		File getfrom=new File("/home/mahogny/javaproj/quickfacs/test");
 		if(getfrom.exists())
 			for(File path:getfrom.listFiles())
-				loadFile(path);
+				loadFile(path);*/
+		loadFile(new File("/ztuff/ztufffromvenus/ztuff/customer/jin/rpt-5/rp5-larva-PMT530-day8-2010-09-11.txt"));
+		
 
-
+		QScrollArea scrollArea=new QScrollArea();
 		scrollArea.setWidgetResizable(true);
-		scrollArea.setWidget(vpane);
+		scrollArea.setWidget(paneViews);
 		
 		scrollArea.setSizePolicy(Policy.Expanding, Policy.Expanding);
 		scrollArea.setVerticalScrollBarPolicy(ScrollBarPolicy.ScrollBarAlwaysOn);
 		
-		paneStats=new GateStatsPane(this);
-		
 		tabwidget.addTab(scrollArea, tr("Graphs"));
 		tabwidget.addTab(paneStats, tr("Statistics"));
+		tabwidget.addTab(paneProfile, tr("Length profiles"));
 
 		QHBoxLayout lay=new QHBoxLayout();
 		lay.addLayout(layLeft);
@@ -626,8 +635,9 @@ public class MainWindow extends QMainWindow
 		if(!isUpdating)
 			{
 			dogating();
-			vpane.updateViews();
+			paneViews.updateViews();
 			paneStats.updateStats();
+			paneProfile.updateViews();
 			}
 		}
 	}
