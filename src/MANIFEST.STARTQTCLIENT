@@ -1,4 +1,4 @@
-Main-Class: quickfacs.gui.MainWindow
+Main-Class: facsanadu.gui.MainWindow
 Manifest-Version: 1.0
 Class-Path: jdom-2.0.4.jar  qtjambi-4.6.3.jar  qtjambi-macosx-gcc-4.6.3
  .jar qtjambi-util-4.6.3.jar qtjambi-win32-msvc2005-4.6.3.jar qtjambi-4

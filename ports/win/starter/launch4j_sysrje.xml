@@ -1,8 +1,8 @@
 <launch4jConfig>
   <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>madgene.jar</jar>
-  <outfile>/home/mahogny/javaproj/synthbio/ports/win/starter/madgene_sysjre.exe</outfile>
+  <jar>facscanadu.jar</jar>
+  <outfile>/home/mahogny/javaproj/quickfacs/ports/win/starter/facsanadu_sysjre.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir></chdir>
@@ -11,7 +11,7 @@
   <supportUrl>http://www.ecobima.com/labstory/</supportUrl>
   <stayAlive>false</stayAlive>
   <manifest></manifest>
-  <icon>/home/mahogny/javaproj/synthbio/ports/win/starter/madgene.ico</icon>
+  <icon>/home/mahogny/javaproj/quickfacs/ports/win/starter/facsanadu.ico</icon>
   <jre>
     <path></path>
     <bundledJre64Bit>false</bundledJre64Bit>

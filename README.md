@@ -1,8 +1,8 @@
-# GloFACS
+# FACSanadu
 
 ## Description
 
-This is a simple piece of software for FACS, written in Java + QT
+This is a simple piece of software for FCS, written in Java + QT
 
 ## Features
 
@@ -11,13 +11,18 @@ This is a simple piece of software for FACS, written in Java + QT
    * Mac
    * Windows
 
+* I/O
+   * Reads FCS files
+   * Reads native COPAS Biosorter files
+
 * Gating
    * Rectangular
-   * Polygon (TODO)
+   * Polygon
 
 * Rendering
    * XY scatter plots
    * Hisograms (TODO)
+   * Length profiles
 
 * Summaries
    * Percent gated, total and of parent
