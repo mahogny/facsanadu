@@ -181,6 +181,7 @@ public class CopasIO
 		File fBinaryProfile=new File(f.getParent(),name+".dat");
 		File fTextProfile=new File(f.getParent(),name+"_profile.txt");
 		
+		System.out.println(fOverview);
 		TreeMap<Integer,CopasEvent> destOverview=readTextOverview(fOverview);
 		
 		boolean hasProfile=false;
@@ -399,7 +400,11 @@ public class CopasIO
 		TreeMap<Integer,CopasEvent> profiles=new TreeMap<Integer, CopasEvent>();
 		
 		CsvFileReader csv=new CsvFileReader(f,'\t');
-		csv.readLine(); //Skip titles
+		ArrayList<String> titles=csv.readLine(); //Skip titles
+		
+		System.out.println(titles.size());
+		if(titles.size()!=27)
+			throw new IOException("Wrong number of headers in file; is this really a COPAS file?");
 		
 		ArrayList<String> line;
 		while((line=csv.readLine())!=null)

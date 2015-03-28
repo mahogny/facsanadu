@@ -17,7 +17,7 @@ import facsanadu.data.Dataset;
 import facsanadu.gates.Gate;
 import facsanadu.gates.GatingResult;
 import facsanadu.gui.MainWindow;
-import facsanadu.gui.QuickfacsProject;
+import facsanadu.gui.FacsanaduProject;
 import facsanadu.gui.events.EventGatesMoved;
 import facsanadu.gui.events.EventViewsChanged;
 import facsanadu.gui.events.QuickfacsEvent;
@@ -64,7 +64,7 @@ public class ViewWidget extends QWidget
 	@Override
 	protected void paintEvent(QPaintEvent pe)
 		{
-		QuickfacsProject project=mw.project;
+		FacsanaduProject project=mw.project;
 		GatingResult gr=project.gatingResult.get(dataset);
 		
 		trans.height=contentsRect().height();
@@ -87,7 +87,7 @@ public class ViewWidget extends QWidget
 			{
 			if(mousePosInBoundary(event.pos()))
 				{
-				QuickfacsProject proj=mw.project;
+				FacsanaduProject proj=mw.project;
 				int invy=height()-event.pos().y();
 				QMenu menu=new QMenu();
 				

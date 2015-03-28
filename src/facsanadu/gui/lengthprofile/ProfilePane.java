@@ -1,4 +1,4 @@
-package facsanadu.gui.length;
+package facsanadu.gui.lengthprofile;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -77,6 +77,7 @@ public class ProfilePane extends QWidget
 		blay.addWidget(new QLabel(tr("Normalize length")));
 		blay.addWidget(cbNormalizeLength);
 		blay.addStretch();
+		blay.addWidget(new QLabel(tr("Event ID:")));
 		blay.addWidget(tfID);
 		blay.addWidget(bPrevProf);
 		blay.addWidget(bNextProf);

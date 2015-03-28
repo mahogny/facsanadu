@@ -1,4 +1,4 @@
-package facsanadu.gui.length;
+package facsanadu.gui.lengthprofile;
 
 import java.util.ArrayList;
 import java.util.Arrays;

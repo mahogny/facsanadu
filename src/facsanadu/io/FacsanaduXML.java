@@ -16,7 +16,7 @@ import facsanadu.data.Dataset;
 import facsanadu.gates.Gate;
 import facsanadu.gates.GatePolygon;
 import facsanadu.gates.GateRect;
-import facsanadu.gui.QuickfacsProject;
+import facsanadu.gui.FacsanaduProject;
 import facsanadu.gui.view.ViewSettings;
 
 
@@ -27,13 +27,13 @@ import facsanadu.gui.view.ViewSettings;
  * @author Johan Henriksson
  *
  */
-public class QuickfacsXML
+public class FacsanaduXML
 	{
 	
 	/**
 	 * Export a project
 	 */
-	public static void exportToFile(QuickfacsProject proj,File f) throws IOException
+	public static void exportToFile(FacsanaduProject proj,File f) throws IOException
 		{
 		Element e=exportXML(proj, f.getParentFile());
 		XMLOutputter xmlOutputter = new XMLOutputter(Format.getPrettyFormat());
@@ -42,9 +42,9 @@ public class QuickfacsXML
 	
 	
 	
-	private static Element exportXML(QuickfacsProject proj, File root) throws IOException
+	private static Element exportXML(FacsanaduProject proj, File root) throws IOException
 		{
-		Element etot=new Element("quickfacs");
+		Element etot=new Element("facsanadu");
 		
 		//Store dataset references
 		for(Dataset ds:proj.datasets)
@@ -182,7 +182,7 @@ public class QuickfacsXML
 	/**
 	 * Import from native format
 	 */
-	public static void importXML(QuickfacsProject proj, Element etot, File root) throws IOException
+	public static void importXML(FacsanaduProject proj, Element etot, File root) throws IOException
 		{
 		try
 			{
@@ -223,9 +223,9 @@ public class QuickfacsXML
 	/**
 	 * Import from XML
 	 */
-	public static QuickfacsProject importXML(File f) throws IOException
+	public static FacsanaduProject importXML(File f) throws IOException
 		{
-		QuickfacsProject proj=new QuickfacsProject();
+		FacsanaduProject proj=new FacsanaduProject();
 		try
 			{
 			FileInputStream is=new FileInputStream(f);

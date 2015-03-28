@@ -42,13 +42,13 @@ import facsanadu.gui.events.EventGatesChanged;
 import facsanadu.gui.events.EventGatesMoved;
 import facsanadu.gui.events.EventViewsChanged;
 import facsanadu.gui.events.QuickfacsEvent;
-import facsanadu.gui.length.ProfilePane;
+import facsanadu.gui.lengthprofile.ProfilePane;
 import facsanadu.gui.qt.QTutil;
 import facsanadu.gui.resource.ImgResource;
 import facsanadu.gui.view.GateViewsPane;
 import facsanadu.gui.view.ViewSettings;
 import facsanadu.io.FCSFile;
-import facsanadu.io.QuickfacsXML;
+import facsanadu.io.FacsanaduXML;
 
 /**
  * 
@@ -59,7 +59,7 @@ import facsanadu.io.QuickfacsXML;
  */
 public class MainWindow extends QMainWindow
 	{
-	public QuickfacsProject project=new QuickfacsProject();
+	public FacsanaduProject project=new FacsanaduProject();
 		
 	private QTableWidget tableDatasets=new QTableWidget();
 	private QTableWidget tableViews=new QTableWidget();	
@@ -170,12 +170,12 @@ public class MainWindow extends QMainWindow
 		tableViews.setSizePolicy(Policy.Minimum, Policy.Expanding);
 		
 		/// Load all files from directory
-		/*
-		File getfrom=new File("/home/mahogny/javaproj/quickfacs/test");
+		File getfrom=new File("/home/mahogny/javaproj/quickfacs/test4");
 		if(getfrom.exists())
 			for(File path:getfrom.listFiles())
-				loadFile(path);*/
-		loadFile(new File("/ztuff/ztufffromvenus/ztuff/customer/jin/rpt-5/rp5-larva-PMT530-day8-2010-09-11.txt"));
+				if(path.getName().endsWith(".txt"))
+					loadFile(path);
+		//loadFile(new File("/ztuff/ztufffromvenus/ztuff/customer/jin/rpt-5/rp5-larva-PMT530-day8-2010-09-11.txt"));
 		
 
 		QScrollArea scrollArea=new QScrollArea();
@@ -213,7 +213,7 @@ public class MainWindow extends QMainWindow
 	 */
 	public void actionNewProject()
 		{
-		project=new QuickfacsProject();
+		project=new FacsanaduProject();
 		updateall();
 		}
 	
@@ -234,14 +234,14 @@ public class MainWindow extends QMainWindow
 		QFileDialog dia=new QFileDialog();
 		dia.setFileMode(FileMode.ExistingFile);
 		dia.setDirectory(lastDirectory.getAbsolutePath());
-		dia.setNameFilter(tr("Project files (*.qfacs)"));
+		dia.setNameFilter(tr("Project files (*.facsanadu)"));
 		if(dia.exec()!=0)
 			{
 			File f=new File(dia.selectedFiles().get(0));
 			lastDirectory=f.getParentFile();
 			try
 				{
-				project=QuickfacsXML.importXML(f);
+				project=FacsanaduXML.importXML(f);
 				currentProjectFile=f;
 				}
 			catch (IOException e)
@@ -264,7 +264,7 @@ public class MainWindow extends QMainWindow
 		if(currentProjectFile!=null)
 			try
 				{
-				QuickfacsXML.exportToFile(project, currentProjectFile);
+				FacsanaduXML.exportToFile(project, currentProjectFile);
 				}
 			catch (IOException e)
 				{
@@ -283,8 +283,8 @@ public class MainWindow extends QMainWindow
 		dia.setFileMode(FileMode.AnyFile);
 		dia.setAcceptMode(AcceptMode.AcceptSave);
 		dia.setDirectory(lastDirectory.getAbsolutePath());
-		dia.setDefaultSuffix("qfacs");
-		dia.setNameFilter(tr("Project files (*.qfacs)"));
+		dia.setDefaultSuffix("facsanadu");
+		dia.setNameFilter(tr("Project files (*.facsanadu)"));
 		if(dia.exec()!=0)
 			{
 			File f=new File(dia.selectedFiles().get(0));
@@ -344,7 +344,7 @@ public class MainWindow extends QMainWindow
 		QFileDialog dia=new QFileDialog();
 		dia.setFileMode(FileMode.ExistingFiles);
 		dia.setDirectory(lastDirectory.getAbsolutePath());
-		dia.setNameFilter(tr("FACS files (*.fcs)"));
+		dia.setNameFilter(tr("FACS files (*.fcs, *.txt, *.lmd)"));
 		if(dia.exec()!=0)
 			{
 			try
@@ -508,7 +508,7 @@ public class MainWindow extends QMainWindow
 	public void dogating()
 		{
 		//For speed, only do selected ones
-		project.dogating(getSelectedDatasets());
+		project.performGating(getSelectedDatasets());
 		}
 	
 

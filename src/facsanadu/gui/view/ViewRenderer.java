@@ -15,7 +15,7 @@ import facsanadu.data.Dataset;
 import facsanadu.gates.Gate;
 import facsanadu.gates.GatingResult;
 import facsanadu.gates.IntArray;
-import facsanadu.gui.QuickfacsProject;
+import facsanadu.gui.FacsanaduProject;
 import facsanadu.gui.view.gate.GateHandler;
 import facsanadu.gui.view.gate.GateRenderer;
 
@@ -30,9 +30,9 @@ public class ViewRenderer
 	public QImage img;
 	public ViewSettings viewsettings=new ViewSettings();
 	private Dataset segment;
-	QuickfacsProject proj;
+	FacsanaduProject proj;
 	
-	public void setDataset(Dataset segment, QuickfacsProject proj)
+	public void setDataset(Dataset segment, FacsanaduProject proj)
 		{
 		this.segment=segment;
 		this.proj=proj;

@@ -13,7 +13,7 @@ import com.trolltech.qt.gui.QSizePolicy.Policy;
 import facsanadu.data.Dataset;
 import facsanadu.gates.Gate;
 import facsanadu.gui.MainWindow;
-import facsanadu.gui.QuickfacsProject;
+import facsanadu.gui.FacsanaduProject;
 import facsanadu.gui.qt.QVLabel;
 
 /**
@@ -51,7 +51,7 @@ public class GateViewsPane extends QWidget
 	 */
 	public void updateViews()
 		{
-		QuickfacsProject project=mw.project;
+		FacsanaduProject project=mw.project;
 		LinkedList<Dataset> selds=mw.getSelectedDatasets();
 		LinkedList<ViewSettings> selviews=mw.getSelectedViews();
 		

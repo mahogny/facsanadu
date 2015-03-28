@@ -14,11 +14,12 @@ import facsanadu.io.FCSFile;
 
 /**
  * 
+ * A project bundle of all data
  * 
  * @author Johan Henriksson
  *
  */
-public class QuickfacsProject
+public class FacsanaduProject
 	{
 	public GateSet gateset=new GateSet();
 	public LinkedList<Dataset> datasets=new LinkedList<Dataset>();
@@ -41,7 +42,7 @@ public class QuickfacsProject
 	/**
 	 * Update gating results
 	 */
-	public void dogating(LinkedList<Dataset> listDatasets)
+	public void performGating(LinkedList<Dataset> listDatasets)
 		{
 		gatingResult.clear();
 		for(Dataset ds:listDatasets)
