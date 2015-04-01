@@ -59,12 +59,11 @@ linuxport: linuxport32 linuxport64 ubuntuport
 winportjre: jars
 	rm -Rf ../release/winjre/
 	mkdir -p ../release/winjre/facsanadu
-	cp ports/win/starter/facsanadu_bundledjre.exe ../release/winjre/facsanadu/facsanadu.exe
-	cp ports/win/installer/* ../release/winjre/
-	cp facsanadu.jar lib/*jar lib/win32/*jar ../release/winjre/facsanadu/
-	cp -r R ../release/winjre/facsanadu/
-	cp -r translations ../release/winjre/facsanadu/
-	cp -r ../support_programs/jre ../release/winjre/
+	#cd ..; cp ports/win/starter/facsanadu_bundledjre.exe release/winjre/facsanadu/facsanadu.exe
+	cd ..; cp ports/win/installer/* release/winjre/
+	cd ..; cp facsanadu.jar lib/*jar lib/win32/*jar release/winjre/facsanadu/
+	#cp -r translations ../release/winjre/facsanadu/
+	cd ..; cp -r ../support_programs/jre release/winjre/
 	cd ../release/winjre; "/home/mahogny/.wine/drive_c/Program Files (x86)/NSIS/makensis.exe" bundledjre.nsi
 	cd ../release/winjre; mv install.exe ../facsanadu_winjre.exe
 

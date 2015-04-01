@@ -8,14 +8,14 @@
 ;General
 
   ;Name and file
-  Name "QuickFACS"
+  Name "FACSanadu"
   OutFile "install.exe"
 
   ;Default installation folder
-  InstallDir "$LOCALAPPDATA\QuickFACS"
+  InstallDir "$LOCALAPPDATA\FACSanadu"
 
   ;Get installation folder from registry if available
-  InstallDirRegKey HKCU "Software\QuickFACS" ""
+  InstallDirRegKey HKCU "Software\FACSanadu" ""
 
   ;Request application privileges for Windows Vista
   RequestExecutionLevel user
@@ -61,13 +61,13 @@ Section "Dummy Section" SecDummy
 ;  CreateDirectory $INSTDIR
 ;  CopyFiles files\*.* $INSTDIR
 
-  File /r "labstory\*.*"  
+  File /r "facsanadu\*.*"  
   File /r "jre\*.*"  
   
-  CreateShortCut "$SMPROGRAMS\QuickFACS.lnk" "$INSTDIR\quickfacs.exe"
+  CreateShortCut "$SMPROGRAMS\FACSanadu.lnk" "$INSTDIR\facsanadu.exe"
   
   ;Store installation folder
-  WriteRegStr HKCU "Software\QuickFACS" "" $INSTDIR
+  WriteRegStr HKCU "Software\FACSanadu" "" $INSTDIR
 
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
@@ -98,6 +98,6 @@ Section "Uninstall"
 
   RMDir "$INSTDIR"
 
-  DeleteRegKey /ifempty HKCU "Software\QuickFACS"
+  DeleteRegKey /ifempty HKCU "Software\FACSanadu"
 
 SectionEnd
