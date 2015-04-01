@@ -59,7 +59,7 @@ linuxport: linuxport32 linuxport64 ubuntuport
 winportjre: jars
 	rm -Rf ../release/winjre/
 	mkdir -p ../release/winjre/facsanadu
-	#cd ..; cp ports/win/starter/facsanadu_bundledjre.exe release/winjre/facsanadu/facsanadu.exe
+	cd ..; cp ports/win/starter/facsanadu_bundledjre.exe release/winjre/facsanadu/facsanadu.exe
 	cd ..; cp ports/win/installer/* release/winjre/
 	cd ..; cp facsanadu.jar lib/*jar lib/win32/*jar release/winjre/facsanadu/
 	#cp -r translations ../release/winjre/facsanadu/
@@ -81,7 +81,7 @@ release: macport linuxport winport #docs
 	cd ../release/linux64; zip -r ../facsanadu_linux64.zip  facsanadu
 	cd ../release/linux32; zip -r ../facsanadu_linux32.zip  facsanadu
 	cd ports; zip -r ../../release/docs.zip            documentation
-	#cp -f org/ecobima/labnote/qtclient/version.txt ../release/qtversion.txt
+	cd ..; cp -f src/facsanadu/gui/version.txt release/qtversion.txt
 
 cleanports:
 	cd ports; rm facsanadu.app/*.jar
