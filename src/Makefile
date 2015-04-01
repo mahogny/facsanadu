@@ -11,7 +11,7 @@ jars:
 	*/*/*.class \
 	*/*/*/*.class \
 	*/*/*/*/*.class \
-	*/*/*.png
+	*/*/*/*.png
 
 ############################################################################################
 ############################ osx ###########################################################
@@ -20,8 +20,8 @@ jars:
 macport: jars
 	rm -Rf ../release/mac
 	cp -r ../ports/mac ../release/mac
-	cp ../facsanadu.jar ../lib/*jar ../lib/mac/*.jar ../release/mac/facsanadu.app/
-#	cp translations/* ../release/mac/labstory.app/translations/
+	cp ../facsanadu.jar ../lib/*jar ../lib/mac/*.jar ../release/mac/FACSanadu.app/
+#	cp translations/* ../release/mac/facsanadu.app/translations/
 	cd ../release/mac/; make
 
 
@@ -31,22 +31,22 @@ macport: jars
 
 ubuntuport: jars
 	sudo rm -f ../release/facsanadu*deb
-	sudo java -cp bin ports.ubuntu.Main
+	cd ..; sudo java -cp bin port.ubuntu.Main
 	sudo mv ../release/facsanadu*deb ../release/facsanadu.deb
 
 linuxport32: jars
 	mkdir -p ../release/linux32
-	rm -Rf ../release/linux32/labstory
-	cp -r ports/linux ../release/linux32/facsanadu
-	cp -r R facsanadu.jar labstoryPostload.jar lib/*jar lib/linux32/*jar ../release/linux32/facsanadu/
-	cp translations/* ../release/linux32/facsanadu/translations/
+	rm -Rf ../release/linux32/facsanadu
+	cd ..; cp -r ports/linux release/linux32/facsanadu
+	cd ..; cp -r facsanadu.jar lib/*jar lib/linux32/*jar release/linux32/facsanadu/
+	#cp translations/* ../release/linux32/facsanadu/translations/
 
 linuxport64: jars
 	mkdir -p ../release/linux64
 	rm -Rf ../release/linux64/facsanadu
-	cp -r ports/linux ../release/linux64/facsanadu
-	cp -r R facsanadu.jar labstoryPostload.jar lib/*jar lib/linux64/*jar ../release/linux64/facsanadu/
-	cp -r translations/* ../release/linux64/labstory/translations/
+	cd ..; cp -r ports/linux release/linux64/facsanadu
+	cd ..; cp -r facsanadu.jar lib/*jar lib/linux64/*jar release/linux64/facsanadu/
+	#cp -r translations/* ../release/linux64/facsanadu/translations/
 
 linuxport: linuxport32 linuxport64 ubuntuport
 
@@ -82,7 +82,7 @@ release: macport linuxport winport #docs
 	cd ../release/linux64; zip -r ../facsanadu_linux64.zip  facsanadu
 	cd ../release/linux32; zip -r ../facsanadu_linux32.zip  facsanadu
 	cd ports; zip -r ../../release/docs.zip            documentation
-	cp -f org/ecobima/labnote/qtclient/version.txt ../release/qtversion.txt
+	#cp -f org/ecobima/labnote/qtclient/version.txt ../release/qtversion.txt
 
 cleanports:
 	cd ports; rm facsanadu.app/*.jar
@@ -92,14 +92,15 @@ cleanports:
 
 
 upload:
-	cd ../release; scp *.dmg *.zip *.deb facsanadu_winjre.exe qtversion.txt mahogny@www.endrov.net:/home/mahogny/hp/other
+#	cd ../release; scp *.dmg *.zip *.deb facsanadu_winjre.exe qtversion.txt mahogny@www.endrov.net:/home/mahogny/hp/facsanadu
+	cd ../release; scp *.dmg *.zip *.deb facsanadu_winjre.exe qtversion.txt 177655_mahogny@ssh.binero.se:/storage/content/55/177655/facsanadu.org/public_html/release/
 
 uploadwin:
-	cd ../release; scp *.exe 177655_mahogny@ssh.binero.se:/storage/content/55/177655/labstory.se/public_html/release/
+	cd ../release; scp *.exe 177655_mahogny@ssh.binero.se:/storage/content/55/177655/facsanadu.se/public_html/release/
 
 
 timestamp:
-	date +%s > org/ecobima/labnote/qtclient/timestamp.txt
+	cd ..; date +%s > bin/facsanadu/gui/timestamp.txt
 
 uploadbackup:
 	cd ../..; scp -r labnote3.git 177655_mahogny@ssh.binero.se:/storage/content/55/177655/

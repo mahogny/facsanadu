@@ -1,0 +1,6 @@
+?package(facsanadu):\
+  needs="X11"\
+  section="Applications/Science"\
+  title="FACSanadu"\
+  icon="/usr/share/pixmaps/facsanadu.xpm"\
+  command="/usr/bin/facsanadu"
