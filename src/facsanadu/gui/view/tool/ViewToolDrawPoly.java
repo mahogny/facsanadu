@@ -27,11 +27,14 @@ public class ViewToolDrawPoly implements ViewTool
 		}
 
 	
+	/**
+	 * Mouse button pressed
+	 */
 	public void mousePressEvent(QMouseEvent event)
 		{
-		if(event.button()==MouseButton.LeftButton)
+		if(event.button()==MouseButton.LeftButton && !w.viewsettings.isHistogram())
 			{
-			QPointF p = w.trans.mapScreenToFacs(event.posF()); 
+			QPointF p = w.trans.mapScreenToFcs(event.posF()); 
 			
 			boolean justcreated=false;
 			GatePolygon g;
@@ -59,19 +62,23 @@ public class ViewToolDrawPoly implements ViewTool
 		
 		}
 
+	/**
+	 * Mouse button released
+	 */
 	public void mouseReleaseEvent(QMouseEvent ev)
 		{
-//		isDrawing=null;
-//		w.mw.handleEvent(new EventGatesMoved());
 		}
 
+	/**
+	 * Mouse moved
+	 */
 	public void mouseMoveEvent(QMouseEvent event)
 		{
 		if(isDrawing!=null)
 			{
 			GatePolygon g=isDrawing;
 			
-			QPointF p = w.trans.mapScreenToFacs(event.posF()); 
+			QPointF p = w.trans.mapScreenToFcs(event.posF()); 
 
 			g.setPoint(g.getNumPoints()-1, p.x(), p.y());
 			g.updateInternal();
@@ -80,7 +87,9 @@ public class ViewToolDrawPoly implements ViewTool
 		}
 
 
-	@Override
+	/**
+	 * Mouse button double-clicked
+	 */
 	public void mouseDoubleClickEvent(QMouseEvent event)
 		{
 		if(isDrawing!=null)

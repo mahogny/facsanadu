@@ -127,7 +127,7 @@ public class GraphExporter
 		for(int i=0;i<listviews.size();i++)
 			{
 			int midy=(oneh+spacing)*i+offsetX+oneh/2;
-			String txt=listviews.get(i).fromGate.name;
+			String txt=listviews.get(i).gate.name;
 			QFontMetrics fm=pm.fontMetrics();
 			pm.drawText(new QPointF(-midy-fm.boundingRect(txt).width()/2, texth), txt);
 			}

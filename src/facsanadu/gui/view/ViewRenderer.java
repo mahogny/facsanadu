@@ -28,9 +28,12 @@ public class ViewRenderer
 	{
 	private static int labelOffset=15;
 	
+	/**
+	 * Render view to device
+	 */
 	public static void render(ViewSettings viewsettings, Dataset segment, GatingResult gr, ViewTransform trans, QPainter pm)
 		{
-		if(viewsettings.indexX==viewsettings.indexY)
+		if(viewsettings.isHistogram())
 			renderHistogram(viewsettings, segment, gr, trans, pm);
 		else
 			renderXY(viewsettings, segment, gr, trans, pm);
@@ -78,7 +81,7 @@ public class ViewRenderer
 		pen.setWidth(2);
 		pm.setPen(pen);
 		
-		IntArray accepted=gr.acceptedFromGate.get(viewsettings.fromGate);
+		IntArray accepted=gr.acceptedFromGate.get(viewsettings.gate);
 		if(accepted!=null)
 			for(int i=0;i<accepted.size();i++)
 				{
@@ -86,8 +89,8 @@ public class ViewRenderer
 				double chanX=segment.getAsFloat(ind,viewsettings.indexX);
 				double chanY=segment.getAsFloat(ind,viewsettings.indexY);
 				
-				int x=trans.mapFacsToScreenX(chanX);
-				int y=trans.mapFacsToScreenY(chanY);
+				int x=trans.mapFcsToScreenX(chanX);
+				int y=trans.mapFcsToScreenY(chanY);
 				pm.drawPoint(x, y);			
 				}
 		else
@@ -100,7 +103,7 @@ public class ViewRenderer
 		drawLines(pm, trans, labelX, labelY);
 		
 		//Draw all gates
-		drawgatesRecursive(pm, trans, viewsettings.fromGate, viewsettings);
+		drawgatesRecursive(pm, trans, viewsettings.gate, viewsettings);
 		}
 
 	
@@ -133,6 +136,9 @@ public class ViewRenderer
 				trans.getTotalWidth()-off2, trans.getTotalHeight()-trans.graphOffsetXY);
 		}
 
+	/**
+	 * Draw all gates recursively
+	 */
 	private static void drawgatesRecursive(QPainter pm, ViewTransform trans, Gate parent, ViewSettings viewsettings)
 		{
 		for(Gate g:parent.children)

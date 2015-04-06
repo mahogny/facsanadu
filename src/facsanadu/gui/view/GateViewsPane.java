@@ -188,7 +188,7 @@ public class GateViewsPane extends QWidget
 			headerHorizontal.get(i).setText(project.datasets.get(i).source.getName());
 		for(int i=0;i<headerVertical.size();i++)
 			{
-			Gate g=selviews.get(i).fromGate;
+			Gate g=selviews.get(i).gate;
 			headerVertical.get(i).setText(g.name);
 			}
 		

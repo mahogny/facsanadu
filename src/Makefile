@@ -80,7 +80,7 @@ release: macport linuxport winport #docs
 	rm -f ../release/facsanadu*zip 
 	cd ../release/linux64; zip -r ../facsanadu_linux64.zip  facsanadu
 	cd ../release/linux32; zip -r ../facsanadu_linux32.zip  facsanadu
-	cd ports; zip -r ../../release/docs.zip            documentation
+	#cd ports; zip -r ../../release/docs.zip            documentation
 	cd ..; cp -f src/facsanadu/gui/version.txt release/qtversion.txt
 
 cleanports:

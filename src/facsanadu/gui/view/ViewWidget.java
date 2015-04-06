@@ -42,6 +42,7 @@ public class ViewWidget extends QWidget
 	private ViewTool tool=new ViewToolDrawPoly(this);
 
 	public ViewTransform trans=new ViewTransform();
+	public ViewSettings viewsettings=new ViewSettings();
 
 	public ViewWidget(MainWindow mw)
 		{
@@ -50,12 +51,10 @@ public class ViewWidget extends QWidget
 		setSizePolicy(Policy.Expanding, Policy.Expanding);
 		}
 
-	ViewSettings viewsettings=new ViewSettings();
 	
 	public void setDataset(Dataset ds)
 		{
 		this.dataset=ds;
-//		r.setDataset(ds, mw.project);
 		}
 	
 	public void render()
@@ -233,7 +232,7 @@ public class ViewWidget extends QWidget
 		Gate g;
 		public void actionSet()
 			{
-			viewsettings.fromGate=g;
+			viewsettings.gate=g;
 			mw.handleEvent(new EventViewsChanged());
 			}
 		}

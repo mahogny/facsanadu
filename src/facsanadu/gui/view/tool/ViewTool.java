@@ -2,6 +2,13 @@ package facsanadu.gui.view.tool;
 
 import com.trolltech.qt.gui.QMouseEvent;
 
+/**
+ * 
+ * Tool for the view widget
+ * 
+ * @author Johan Henriksson
+ *
+ */
 public interface ViewTool
 	{
 	public void mousePressEvent(QMouseEvent event);

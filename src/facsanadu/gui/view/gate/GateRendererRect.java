@@ -49,8 +49,8 @@ public class GateRendererRect implements GateRenderer
 			y2=cg.y2;
 			}
 
-		QPointF p1=w.mapFacsToScreen(new QPointF(x1,y1));
-		QPointF p2=w.mapFacsToScreen(new QPointF(x2,y2));
+		QPointF p1=w.mapFcsToScreen(new QPointF(x1,y1));
+		QPointF p2=w.mapFcsToScreen(new QPointF(x2,y2));
 		
 		p.drawRect(new QRectF(p1,p2));
 		p.drawText(p1, gate.name);

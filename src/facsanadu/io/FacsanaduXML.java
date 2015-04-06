@@ -66,7 +66,7 @@ public class FacsanaduXML
 			Element eview=new Element("view");
 			eview.setAttribute("indexX",""+vs.indexX);
 			eview.setAttribute("indexY",""+vs.indexY);
-			eview.setAttribute("gate",""+vs.fromGate.name);
+			eview.setAttribute("gate",""+vs.gate.name);
 			etot.addContent(eview);
 			}
 		
@@ -195,7 +195,7 @@ public class FacsanaduXML
 				else if(one.getName().equals("view"))
 					{
 					ViewSettings vs=new ViewSettings();
-					vs.fromGate=proj.gateset.getGate(one.getAttributeValue("gate"));
+					vs.gate=proj.gateset.getGate(one.getAttributeValue("gate"));
 					vs.indexX=one.getAttribute("indexX").getIntValue();
 					vs.indexY=one.getAttribute("indexY").getIntValue();
 					proj.views.add(vs);

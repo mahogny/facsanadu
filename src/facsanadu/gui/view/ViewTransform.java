@@ -10,25 +10,40 @@ import com.trolltech.qt.core.QPointF;
  */
 public class ViewTransform
 	{
+	//How far the graph is pushed from the boundary (where labels are placed)
 	public int graphOffsetXY=30;
 	
 	public ViewSettings viewsettings;
 	private int internalHeight;
 	private int internalWidth;
 
+	/**
+	 * Set the total view height
+	 */
 	public void setTotalHeight(int h)
 		{
 		internalHeight=h-graphOffsetXY;
 		}
+	
+	/**
+	 * Set the total view width
+	 */
 	public void setTotalWidth(int w)
 		{
 		internalWidth=w-graphOffsetXY;
 		}
-	
+
+	/**
+	 * Get the total height of the view
+	 */
 	public int getTotalHeight()
 		{
 		return graphOffsetXY+internalHeight;
 		}
+	
+	/**
+	 * Set the total width of the view
+	 */
 	public int getTotalWidth()
 		{
 		return graphOffsetXY+internalWidth;
@@ -43,7 +58,10 @@ public class ViewTransform
 		return viewsettings.scaleY*internalHeight; 
 		}
 
-	public QPointF mapScreenToFacs(QPointF pos)
+	/**
+	 * Map screen space to FCS value
+	 */
+	public QPointF mapScreenToFcs(QPointF pos)
 		{
 		int h=internalHeight-1;
 		QPointF p=new QPointF(
@@ -53,7 +71,10 @@ public class ViewTransform
 		return p;
 		}
 
-	public QPointF mapFacsToScreen(QPointF pos)
+	/**
+	 * Map FCS value to screen space
+	 */
+	public QPointF mapFcsToScreen(QPointF pos)
 		{
 		int h=internalHeight-1;
 		QPointF p=new QPointF(
@@ -63,17 +84,14 @@ public class ViewTransform
 		return p;
 		}
 
-	public int mapFacsToScreenX(double x)
+	public int mapFcsToScreenX(double x)
 		{
 		return mapGeneralToScreenX(viewsettings.scaleX*x);
-		//return graphOffsetXY+(int)(getTotalScaleX()*x);
 		}
 
-	public int mapFacsToScreenY(double y)
+	public int mapFcsToScreenY(double y)
 		{
 		return mapGeneralToScreenY(viewsettings.scaleY*y);
-//		int h=height-graphOffsetXY-1;
-//		return h-((int)(getTotalScaleY()*y));
 		}
 
 	

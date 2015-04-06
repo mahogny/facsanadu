@@ -27,19 +27,25 @@ public class ViewToolDrawRect implements ViewTool
 		this.w=w;
 		}
 	
+	/**
+	 * Mouse button released
+	 */
 	public void mouseReleaseEvent(QMouseEvent ev)
 		{
 		isDrawing=null;
 		w.mw.handleEvent(new EventGatesMoved());
 		}
 
+	/**
+	 * Mouse moved
+	 */
 	public void mouseMoveEvent(QMouseEvent event)
 		{
 		if(isDrawing!=null)
 			{
 			GateRect grect=(GateRect)isDrawing;
 			
-			QPointF p = w.trans.mapScreenToFacs(event.posF()); 
+			QPointF p = w.trans.mapScreenToFcs(event.posF()); 
 			
 			grect.x2=p.x();
 			grect.y2=p.y();
@@ -49,12 +55,14 @@ public class ViewToolDrawRect implements ViewTool
 		}
 
 	
-	
+	/**
+	 * Mouse button pressed
+	 */
 	public void mousePressEvent(QMouseEvent event)
 		{
-		if(event.button()==MouseButton.LeftButton)
+		if(event.button()==MouseButton.LeftButton && !w.viewsettings.isHistogram())
 			{
-			QPointF p = w.trans.mapScreenToFacs(event.posF()); 
+			QPointF p = w.trans.mapScreenToFcs(event.posF()); 
 			
 			GateRect grect=new GateRect();
 			grect.indexX=w.getIndexX();
@@ -70,7 +78,9 @@ public class ViewToolDrawRect implements ViewTool
 		
 		}
 
-	@Override
+	/**
+	 * Mouse button double-clicked
+	 */
 	public void mouseDoubleClickEvent(QMouseEvent event)
 		{
 		}

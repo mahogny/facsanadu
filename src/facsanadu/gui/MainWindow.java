@@ -379,7 +379,7 @@ public class MainWindow extends QMainWindow
 			g.detachParent();
 
 		for(ViewSettings vs:new LinkedList<ViewSettings>(project.views))
-			if(gates.contains(vs.fromGate))
+			if(gates.contains(vs.gate))
 				project.views.remove(vs);
 		updateGatesList();
 		updateViewsList();
@@ -432,7 +432,7 @@ public class MainWindow extends QMainWindow
 	public void actionNewView()
 		{
 		ViewSettings vs=new ViewSettings();
-		vs.fromGate=project.gateset.getRootGate();
+		vs.gate=project.gateset.getRootGate();
 		vs.indexX=0;
 		vs.indexY=1;                                                    
 		if(project.getNumChannels()>vs.indexX)
@@ -568,7 +568,7 @@ public class MainWindow extends QMainWindow
 		int row=0;
 		for(ViewSettings vs:project.views)
 			{
-			String showname=vs.fromGate.name+": ";
+			String showname=vs.gate.name+": ";
 			if(!project.datasets.isEmpty())
 				{
 				Dataset ds=project.datasets.get(0);

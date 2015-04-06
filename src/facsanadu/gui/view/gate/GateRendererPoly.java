@@ -41,7 +41,7 @@ public class GateRendererPoly implements GateRenderer
 
 		QPolygonF poly=new QPolygonF();
 		for(int i=0;i<cg.getNumPoints();i++)
-			poly.add(w.mapFacsToScreenX(thex[i]), w.mapFacsToScreenY(they[i]));
+			poly.add(w.mapFcsToScreenX(thex[i]), w.mapFcsToScreenY(they[i]));
 
 		p.drawPolygon(poly);
 		p.drawText(poly.first(), gate.name);

@@ -17,7 +17,8 @@ import facsanadu.gates.IntArray;
  */
 public class ViewSettings
 	{
-	public Gate fromGate;
+	//Which gate the view should pick data from
+	public Gate gate;
 	
 	public int indexX=7;
 	public int indexY=6;
@@ -26,9 +27,12 @@ public class ViewSettings
 	public double scaleX=1;
 	public double scaleY=1;
 	
-
+	/**
+	 * Set the scale to cover the given max and min values
+	 */
 	public void autoscale(double[] max, double[] min)
 		{
+		//Currently min values are not used
 		double maxx=max[indexX];
 		double maxy=max[indexY];
 		scaleX=1.0/maxx;
@@ -36,7 +40,9 @@ public class ViewSettings
 		} 
 
 
-	
+	/**
+	 * Get the maximum for a channel
+	 */
 	public static double[] getMaxForChannel(Dataset dataset)
 		{
 		double max[]=new double[dataset.getNumChannels()];
@@ -44,11 +50,13 @@ public class ViewSettings
 			max[i]=-Double.MAX_VALUE;
 		for(int i=0;i<dataset.eventsFloat.size();i++)
 			for(int j=0;j<max.length;j++)
-					max[j]=Math.max(max[j],dataset.eventsFloat.get(i)[j]);
+					max[j]=Math.max(max[j],dataset.getAsFloat(i,j));
 		return max;
 		}
 
-
+	/**
+	 * Get the minimum value for channel
+	 */
 	public static double[] getMinForChannel(Dataset dataset)
 		{
 		double val[]=new double[dataset.getNumChannels()];
@@ -56,10 +64,13 @@ public class ViewSettings
 			val[i]=Double.MAX_VALUE;
 		for(int i=0;i<dataset.eventsFloat.size();i++)
 			for(int j=0;j<val.length;j++)
-					val[j]=Math.min(val[j],dataset.eventsFloat.get(i)[j]);
+					val[j]=Math.min(val[j],dataset.getAsFloat(i,j));
 		return val;
 		}
 
+	/**
+	 * Get the maximum value for all channels
+	 */
 	public static double[] getMaxForChannels(Collection<Dataset> dataset)
 		{
 		if(dataset.size()==0)
@@ -81,7 +92,9 @@ public class ViewSettings
 			}
 		}
 	
-	
+	/**
+	 * Get the minimum value for all channels
+	 */
 	public static double[] getMinForChannels(Collection<Dataset> dataset)
 		{
 		if(dataset.size()==0)
@@ -119,21 +132,25 @@ public class ViewSettings
 		}
 
 
-
+	/**
+	 * Get the name of this view
+	 */
 	public String getName()
 		{
 		//Use gate name as name of view
-		return fromGate.name;
+		return gate.name;
 		}
 
 
-
+	/**
+	 * Compute histogram from data
+	 */
 	public Histogram computeHistogram(Dataset data, GatingResult gr)
 		{
 		Histogram h=new Histogram();
 		h.setup(0, 1.0/scaleX, 50);
 		
-		IntArray accepted=gr.acceptedFromGate.get(fromGate);
+		IntArray accepted=gr.acceptedFromGate.get(gate);
 		if(accepted!=null)
 			for(int i=0;i<accepted.size();i++)
 				{
@@ -141,6 +158,15 @@ public class ViewSettings
 				h.countEvent(data.getAsFloat(ind, indexX));
 				}
 		return h;
+		}
+
+
+	/**
+	 * Check if the view settings is for a histogram
+	 */
+	public boolean isHistogram()
+		{
+		return indexX==indexY;
 		}
 	
 	
