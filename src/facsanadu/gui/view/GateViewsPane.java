@@ -56,13 +56,7 @@ public class GateViewsPane extends QWidget
 		LinkedList<ViewSettings> selviews=mw.getSelectedViews();
 		
 		//Autoscale all views to the same size
-		if(!selds.isEmpty())
-			{
-			double[] max=ViewSettings.getMaxForChannels(selds);
-			double[] min=ViewSettings.getMinForChannels(selds);
-			for(ViewSettings vs:selviews)
-				vs.autoscale(max,min);
-			}
+		ViewSettings.autoscale(selds, selviews);
 
 		int numrow=selds.size();
 		int numcol=selviews.size();

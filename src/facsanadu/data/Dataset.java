@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public class Dataset
 	{
-	public ArrayList<int[]> eventsInt=new ArrayList<int[]>();
+	//public ArrayList<int[]> eventsInt=new ArrayList<int[]>();
 	public ArrayList<double[]> eventsFloat=new ArrayList<double[]>();
 	public ArrayList<ChannelInfo> ci=new ArrayList<ChannelInfo>();
 	public File source;
@@ -46,5 +46,17 @@ public class Dataset
 	public int getNumLengthProfiles()
 		{
 		return lengthprofsInfo.size();
+		}
+
+
+	public String getName()
+		{
+		return source.getName();
+		}
+
+
+	public double getAsFloat(int ind, int indexX)
+		{
+		return eventsFloat.get(ind)[indexX];
 		}
 	}

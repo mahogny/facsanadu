@@ -2,56 +2,76 @@ package facsanadu.gui.view;
 
 import java.util.ArrayList;
 
-import com.trolltech.qt.core.QSize;
+import com.trolltech.qt.core.QRect;
+import com.trolltech.qt.gui.QBrush;
 import com.trolltech.qt.gui.QColor;
 import com.trolltech.qt.gui.QFontMetrics;
-import com.trolltech.qt.gui.QImage;
 import com.trolltech.qt.gui.QPainter;
 import com.trolltech.qt.gui.QPen;
-import com.trolltech.qt.gui.QImage.Format;
 
 import facsanadu.data.ChannelInfo;
 import facsanadu.data.Dataset;
 import facsanadu.gates.Gate;
 import facsanadu.gates.GatingResult;
 import facsanadu.gates.IntArray;
-import facsanadu.gui.FacsanaduProject;
 import facsanadu.gui.view.gate.GateHandler;
 import facsanadu.gui.view.gate.GateRenderer;
 
 /**
  * 
+ * Renderer of one view
  * 
  * @author Johan Henriksson
  *
  */
 public class ViewRenderer
 	{
-	public QImage img;
-	public ViewSettings viewsettings=new ViewSettings();
-	private Dataset segment;
-	FacsanaduProject proj;
+	private static int labelOffset=15;
 	
-	public void setDataset(Dataset segment, FacsanaduProject proj)
+	public static void render(ViewSettings viewsettings, Dataset segment, GatingResult gr, ViewTransform trans, QPainter pm)
 		{
-		this.segment=segment;
-		this.proj=proj;
+		if(viewsettings.indexX==viewsettings.indexY)
+			renderHistogram(viewsettings, segment, gr, trans, pm);
+		else
+			renderXY(viewsettings, segment, gr, trans, pm);
 		}
 	
-	/*
-	public void autoscale()
+	
+	/**
+	 * Render histogram
+	 */
+	private static void renderHistogram(ViewSettings viewsettings, Dataset segment, GatingResult gr, ViewTransform trans, QPainter pm)
 		{
-		viewsettings.autoscale(segment);
-		}*/
-	
-	
-	public void render(GatingResult gr, ViewTransform trans)
+		ArrayList<ChannelInfo> chans=segment.getChannelInfo();
+		//Headache - for scaling, here it would make more sense to scale by the output histograms rather than just datasize
+		
+		Histogram h=viewsettings.computeHistogram(segment, gr); //better if this was only once!
+		
+		pm.setPen(new QPen(QColor.fromRgb(0,0,0)));
+		pm.setBrush(new QBrush(QColor.gray));
+		
+		double binw=1.0/(h.getNumBins()+1);
+		for(int i=0;i<h.getNumBins();i++)
+			{
+			double frac=h.getFrac(i);
+			int x1=trans.mapGeneralToScreenX(i*binw);
+			int x2=trans.mapGeneralToScreenX((i+1)*binw);
+			int y1=trans.mapGeneralToScreenY(0); 
+			int y2=trans.mapGeneralToScreenY(frac*8); //here is the problem
+			pm.drawRect(new QRect(x1,y1,x2-x1,y2-y1));
+			}
+
+		//Draw boundary
+		String labelX=chans.get(viewsettings.indexX).formatName();
+		String labelY="Fraction";
+		drawLines(pm, trans, labelX, labelY);
+		}
+
+	/**
+	 * Draw scatter plot
+	 */
+	private static void renderXY(ViewSettings viewsettings, Dataset segment, GatingResult gr, ViewTransform trans, QPainter pm)
 		{
-		//Clear image
-		img=new QImage(new QSize(trans.width, trans.height), Format.Format_RGB32);
-		img.fill(0xFFFFFF);
-		QPainter pm=new QPainter(img);
-	
 		ArrayList<ChannelInfo> chans=segment.getChannelInfo();
 
 		QPen pen=new QPen(QColor.fromRgb(0,0,255));
@@ -63,8 +83,8 @@ public class ViewRenderer
 			for(int i=0;i<accepted.size();i++)
 				{
 				int ind=accepted.get(i);
-				double chanX=segment.eventsFloat.get(ind)[viewsettings.indexX];
-				double chanY=segment.eventsFloat.get(ind)[viewsettings.indexY];
+				double chanX=segment.getAsFloat(ind,viewsettings.indexX);
+				double chanY=segment.getAsFloat(ind,viewsettings.indexY);
 				
 				int x=trans.mapFacsToScreenX(chanX);
 				int y=trans.mapFacsToScreenY(chanY);
@@ -73,47 +93,54 @@ public class ViewRenderer
 		else
 			System.out.println("gating not done yet");
 		
-		int labelOffset=15;
 		
-		//Draw labels
-		QFontMetrics fm=pm.fontMetrics();
+		//Draw boundary
 		String labelX=chans.get(viewsettings.indexX).formatName();
 		String labelY=chans.get(viewsettings.indexY).formatName();
+		drawLines(pm, trans, labelX, labelY);
 		
+		//Draw all gates
+		drawgatesRecursive(pm, trans, viewsettings.fromGate, viewsettings);
+		}
+
+	
+	
+	/**
+	 * Draw things surrounding graph
+	 */
+	private static void drawLines(QPainter pm, ViewTransform trans, String labelX, String labelY)
+		{
+		//Draw labels
+		QFontMetrics fm=pm.fontMetrics();
 		pm.setPen(QColor.fromRgb(0,0,0));
-		pm.drawText((trans.width-fm.boundingRect(labelX).width())/2, img.height()-labelOffset, labelX);
+		pm.drawText(
+				(trans.getTotalWidth()-fm.boundingRect(labelX).width())/2, 
+				trans.getTotalHeight()-labelOffset, labelX);
 		pm.save();
-		pm.translate(labelOffset, (trans.height+fm.boundingRect(labelY).width())/2);
+		pm.translate(labelOffset, (trans.getTotalHeight()+fm.boundingRect(labelY).width())/2);
 		pm.rotate(-90);
 		pm.drawText(0, 0, labelY);
 		pm.restore();
-		
-		//Draw separating lines
+
+		//Draw lines
 		pm.setPen(QColor.fromRgb(0,0,0));
 		int off2=5;
 		pm.drawLine(
 				trans.graphOffsetXY,off2, 
-				trans.graphOffsetXY, trans.height-trans.graphOffsetXY);
+				trans.graphOffsetXY, trans.getTotalHeight()-trans.graphOffsetXY);
 		pm.drawLine(
-				trans.graphOffsetXY, trans.height-trans.graphOffsetXY, 
-				trans.width-off2, trans.height-trans.graphOffsetXY);
-		
-		
-		//Draw all gates
-		drawgatesRecursive(pm, trans, viewsettings.fromGate);
-		
-		pm.end();
+				trans.graphOffsetXY, trans.getTotalHeight()-trans.graphOffsetXY, 
+				trans.getTotalWidth()-off2, trans.getTotalHeight()-trans.graphOffsetXY);
 		}
-	
 
-	private void drawgatesRecursive(QPainter pm, ViewTransform trans, Gate parent)
+	private static void drawgatesRecursive(QPainter pm, ViewTransform trans, Gate parent, ViewSettings viewsettings)
 		{
 		for(Gate g:parent.children)
 			{
 			pm.setPen(QColor.fromRgb(255,0,0));
 			GateRenderer rend=GateHandler.getGateRenderer(g);
 			rend.render(g, pm, trans, viewsettings);
-			drawgatesRecursive(pm, trans, g);
+			drawgatesRecursive(pm, trans, g, viewsettings);
 			}
 		
 		}

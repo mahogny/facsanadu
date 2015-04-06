@@ -633,9 +633,24 @@ public class FCSFile
 			{
 			Dataset dataset=new Dataset();
 			dataset.eventsFloat=eventsFloat;
-			dataset.eventsInt=eventsInt;
+			//dataset.eventsInt=eventsInt;
 			dataset.source=source;
 			dataset.ci.addAll(getChannelInfo());
+			
+			//Convert int events to float
+			if(eventsInt!=null)
+				{
+				ArrayList<double[]> arr=new ArrayList<double[]>(eventsInt.size());
+				dataset.eventsFloat=arr;
+				for(int[] one:eventsInt)
+					{
+					double[] onef=new double[one.length];
+					for(int i=0;i<one.length;i++)
+						onef[i]=one[i];
+					arr.add(onef);
+					}
+				}
+			
 			return dataset;
 			}
 		}

@@ -4,9 +4,11 @@ import java.util.LinkedList;
 import java.util.TreeSet;
 
 import com.trolltech.qt.core.QModelIndex;
+import com.trolltech.qt.core.Qt;
 import com.trolltech.qt.gui.QApplication;
 import com.trolltech.qt.gui.QTableWidget;
 import com.trolltech.qt.gui.QKeySequence.StandardKey;
+import com.trolltech.qt.gui.QTableWidgetItem;
 
 /**
  * 
@@ -26,7 +28,7 @@ public class QTableWidgetWithCSVcopy extends QTableWidget
 			super.keyPressEvent(event);
 		}
 
-	public void copyAll()
+	public String allToCSV()
 		{
 		TreeSet<Integer> whichcol=new TreeSet<Integer>();
 		TreeSet<Integer> whichrow=new TreeSet<Integer>();
@@ -34,10 +36,20 @@ public class QTableWidgetWithCSVcopy extends QTableWidget
 			whichcol.add(i);
 		for(int i=0;i<rowCount();i++)
 			whichrow.add(i);
-		copy(whichcol, whichrow);
+		return toCSV(whichcol, whichrow);
 		}
 	
 	public void copy(TreeSet<Integer> whichcol, TreeSet<Integer> whichrow)
+		{
+		String s=toCSV(whichcol, whichrow);
+		QApplication.clipboard().setText(s);
+		}
+
+	
+	/**
+	 * Export selection to CSV
+	 */
+	public String toCSV(TreeSet<Integer> whichcol, TreeSet<Integer> whichrow)
 		{
 		StringBuilder sb=new StringBuilder();
 	
@@ -59,15 +71,23 @@ public class QTableWidgetWithCSVcopy extends QTableWidget
 				if(!fst)
 					sb.append("\t");
 				fst=false;
-				sb.append(item(currow,curcol).text());
+				QTableWidgetItem item=item(currow,curcol);
+				if(item.data(Qt.ItemDataRole.UserRole)!=null)
+					sb.append(item.data(Qt.ItemDataRole.UserRole).toString());
+				else
+					sb.append(item.text());
 				}
 			sb.append("\n");
 			}
 		sb.append("\n");
-		QApplication.clipboard().setText(sb.toString());
+		return sb.toString();
 		}
+
 	
-	public void copy()
+	/**
+	 * Export everything to CSV. Can return null if no
+	 */
+	public String selectionToCSV()
 		{
 		LinkedList<QModelIndex> indexes=new LinkedList<QModelIndex>(selectionModel().selectedIndexes());
 		if(indexes.size()>0)
@@ -79,8 +99,24 @@ public class QTableWidgetWithCSVcopy extends QTableWidget
 				whichcol.add(in.column());
 				whichrow.add(in.row());
 				}
-			copy(whichcol, whichrow);
+			return toCSV(whichcol, whichrow);
 			}
+		else
+			return null;
+		}
+	
+	public void copyAll()
+		{
+		String s=allToCSV();
+		if(s!=null)
+			QApplication.clipboard().setText(s);
+		}
+	
+	public void copy()
+		{
+		String s=selectionToCSV();
+		if(s!=null)
+			QApplication.clipboard().setText(s);
 		}
 
 

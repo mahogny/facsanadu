@@ -46,6 +46,7 @@ import facsanadu.gui.lengthprofile.ProfilePane;
 import facsanadu.gui.qt.QTutil;
 import facsanadu.gui.resource.ImgResource;
 import facsanadu.gui.view.GateViewsPane;
+import facsanadu.gui.view.GraphExporter;
 import facsanadu.gui.view.ViewSettings;
 import facsanadu.io.FCSFile;
 import facsanadu.io.FacsanaduXML;
@@ -104,12 +105,8 @@ public class MainWindow extends QMainWindow
 
 		
 		QMenu mExport=menubar.addMenu(tr("Export"));
-		mExport.addAction(tr("Graphs as one file"));
-		mExport.addAction(tr("Graphs by dataset"));
-		mExport.addAction(tr("Graphs by view"));
-		mExport.addAction(tr("Graphs as individual files"));
-		mExport.addSeparator();
-		mExport.addAction(tr("Statistics to CSV"));
+		mExport.addAction(tr("Graphs"), this, "actionExportGraphs()");
+		mExport.addAction(tr("Statistics"), this, "actionExportStatistics()");
 
 		
 		tableDatasets.setColumnCount(1);
@@ -450,6 +447,47 @@ public class MainWindow extends QMainWindow
 		}
 	
 	
+	/**
+	 * Action: Export graphs
+	 */
+	public void actionExportGraphs()
+		{
+		LinkedList<Dataset> listds=getSelectedDatasets();
+		LinkedList<ViewSettings> listviews=getSelectedViews();
+		
+		GraphExportWindow w=new GraphExportWindow();
+		w.exec();
+		if(w.wasOk)
+			{
+			QFileDialog dia=new QFileDialog();
+			dia.setFileMode(FileMode.AnyFile);
+			dia.setNameFilter(tr("Image files (*.png)"));
+			dia.setAcceptMode(AcceptMode.AcceptSave);
+			dia.setDefaultSuffix("png");
+
+			if(dia.exec()!=0)
+				{
+				try
+					{
+					File f=new File(dia.selectedFiles().get(0));
+					GraphExporter.render(f, project, listds, listviews, w.splitByDataset(), w.splitByView(), w.getWidth(), w.getHeight());
+					}
+				catch (RuntimeException e)
+					{
+					QTutil.showNotice(this, e.getMessage());
+					e.printStackTrace();
+					}
+				}		
+			}
+		}
+	
+	/**
+	 * Export everything to CSV
+	 */
+	public void actionExportStatistics()
+		{
+		paneStats.actionExportCSV();
+		}
 	
 	/**
 	 * Load one file

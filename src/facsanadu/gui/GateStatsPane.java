@@ -1,13 +1,20 @@
 package facsanadu.gui;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 
+import com.trolltech.qt.core.Qt;
 import com.trolltech.qt.gui.QCheckBox;
+import com.trolltech.qt.gui.QFileDialog;
 import com.trolltech.qt.gui.QPushButton;
 import com.trolltech.qt.gui.QTableWidgetItem;
 import com.trolltech.qt.gui.QVBoxLayout;
 import com.trolltech.qt.gui.QWidget;
+import com.trolltech.qt.gui.QFileDialog.AcceptMode;
+import com.trolltech.qt.gui.QFileDialog.FileMode;
 import com.trolltech.qt.gui.QHeaderView.ResizeMode;
 
 import facsanadu.data.Dataset;
@@ -32,7 +39,7 @@ public class GateStatsPane extends QWidget
 	
 	private QCheckBox cbShowParent=new QCheckBox(tr("Show % of parent"));
 	private QCheckBox cbShowTotal=new QCheckBox(tr("Show % of total"));
-	private QPushButton bCopyCSV=new QPushButton(tr("Copy all"));
+	private QPushButton bCopyCSV=new QPushButton(tr("Export to clipboard"));
 	
 	public GateStatsPane(MainWindow mw)
 		{
@@ -113,12 +120,14 @@ public class GateStatsPane extends QWidget
 				if(cbShowParent.isChecked())
 					{
 					QTableWidgetItem it=QTutil.createReadOnlyItem(formatPerc(percParent));
+					it.setData(Qt.ItemDataRole.UserRole, percParent);
 					tableStats.setItem(row, curcol, it);
 					curcol++;
 					}
 				if(cbShowTotal.isChecked())
 					{
 					QTableWidgetItem it=QTutil.createReadOnlyItem(formatPerc(percTotal));
+					it.setData(Qt.ItemDataRole.UserRole, percTotal);
 					tableStats.setItem(row, curcol, it);
 					curcol++;
 					}
@@ -147,5 +156,33 @@ public class GateStatsPane extends QWidget
 	public void actionCopyToClipboard()
 		{
 		tableStats.copyAll();
+		}
+
+
+	/**
+	 * Export everything to CSV
+	 */
+	public void actionExportCSV()
+		{
+		QFileDialog dia=new QFileDialog();
+		dia.setFileMode(FileMode.AnyFile);
+		dia.setNameFilter(tr("CSV files (*.csv)"));
+		dia.setAcceptMode(AcceptMode.AcceptSave);
+		dia.setDefaultSuffix("csv");
+
+		if(dia.exec()!=0)
+			{
+			try
+				{
+				PrintWriter fw=new PrintWriter(new File(dia.selectedFiles().get(0)));
+				fw.println(tableStats.allToCSV());
+				fw.close();
+				}
+			catch (IOException e)
+				{
+				QTutil.showNotice(this, e.getMessage());
+				e.printStackTrace();
+				}
+			}		
 		}
 	}

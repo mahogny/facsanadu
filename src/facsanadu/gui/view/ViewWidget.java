@@ -5,6 +5,8 @@ import java.util.LinkedList;
 
 import com.trolltech.qt.core.QPoint;
 import com.trolltech.qt.core.Qt.MouseButton;
+import com.trolltech.qt.gui.QBrush;
+import com.trolltech.qt.gui.QColor;
 import com.trolltech.qt.gui.QMenu;
 import com.trolltech.qt.gui.QMouseEvent;
 import com.trolltech.qt.gui.QPaintEvent;
@@ -34,11 +36,9 @@ import facsanadu.gui.view.tool.ViewToolDrawPoly;
 public class ViewWidget extends QWidget
 	{
 	private Dataset dataset;
-	private ViewRenderer r=new ViewRenderer();
 	public MainWindow mw;
 
-	private LinkedList<CallbackSetChannel> setchans=new LinkedList<ViewWidget.CallbackSetChannel>();
-	private LinkedList<CallbackSetGate> setgate=new LinkedList<CallbackSetGate>();
+	private LinkedList<Callback> setchans=new LinkedList<Callback>();
 	private ViewTool tool=new ViewToolDrawPoly(this);
 
 	public ViewTransform trans=new ViewTransform();
@@ -49,11 +49,13 @@ public class ViewWidget extends QWidget
 		setMouseTracking(true);
 		setSizePolicy(Policy.Expanding, Policy.Expanding);
 		}
+
+	ViewSettings viewsettings=new ViewSettings();
 	
 	public void setDataset(Dataset ds)
 		{
 		this.dataset=ds;
-		r.setDataset(ds, mw.project);
+//		r.setDataset(ds, mw.project);
 		}
 	
 	public void render()
@@ -64,16 +66,18 @@ public class ViewWidget extends QWidget
 	@Override
 	protected void paintEvent(QPaintEvent pe)
 		{
+		super.paintEvent(pe);
 		FacsanaduProject project=mw.project;
 		GatingResult gr=project.gatingResult.get(dataset);
 		
-		trans.height=contentsRect().height();
-		trans.width=contentsRect().width();
-		trans.viewsettings=r.viewsettings;
+		trans.setTotalHeight(contentsRect().height());
+		trans.setTotalWidth(contentsRect().width());
+		trans.viewsettings=viewsettings;
 		
 		QPainter pm=new QPainter(this);
-		r.render(gr, trans);
-		pm.drawImage(0, 0, r.img);
+		pm.setBrush(new QBrush(QColor.white));
+		pm.drawRect(-5,-5,10000,10000);
+		ViewRenderer.render(viewsettings, dataset, gr, trans, pm);
 		pm.end();
 		}
 	
@@ -87,12 +91,14 @@ public class ViewWidget extends QWidget
 			{
 			if(mousePosInBoundary(event.pos()))
 				{
+				setchans.clear();
 				FacsanaduProject proj=mw.project;
 				int invy=height()-event.pos().y();
 				QMenu menu=new QMenu();
 				
-				//Menu to set axis
+				//Menu to set axis, and histogram
 				QMenu menu2=menu.addMenu(tr("Set axis"));
+				QMenu menuHist=menu.addMenu(tr("Set histogram"));
 				boolean lastwasx=true;
 				if(event.pos().x()>invy)
 					lastwasx=true;
@@ -100,7 +106,6 @@ public class ViewWidget extends QWidget
 					lastwasx=false;
 							
 				ArrayList<ChannelInfo> chans=dataset.getChannelInfo();
-				setchans.clear();
 				for(int i=0;i<chans.size();i++)
 					{
 					ChannelInfo ci=chans.get(i);
@@ -111,17 +116,22 @@ public class ViewWidget extends QWidget
 						set.forx=lastwasx;
 						menu2.addAction(ci.formatName(), set, "actionSet()");
 						setchans.add(set);
+						
+						CallbackSetHistogram sethist=new CallbackSetHistogram();
+						set.chanid=i;
+						menuHist.addAction(ci.formatName(), sethist, "actionSet()");
+						setchans.add(sethist);
 						}
 					}
+				
 
 				//Menu to set source population
 				QMenu mSetSource=menu.addMenu(tr("Set source population"));
-				setgate.clear();
 				for(Gate g:proj.gateset.getGates())
 					{
 					CallbackSetGate sg=new CallbackSetGate();
 					sg.g=g;
-					setgate.add(sg);
+					setchans.add(sg);
 					mSetSource.addAction(g.name, sg, "actionSet()");
 					}
 				menu.exec(event.globalPos());
@@ -170,29 +180,46 @@ public class ViewWidget extends QWidget
 	
 	public void setChannels(int indexX, int indexY)
 		{
-		r.viewsettings.indexX=indexX;
-		r.viewsettings.indexY=indexY;
+		viewsettings.indexX=indexX;
+		viewsettings.indexY=indexY;
 		}
 
 	public void setSettings(ViewSettings vs)
 		{
-		r.viewsettings=vs;
+		viewsettings=vs;
 		}
 
+	public interface Callback
+		{
+		public void actionSet();
+		}
 
 	/**
 	 * Callback: Set channel
 	 */
-	public class CallbackSetChannel
+	public class CallbackSetChannel implements Callback
 		{
 		public boolean forx;
 		int chanid;
 		public void actionSet()
 			{
 			if(forx)
-				r.viewsettings.indexX=chanid;
+				viewsettings.indexX=chanid;
 			else
-				r.viewsettings.indexY=chanid;
+				viewsettings.indexY=chanid;
+			mw.handleEvent(new EventViewsChanged());
+			}
+		}
+
+	/**
+	 * Callback: Set histogram
+	 */
+	public class CallbackSetHistogram implements Callback
+		{
+		int chanid;
+		public void actionSet()
+			{
+			viewsettings.indexX=viewsettings.indexY=chanid;
 			mw.handleEvent(new EventViewsChanged());
 			}
 		}
@@ -201,12 +228,12 @@ public class ViewWidget extends QWidget
 	/**
 	 * Callback: set displayed gate
 	 */
-	public class CallbackSetGate
+	public class CallbackSetGate implements Callback
 		{
 		Gate g;
 		public void actionSet()
 			{
-			r.viewsettings.fromGate=g;
+			viewsettings.fromGate=g;
 			mw.handleEvent(new EventViewsChanged());
 			}
 		}
@@ -214,11 +241,11 @@ public class ViewWidget extends QWidget
 
 	public int getIndexX()
 		{
-		return r.viewsettings.indexX;
+		return viewsettings.indexX;
 		}
 	public int getIndexY()
 		{
-		return r.viewsettings.indexY;
+		return viewsettings.indexY;
 		}
 
 	public void sendEvent(QuickfacsEvent event)

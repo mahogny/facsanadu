@@ -1,9 +1,12 @@
 package facsanadu.gui.view;
 
 import java.util.Collection;
+import java.util.LinkedList;
 
 import facsanadu.data.Dataset;
 import facsanadu.gates.Gate;
+import facsanadu.gates.GatingResult;
+import facsanadu.gates.IntArray;
 
 /**
  * 
@@ -98,6 +101,46 @@ public class ViewSettings
 				}
 			return val;
 			}
+		}
+
+
+	/**
+	 * Autoscale several views according to several datasets
+	 */
+	public static void autoscale(LinkedList<Dataset> selds, LinkedList<ViewSettings> selviews)
+		{
+		if(!selds.isEmpty())
+			{
+			double[] max=ViewSettings.getMaxForChannels(selds);
+			double[] min=ViewSettings.getMinForChannels(selds);
+			for(ViewSettings vs:selviews)
+				vs.autoscale(max,min);
+			}
+		}
+
+
+
+	public String getName()
+		{
+		//Use gate name as name of view
+		return fromGate.name;
+		}
+
+
+
+	public Histogram computeHistogram(Dataset data, GatingResult gr)
+		{
+		Histogram h=new Histogram();
+		h.setup(0, 1.0/scaleX, 50);
+		
+		IntArray accepted=gr.acceptedFromGate.get(fromGate);
+		if(accepted!=null)
+			for(int i=0;i<accepted.size();i++)
+				{
+				int ind=accepted.get(i);
+				h.countEvent(data.getAsFloat(ind, indexX));
+				}
+		return h;
 		}
 	
 	
