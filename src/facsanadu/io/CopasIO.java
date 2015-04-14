@@ -166,6 +166,11 @@ public class CopasIO
 		
 		}
 
+	public static boolean isCopasFile(File path)
+		{
+		return path.getName().endsWith(".lmd") || path.getName().endsWith(".txt") || path.getName().endsWith(".dat");
+		}
+
 	
 	/**
 	 * Read all files belong together. Supply basename with .txt or .dat or .lmd
@@ -508,6 +513,8 @@ public class CopasIO
 			profDest.prop.putAll(profSource.prop);
 			}
 		}
+
+
 
 	
 	}

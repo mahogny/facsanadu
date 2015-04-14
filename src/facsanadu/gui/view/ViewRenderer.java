@@ -144,6 +144,7 @@ public class ViewRenderer
 		for(Gate g:parent.children)
 			{
 			pm.setPen(QColor.fromRgb(255,0,0));
+			pm.setBrush(new QBrush(QColor.transparent));
 			GateRenderer rend=GateHandler.getGateRenderer(g);
 			rend.render(g, pm, trans, viewsettings);
 			drawgatesRecursive(pm, trans, g, viewsettings);

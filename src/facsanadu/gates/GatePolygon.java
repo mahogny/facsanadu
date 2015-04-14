@@ -31,7 +31,10 @@ public class GatePolygon extends Gate
 	
 	public boolean classify(double[] obs)
 		{
-		return poly.containsPoint(new QPointF(obs[indexX], obs[indexY]),FillRule.WindingFill);
+		if(poly!=null)
+			return poly.containsPoint(new QPointF(obs[indexX], obs[indexY]),FillRule.WindingFill);
+		else
+			return false;
 		}
 
 	public void addPoint(double x, double y)

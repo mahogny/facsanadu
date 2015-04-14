@@ -9,6 +9,7 @@ import java.util.LinkedList;
 
 import com.trolltech.qt.core.QCoreApplication;
 import com.trolltech.qt.core.QModelIndex;
+import com.trolltech.qt.core.QUrl;
 import com.trolltech.qt.core.Qt;
 import com.trolltech.qt.core.Qt.ScrollBarPolicy;
 import com.trolltech.qt.gui.QAbstractItemView.SelectionBehavior;
@@ -27,6 +28,7 @@ import com.trolltech.qt.gui.QPushButton;
 import com.trolltech.qt.gui.QResizeEvent;
 import com.trolltech.qt.gui.QScrollArea;
 import com.trolltech.qt.gui.QSizePolicy.Policy;
+import com.trolltech.qt.gui.QDropEvent;
 import com.trolltech.qt.gui.QInputDialog;
 import com.trolltech.qt.gui.QTabWidget;
 import com.trolltech.qt.gui.QTableWidget;
@@ -48,7 +50,7 @@ import facsanadu.gui.resource.ImgResource;
 import facsanadu.gui.view.GateViewsPane;
 import facsanadu.gui.view.GraphExporter;
 import facsanadu.gui.view.ViewSettings;
-import facsanadu.io.FCSFile;
+import facsanadu.io.CopasIO;
 import facsanadu.io.FacsanaduXML;
 
 /**
@@ -62,7 +64,9 @@ public class MainWindow extends QMainWindow
 	{
 	public FacsanaduProject project=new FacsanaduProject();
 		
-	private QTableWidget tableDatasets=new QTableWidget();
+	private QTableWidget tableDatasets=new QTableWidget()
+		{
+		};
 	private QTableWidget tableViews=new QTableWidget();	
 	private QTreeWidget treeGates=new QTreeWidget();
 	private QTabWidget tabwidget=new QTabWidget();
@@ -99,8 +103,6 @@ public class MainWindow extends QMainWindow
 		mFile.addAction(tr("Save project"), this, "actionSaveProject()");
 		mFile.addAction(tr("Save project as"), this, "actionSaveProjectAs()");
 		mFile.addSeparator();
-		mFile.addAction(tr("Add datasets"), this, "actionAddDatasets()");
-		mFile.addSeparator();
 		mFile.addAction(tr("Exit"), this, "close()");
 
 		
@@ -128,6 +130,7 @@ public class MainWindow extends QMainWindow
 		treeGates.setSelectionMode(SelectionMode.MultiSelection);
 		treeGates.selectionModel().selectionChanged.connect(this,"dothelayout()");
 
+		QPushButton bAddDataset=new QPushButton(tr("Add dataset"));
 		QPushButton bSelectAllDataset=new QPushButton(tr("Select all"));
 		QPushButton bRemoveDataset=new QPushButton(tr("Remove dataset"));
 		
@@ -145,6 +148,7 @@ public class MainWindow extends QMainWindow
 
 		bRenameGate.clicked.connect(this,"actionRenameGate()");
 
+		bAddDataset.clicked.connect(this,"actionAddDatasets()");
 		bRemoveDataset.clicked.connect(this,"actionRemoveDataset()");
 		bRemoveGate.clicked.connect(this,"actionRemoveGates()");
 
@@ -154,7 +158,7 @@ public class MainWindow extends QMainWindow
 
 		QVBoxLayout layLeft=new QVBoxLayout();
 		layLeft.addWidget(tableDatasets);
-		layLeft.addLayout(QTutil.layoutHorizontal(bSelectAllDataset, bRemoveDataset));
+		layLeft.addLayout(QTutil.layoutHorizontal(bAddDataset, bSelectAllDataset, bRemoveDataset));
 		layLeft.addWidget(tableViews);
 		layLeft.addLayout(QTutil.layoutHorizontal(bSelectAllViews, bNewView, bRemoveView));
 		layLeft.addWidget(treeGates);
@@ -167,11 +171,19 @@ public class MainWindow extends QMainWindow
 		tableViews.setSizePolicy(Policy.Minimum, Policy.Expanding);
 		
 		/// Load all files from directory
-		File getfrom=new File("/home/mahogny/javaproj/quickfacs/test4");
-		if(getfrom.exists())
-			for(File path:getfrom.listFiles())
-				if(path.getName().endsWith(".txt"))
-					loadFile(path);
+		try
+			{
+			File getfrom=new File("/home/mahogny/javaproj/quickfacs/test4");
+			if(getfrom.exists())
+				for(File path:getfrom.listFiles())
+					if(CopasIO.isCopasFile(path) && path.getName().endsWith(".dat"))
+						loadFile(path);
+			}
+		catch (IOException e)
+			{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			}
 		//loadFile(new File("/ztuff/ztufffromvenus/ztuff/customer/jin/rpt-5/rp5-larva-PMT530-day8-2010-09-11.txt"));
 		
 
@@ -201,6 +213,7 @@ public class MainWindow extends QMainWindow
 		updateGatesList();
 		dothelayout();
 
+		setAcceptDrops(true);
 		show();
 		}
 	
@@ -231,7 +244,7 @@ public class MainWindow extends QMainWindow
 		QFileDialog dia=new QFileDialog();
 		dia.setFileMode(FileMode.ExistingFile);
 		dia.setDirectory(lastDirectory.getAbsolutePath());
-		dia.setNameFilter(tr("Project files (*.facsanadu)"));
+		dia.setNameFilter(tr("Project files")+" (*.facsanadu)");
 		if(dia.exec()!=0)
 			{
 			File f=new File(dia.selectedFiles().get(0));
@@ -281,7 +294,7 @@ public class MainWindow extends QMainWindow
 		dia.setAcceptMode(AcceptMode.AcceptSave);
 		dia.setDirectory(lastDirectory.getAbsolutePath());
 		dia.setDefaultSuffix("facsanadu");
-		dia.setNameFilter(tr("Project files (*.facsanadu)"));
+		dia.setNameFilter(tr("Project files")+" (*.facsanadu)");
 		if(dia.exec()!=0)
 			{
 			File f=new File(dia.selectedFiles().get(0));
@@ -341,7 +354,7 @@ public class MainWindow extends QMainWindow
 		QFileDialog dia=new QFileDialog();
 		dia.setFileMode(FileMode.ExistingFiles);
 		dia.setDirectory(lastDirectory.getAbsolutePath());
-		dia.setNameFilter(tr("FACS files (*.fcs, *.txt, *.lmd)"));
+		dia.setNameFilter(tr(tr("FCS files")+" (*.fcs *.txt *.lmd)"));
 		if(dia.exec()!=0)
 			{
 			try
@@ -350,10 +363,7 @@ public class MainWindow extends QMainWindow
 					{
 					File f=new File(sf);
 					lastDirectory=f.getParentFile();
-					if(FCSFile.isFCSfile(f))
-						loadFile(f);
-					else
-						QTutil.showNotice(this, "Not a FACS file: "+f);
+					loadFile(f);
 					}
 				}
 			catch (IOException e)
@@ -461,7 +471,7 @@ public class MainWindow extends QMainWindow
 			{
 			QFileDialog dia=new QFileDialog();
 			dia.setFileMode(FileMode.AnyFile);
-			dia.setNameFilter(tr("Image files (*.png)"));
+			dia.setNameFilter(tr("Image files)")+" (*.png)");
 			dia.setAcceptMode(AcceptMode.AcceptSave);
 			dia.setDefaultSuffix("png");
 
@@ -491,18 +501,12 @@ public class MainWindow extends QMainWindow
 	
 	/**
 	 * Load one file
+	 * @throws IOException 
 	 */
-	public void loadFile(File path)
+	public void loadFile(File path) throws IOException
 		{
-		try
-			{
-			project.addDataset(path);
-			updateDatasetList();
-			}
-		catch (IOException e)
-			{
-			e.printStackTrace();
-			}
+		project.addDataset(path);
+		updateDatasetList();
 		}
 
 	
@@ -678,4 +682,30 @@ public class MainWindow extends QMainWindow
 			paneProfile.updateViews();
 			}
 		}
+	
+	protected void dragEnterEvent(com.trolltech.qt.gui.QDragEnterEvent event) 
+		{
+	   if(event.mimeData().hasFormat("text/uri-list"))
+       event.acceptProposedAction();
+		}
+
+	@Override
+	protected void dropEvent(QDropEvent event)
+		{
+		try
+			{
+			for(QUrl url:event.mimeData().urls())
+				{
+				File f=new File(url.path());
+				lastDirectory=f.getParentFile();
+				loadFile(f);
+				}
+			}
+		catch (IOException e)
+			{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			}
+		}
+	
 	}
