@@ -57,16 +57,18 @@ public class FacsanaduProject
 
 	public void addDataset(File path) throws IOException
 		{
-		if(path.getName().endsWith(".fcs"))
+		if(FCSFile.isFCSfile(path))
 			{
 			//Assume it is an FCS file
 			datasets.add(FCSFile.load(path));
 			}
-		else
+		else if(CopasIO.isCopasFile(path))
 			{
 			//Assume COPAS file
 			datasets.add(CopasIO.readAll(path));
 			}
+		else
+			throw new IOException("Cannot recognize file");
 		}
 
 

@@ -55,8 +55,14 @@ public class Dataset
 		}
 
 
-	public double getAsFloat(int ind, int indexX)
+	public double getAsFloat(int obs, int indexChan)
 		{
-		return eventsFloat.get(ind)[indexX];
+		return eventsFloat.get(obs)[indexChan];
+		}
+
+
+	public double[] getAsFloat(int obs)
+		{
+		return eventsFloat.get(obs);
 		}
 	}

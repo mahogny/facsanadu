@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import com.trolltech.qt.core.QPoint;
+import com.trolltech.qt.core.QPointF;
+import com.trolltech.qt.core.QRectF;
 import com.trolltech.qt.core.Qt.MouseButton;
 import com.trolltech.qt.gui.QBrush;
 import com.trolltech.qt.gui.QColor;
@@ -23,6 +25,7 @@ import facsanadu.gui.FacsanaduProject;
 import facsanadu.gui.events.EventGatesMoved;
 import facsanadu.gui.events.EventViewsChanged;
 import facsanadu.gui.events.QuickfacsEvent;
+import facsanadu.gui.view.gate.GateHandle;
 import facsanadu.gui.view.tool.ViewTool;
 import facsanadu.gui.view.tool.ViewToolDrawPoly;
 
@@ -43,6 +46,8 @@ public class ViewWidget extends QWidget
 
 	public ViewTransform trans=new ViewTransform();
 	public ViewSettings viewsettings=new ViewSettings();
+
+	LinkedList<GateHandle> handles=new LinkedList<GateHandle>();
 
 	public ViewWidget(MainWindow mw)
 		{
@@ -73,22 +78,69 @@ public class ViewWidget extends QWidget
 		trans.setTotalWidth(contentsRect().width());
 		trans.viewsettings=viewsettings;
 		
+		handles=new LinkedList<GateHandle>();
 		QPainter pm=new QPainter(this);
 		pm.setBrush(new QBrush(QColor.white));
 		pm.drawRect(-5,-5,10000,10000);
-		ViewRenderer.render(viewsettings, dataset, gr, trans, pm);
+		ViewRenderer.render(viewsettings, dataset, gr, trans, pm, handles, 10000); //how many? TODO
+				
+		//Now render handles?
+		for(GateHandle h:handles)
+			{
+			pm.setBrush(new QBrush(QColor.transparent));
+			pm.setPen(QColor.red);
+
+			int size=2;
+			pm.drawRect(new QRectF(h.getX()-size, h.getY()-size,2*size,2*size));
+			}
+		
+		
 		pm.end();
 		}
 	
 
+	public GateHandle getClosestHandle(QPointF pos, double cutoff)
+		{
+		if(!tool.allowHandle())
+			return null;
+		GateHandle ch=null;
+		double cd=Double.MAX_VALUE;
+		for(GateHandle h:handles)
+			{
+			double dx=pos.x()-h.getX();
+			double dy=pos.y()-h.getY();
+			double d2=dx*dx + dy*dy;
+			if(d2<cd)
+				{
+				cd=d2;
+				ch=h;
+				}
+			}
+		if(cd<cutoff*cutoff)
+			return ch;
+		else
+			return null;
+		}
+	
+	GateHandle curhandle=null;
+	
+	QPointF pointLast=new QPointF();
 	
 	@Override
 	protected void mousePressEvent(QMouseEvent event)
 		{
+		pointLast=event.posF();
 		super.mousePressEvent(event);
 		if(event.button()==MouseButton.LeftButton)
 			{
-			if(mousePosInBoundary(event.pos()))
+			curhandle=null;
+			GateHandle handle=getClosestHandle(event.posF(), 10);
+			if(handle!=null)
+				{
+				//Move a handle
+				curhandle=handle;
+				}
+			else if(mousePosInBoundary(event.pos()))
 				{
 				setchans.clear();
 				FacsanaduProject proj=mw.project;
@@ -144,10 +196,10 @@ public class ViewWidget extends QWidget
 		}
 	
 	@Override
-	protected void mouseDoubleClickEvent(QMouseEvent arg__1)
+	protected void mouseDoubleClickEvent(QMouseEvent e)
 		{
-		super.mouseDoubleClickEvent(arg__1);
-		tool.mouseDoubleClickEvent(arg__1);
+		super.mouseDoubleClickEvent(e);
+		tool.mouseDoubleClickEvent(e);
 		}
 	
 	@Override
@@ -156,6 +208,7 @@ public class ViewWidget extends QWidget
 		super.mouseReleaseEvent(ev);
 		tool.mouseReleaseEvent(ev);
 		mw.handleEvent(new EventGatesMoved());
+		curhandle=null;
 		}
 
 	
@@ -163,7 +216,18 @@ public class ViewWidget extends QWidget
 	protected void mouseMoveEvent(QMouseEvent event)
 		{
 		super.mouseMoveEvent(event);
-		tool.mouseMoveEvent(event);
+		if(curhandle!=null)
+			{
+			double dx=event.posF().x() - pointLast.x();
+			double dy=event.posF().y() - pointLast.y();
+
+			dx=trans.scaleScreenToFCSx(dx);
+			dy=trans.scaleScreenToFCSy(dy);
+			curhandle.move(mw, dx, -dy);
+			}
+		else
+			tool.mouseMoveEvent(event);
+		pointLast=event.posF();
 		}
 
 

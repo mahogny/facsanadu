@@ -1,5 +1,6 @@
 package facsanadu.io;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -517,7 +518,7 @@ public class FCSFile
 			////// data //////
 			//////////////////
 			
-			FileInputStream fiData=new FileInputStream(f);
+			InputStream fiData=new BufferedInputStream(new FileInputStream(f));
 			fiData.skip(offsetDataStart);
 			
 			if(dataType.equals("I"))
@@ -583,6 +584,7 @@ public class FCSFile
 				}
 			else if(dataType.equals("F"))
 				{
+				System.out.println(System.currentTimeMillis());
 				DataInputStream rData=new DataInputStream(fiData);
 				eventsFloat=new ArrayList<double[]>(numEvents);
 				for(int i=0;i<numEvents;i++)
@@ -593,6 +595,7 @@ public class FCSFile
 						event[j]=rData.readFloat(); //untested
 					}
 				rData.close();
+				System.out.println(System.currentTimeMillis());
 				}
 			else if(dataType.equals("A"))
 				{

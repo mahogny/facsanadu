@@ -86,4 +86,10 @@ public class ViewToolDrawRect implements ViewTool
 		}
 	
 	
+	@Override
+	public boolean allowHandle()
+		{
+		return isDrawing==null;
+		}
+
 	}

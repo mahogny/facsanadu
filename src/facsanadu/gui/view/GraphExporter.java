@@ -17,6 +17,7 @@ import com.trolltech.qt.gui.QImage.Format;
 
 import facsanadu.data.Dataset;
 import facsanadu.gui.FacsanaduProject;
+import facsanadu.gui.view.gate.GateHandle;
 
 /**
  * 
@@ -105,7 +106,7 @@ public class GraphExporter
 				
 				Dataset ds=listds.get(i);
 				ViewSettings vs=listviews.get(j);
-				ViewRenderer.render(vs, ds, proj.getGatingResult(ds), trans, pm);
+				ViewRenderer.render(vs, ds, proj.getGatingResult(ds), trans, pm, new LinkedList<GateHandle>(), Integer.MAX_VALUE);
 				pm.restore();
 				}
 		

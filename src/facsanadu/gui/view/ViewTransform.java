@@ -106,5 +106,15 @@ public class ViewTransform
 		return h-((int)(y*h));
 		}
 
+	public double scaleScreenToFCSx(double dx)
+		{
+		return dx/getTotalScaleX();
+		}
+	public double scaleScreenToFCSy(double dy)
+		{
+		return dy/getTotalScaleY();
+		}
+
+
 	
 	}

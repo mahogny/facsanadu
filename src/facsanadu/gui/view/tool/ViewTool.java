@@ -15,4 +15,5 @@ public interface ViewTool
 	public void mouseReleaseEvent(QMouseEvent ev);
 	public void mouseMoveEvent(QMouseEvent event);
 	public void mouseDoubleClickEvent(QMouseEvent event);
+	public boolean allowHandle();
 	}

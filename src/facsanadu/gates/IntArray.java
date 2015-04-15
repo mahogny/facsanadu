@@ -41,6 +41,16 @@ public class IntArray
 		{
 		return arr[i];
 		}
+
+	
+	/**
+	 * Add a value without checking if there is enough space. Caller has to ensure this
+	 */
+	public void addUnchecked(int value)
+		{
+		arr[len]=value;
+		len++;
+		}
 	
 	
 

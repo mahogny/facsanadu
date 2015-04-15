@@ -1,6 +1,7 @@
 package facsanadu.gui.view;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import com.trolltech.qt.core.QRect;
 import com.trolltech.qt.gui.QBrush;
@@ -14,7 +15,8 @@ import facsanadu.data.Dataset;
 import facsanadu.gates.Gate;
 import facsanadu.gates.GatingResult;
 import facsanadu.gates.IntArray;
-import facsanadu.gui.view.gate.GateHandler;
+import facsanadu.gui.view.gate.GateHandle;
+import facsanadu.gui.view.gate.GateRendererManager;
 import facsanadu.gui.view.gate.GateRenderer;
 
 /**
@@ -31,12 +33,12 @@ public class ViewRenderer
 	/**
 	 * Render view to device
 	 */
-	public static void render(ViewSettings viewsettings, Dataset segment, GatingResult gr, ViewTransform trans, QPainter pm)
+	public static void render(ViewSettings viewsettings, Dataset segment, GatingResult gr, ViewTransform trans, QPainter pm, LinkedList<GateHandle> handles, int rendermax)
 		{
 		if(viewsettings.isHistogram())
 			renderHistogram(viewsettings, segment, gr, trans, pm);
 		else
-			renderXY(viewsettings, segment, gr, trans, pm);
+			renderXY(viewsettings, segment, gr, trans, pm, handles, rendermax);
 		}
 	
 	
@@ -73,7 +75,8 @@ public class ViewRenderer
 	/**
 	 * Draw scatter plot
 	 */
-	private static void renderXY(ViewSettings viewsettings, Dataset segment, GatingResult gr, ViewTransform trans, QPainter pm)
+	private static void renderXY(ViewSettings viewsettings, Dataset segment, GatingResult gr, ViewTransform trans, QPainter pm, LinkedList<GateHandle> handles,
+			int rendermax)
 		{
 		ArrayList<ChannelInfo> chans=segment.getChannelInfo();
 
@@ -83,7 +86,7 @@ public class ViewRenderer
 		
 		IntArray accepted=gr.acceptedFromGate.get(viewsettings.gate);
 		if(accepted!=null)
-			for(int i=0;i<accepted.size();i++)
+			for(int i=0;i<accepted.size() && i<rendermax;i++)
 				{
 				int ind=accepted.get(i);
 				double chanX=segment.getAsFloat(ind,viewsettings.indexX);
@@ -103,7 +106,7 @@ public class ViewRenderer
 		drawLines(pm, trans, labelX, labelY);
 		
 		//Draw all gates
-		drawgatesRecursive(pm, trans, viewsettings.gate, viewsettings);
+		drawgatesRecursive(pm, trans, viewsettings.gate, viewsettings, handles);
 		}
 
 	
@@ -139,15 +142,15 @@ public class ViewRenderer
 	/**
 	 * Draw all gates recursively
 	 */
-	private static void drawgatesRecursive(QPainter pm, ViewTransform trans, Gate parent, ViewSettings viewsettings)
+	private static void drawgatesRecursive(QPainter pm, ViewTransform trans, Gate parent, ViewSettings viewsettings, LinkedList<GateHandle> handles)
 		{
 		for(Gate g:parent.children)
 			{
 			pm.setPen(QColor.fromRgb(255,0,0));
 			pm.setBrush(new QBrush(QColor.transparent));
-			GateRenderer rend=GateHandler.getGateRenderer(g);
-			rend.render(g, pm, trans, viewsettings);
-			drawgatesRecursive(pm, trans, g, viewsettings);
+			GateRenderer rend=GateRendererManager.getGateRenderer(g);
+			rend.render(g, pm, trans, viewsettings, handles);
+			drawgatesRecursive(pm, trans, g, viewsettings, handles);
 			}
 		
 		}

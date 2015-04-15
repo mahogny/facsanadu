@@ -7,10 +7,12 @@ import facsanadu.gates.GateRoot;
 
 /**
  * 
+ * Manager of gate renderers
+ * 
  * @author Johan Henriksson
  *
  */
-public class GateHandler
+public class GateRendererManager
 	{
 	/**
 	 * Get a suitable renderer for the gate

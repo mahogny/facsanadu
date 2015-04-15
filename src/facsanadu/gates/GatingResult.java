@@ -12,7 +12,6 @@ import facsanadu.data.Dataset;
  */
 public class GatingResult
 	{
-
 	public HashMap<Gate, IntArray> acceptedFromGate=new HashMap<Gate, IntArray>();
 	
 	GateSet gating;
@@ -22,12 +21,24 @@ public class GatingResult
 	 */
 	public void perform(GateSet gating, Dataset segment)
 		{
+		boolean approximate=true;
+		
+		
 		this.gating=gating;
 		Gate g=gating.getRootGate();
-		IntArray res=new IntArray(segment.getNumObservations());
-		for(int i=0;i<segment.getNumObservations();i++)
-			if(g.classify(segment.eventsFloat.get(i)))
-				res.add(i);
+		int n=segment.getNumObservations();
+		
+		int inc=1;
+		if(approximate && n>10000)
+			{
+			inc=n/10000;
+			}
+		
+		
+		IntArray res=new IntArray(n);
+		for(int i=0;i<n;i+=inc)
+			if(g.classify(segment.getAsFloat(i)))
+				res.addUnchecked(i);
 		acceptedFromGate.put(g, res);
 		for(Gate child:g.children)
 			dogate(g,child, segment);
