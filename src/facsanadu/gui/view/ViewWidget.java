@@ -169,7 +169,7 @@ public class ViewWidget extends QWidget
 						setchans.add(set);
 						
 						CallbackSetHistogram sethist=new CallbackSetHistogram();
-						set.chanid=i;
+						sethist.chanid=i;
 						menuHist.addAction(ci.formatName(), sethist, "actionSet()");
 						setchans.add(sethist);
 						}
@@ -282,7 +282,7 @@ public class ViewWidget extends QWidget
 		int chanid;
 		public void actionSet()
 			{
-			viewsettings.indexX=viewsettings.indexY=chanid;
+			viewsettings.setHistogram(chanid);
 			mw.handleEvent(new EventViewsChanged());
 			}
 		}
