@@ -1,5 +1,6 @@
 package facsanadu.io;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -330,7 +331,7 @@ public class CopasIO
 		{
 		TreeMap<Integer,CopasEvent> profiles=new TreeMap<Integer, CopasEvent>();
 		
-		DataInputStream is=new DataInputStream(new FileInputStream(f));
+		DataInputStream is=new DataInputStream(new BufferedInputStream(new FileInputStream(f)));
 		
 		// 1-Extinction, 2- Flu1, 3- Flu2, 4- Flu3
 		String[] chanName=new String[]{"EXT","Flu1","Flu2","Flu3"};

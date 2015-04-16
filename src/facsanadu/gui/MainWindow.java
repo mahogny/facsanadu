@@ -172,11 +172,10 @@ public class MainWindow extends QMainWindow
 		/// Load all files from directory
 		try
 			{
-			File getfrom=new File("/home/mahogny/javaproj/quickfacs/test5");
+			File getfrom=new File("/home/mahogny/javaproj/quickfacs/test4");
 			if(getfrom.exists())
 				for(File path:getfrom.listFiles())
-					if(path.getName().endsWith(".fcs"))
-//					if(CopasIO.isCopasFile(path) && path.getName().endsWith(".dat"))
+					if(path.getName().endsWith(".fcs") || path.getName().endsWith(".dat"))
 						loadFile(path);
 			}
 		catch (IOException e)
