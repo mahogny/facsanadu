@@ -59,7 +59,7 @@ linuxport: linuxport32 linuxport64 ubuntuport
 winportjre: jars
 	rm -Rf ../release/winjre/
 	mkdir -p ../release/winjre/facsanadu
-	cd ..; cp ports/win/starter/facsanadu_bundledjre.exe release/winjre/facsanadu/facsanadu.exe
+	cd ..; cp ports/win/starter/facsanadu_bundledjre.exe release/winjre/facsanadu/start.exe
 	cd ..; cp ports/win/installer/* release/winjre/
 	cd ..; cp facsanadu.jar lib/*jar lib/win32/*jar release/winjre/facsanadu/
 	#cp -r translations ../release/winjre/facsanadu/

@@ -3,47 +3,34 @@ package facsanadu.gui;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedList;
 
 import com.trolltech.qt.core.QCoreApplication;
-import com.trolltech.qt.core.QModelIndex;
 import com.trolltech.qt.core.QUrl;
-import com.trolltech.qt.core.Qt;
 import com.trolltech.qt.core.Qt.ScrollBarPolicy;
-import com.trolltech.qt.gui.QAbstractItemView.SelectionBehavior;
-import com.trolltech.qt.gui.QAbstractItemView.SelectionMode;
 import com.trolltech.qt.gui.QApplication;
 import com.trolltech.qt.gui.QFileDialog;
 import com.trolltech.qt.gui.QFileDialog.AcceptMode;
 import com.trolltech.qt.gui.QFileDialog.FileMode;
 import com.trolltech.qt.gui.QHBoxLayout;
-import com.trolltech.qt.gui.QHeaderView.ResizeMode;
-import com.trolltech.qt.gui.QLineEdit.EchoMode;
 import com.trolltech.qt.gui.QMainWindow;
 import com.trolltech.qt.gui.QMenu;
 import com.trolltech.qt.gui.QMenuBar;
-import com.trolltech.qt.gui.QPushButton;
 import com.trolltech.qt.gui.QResizeEvent;
 import com.trolltech.qt.gui.QScrollArea;
 import com.trolltech.qt.gui.QSizePolicy.Policy;
 import com.trolltech.qt.gui.QDropEvent;
-import com.trolltech.qt.gui.QInputDialog;
 import com.trolltech.qt.gui.QTabWidget;
-import com.trolltech.qt.gui.QTableWidget;
-import com.trolltech.qt.gui.QTableWidgetItem;
-import com.trolltech.qt.gui.QTreeWidget;
-import com.trolltech.qt.gui.QTreeWidgetItem;
 import com.trolltech.qt.gui.QVBoxLayout;
 import com.trolltech.qt.gui.QWidget;
 
 import facsanadu.data.Dataset;
 import facsanadu.gates.Gate;
+import facsanadu.gui.events.EventDatasetsChanged;
 import facsanadu.gui.events.EventGatesChanged;
 import facsanadu.gui.events.EventGatesMoved;
 import facsanadu.gui.events.EventViewsChanged;
-import facsanadu.gui.events.QuickfacsEvent;
+import facsanadu.gui.events.FacsanaduEvent;
 import facsanadu.gui.lengthprofile.ProfilePane;
 import facsanadu.gui.qt.QTutil;
 import facsanadu.gui.resource.ImgResource;
@@ -62,20 +49,19 @@ import facsanadu.io.FacsanaduXML;
 public class MainWindow extends QMainWindow
 	{
 	public FacsanaduProject project=new FacsanaduProject();
-		
-	private QTableWidget tableDatasets=new QTableWidget()
-		{
-		};
-	private QTableWidget tableViews=new QTableWidget();	
-	private QTreeWidget treeGates=new QTreeWidget();
+
+	public File lastDirectory=new File(".");
+
 	private QTabWidget tabwidget=new QTabWidget();
 	private QMenuBar menubar=new QMenuBar();
+	private GatesListWidget gatesw=new GatesListWidget(this);
+	private ViewsListWidget viewsw=new ViewsListWidget(this);
+	private DatasetListWidget datasetsw=new DatasetListWidget(this);
 	
 	private GateViewsPane paneViews;
 	private GateStatsPane paneStats;
 	private ProfilePane paneProfile;
 	
-	private File lastDirectory=new File(".");
 	private File currentProjectFile=null;
 	
 	private boolean isUpdating=false;
@@ -110,64 +96,15 @@ public class MainWindow extends QMainWindow
 		mExport.addAction(tr("Statistics"), this, "actionExportStatistics()");
 
 		
-		tableDatasets.setColumnCount(1);
-		tableDatasets.verticalHeader().hide();
-		tableDatasets.setHorizontalHeaderLabels(Arrays.asList(tr("Dataset")));
-		tableDatasets.setSelectionBehavior(SelectionBehavior.SelectRows);
-		tableDatasets.horizontalHeader().setResizeMode(ResizeMode.ResizeToContents);
-		tableDatasets.horizontalHeader().setStretchLastSection(true);		
-		tableDatasets.selectionModel().selectionChanged.connect(this,"dothelayout()");
 
-		tableViews.verticalHeader().hide();
-		tableViews.setSelectionBehavior(SelectionBehavior.SelectRows);
-		tableViews.horizontalHeader().setResizeMode(ResizeMode.ResizeToContents);
-		tableViews.horizontalHeader().setStretchLastSection(true);		
-		tableViews.selectionModel().selectionChanged.connect(this,"dothelayout()");
-	
-		treeGates.setHeaderLabels(Arrays.asList(tr("Gate")));
-		treeGates.setSelectionBehavior(SelectionBehavior.SelectRows);
-		treeGates.setSelectionMode(SelectionMode.MultiSelection);
-		treeGates.selectionModel().selectionChanged.connect(this,"dothelayout()");
-
-		QPushButton bAddDataset=new QPushButton(tr("Add dataset"));
-		QPushButton bSelectAllDataset=new QPushButton(tr("Select all"));
-		QPushButton bRemoveDataset=new QPushButton(tr("Remove dataset"));
-		
-		QPushButton bSelectAllGates=new QPushButton(tr("Select all"));
-		QPushButton bRenameGate=new QPushButton(tr("Rename gate"));
-		QPushButton bRemoveGate=new QPushButton(tr("Remove gate"));
-		
-		QPushButton bSelectAllViews=new QPushButton(tr("Select all"));
-		QPushButton bNewView=new QPushButton(tr("New view"));
-		QPushButton bRemoveView=new QPushButton(tr("Remove view"));
-
-
-		bNewView.clicked.connect(this,"actionNewView()");
-		bRemoveView.clicked.connect(this,"actionRemoveView()");
-
-		bRenameGate.clicked.connect(this,"actionRenameGate()");
-
-		bAddDataset.clicked.connect(this,"actionAddDatasets()");
-		bRemoveDataset.clicked.connect(this,"actionRemoveDataset()");
-		bRemoveGate.clicked.connect(this,"actionRemoveGates()");
-
-		bSelectAllDataset.clicked.connect(this,"actionSelectAllDataset()");
-		bSelectAllViews.clicked.connect(this,"actionSelectAllViews()");
-		bSelectAllGates.clicked.connect(this,"actionSelectAllGates()");
 
 		QVBoxLayout layLeft=new QVBoxLayout();
-		layLeft.addWidget(tableDatasets);
-		layLeft.addLayout(QTutil.layoutHorizontal(bAddDataset, bSelectAllDataset, bRemoveDataset));
-		layLeft.addWidget(tableViews);
-		layLeft.addLayout(QTutil.layoutHorizontal(bSelectAllViews, bNewView, bRemoveView));
-		layLeft.addWidget(treeGates);
-		layLeft.addLayout(QTutil.layoutHorizontal(bSelectAllGates, bRenameGate, bRemoveGate));
+		layLeft.addLayout(datasetsw);
+		layLeft.addLayout(viewsw);
+		layLeft.addLayout(gatesw);
 
-		actionNewView();
+		viewsw.actionNewView();
 
-		treeGates.setSizePolicy(Policy.Minimum, Policy.Expanding);
-		tableDatasets.setSizePolicy(Policy.Minimum, Policy.Expanding);
-		tableViews.setSizePolicy(Policy.Minimum, Policy.Expanding);
 		
 		/// Load all files from directory
 		try
@@ -206,12 +143,7 @@ public class MainWindow extends QMainWindow
 		setCentralWidget(cent);
 
 		
-
-		updateViewsList();
-		updateDatasetList();
-		updateGatesList();
-		dothelayout();
-
+		updateall();
 		setAcceptDrops(true);
 		show();
 		}
@@ -230,9 +162,9 @@ public class MainWindow extends QMainWindow
 		{
 		boolean wasUpdating=isUpdating;
 		isUpdating=true;
-		updateViewsList();
-		updateGatesList();
-		updateDatasetList();
+		viewsw.updateViewsList();
+		gatesw.updateGatesList();
+		datasetsw.updateDatasetList();
 		isUpdating=wasUpdating;
 		dothelayout();
 		}
@@ -304,156 +236,10 @@ public class MainWindow extends QMainWindow
 		}
 
 	
-	/**
-	 * Action: Remove selected datasets
-	 */
-	public void actionRemoveDataset()
-		{
-		project.datasets.removeAll(getSelectedDatasets());
-		updateDatasetList();
-		dothelayout();
-		}
-
-	
-	public void actionSelectAllDataset()
-		{
-		tableDatasets.selectAll();
-		}
-	public void actionSelectAllViews()
-		{
-		tableViews.selectAll();
-		}
-	public void actionSelectAllGates()
-		{
-		treeGates.selectAll();
-		}
-
-	public void actionRenameGate()
-		{
-		Gate g=getCurrentGate();
-		if(g!=null && g!=project.gateset.getRootGate())
-			{
-			String newname=QInputDialog.getText(this, tr("Rename gate"), tr("New name:"), EchoMode.Normal, g.name);
-			if(!newname.equals("") && (newname.equals(g.name) || !project.gateset.getGateNames().contains(newname)))
-				{
-				g.name=newname;
-				handleEvent(new EventGatesChanged());
-				}
-			else
-				QTutil.showNotice(this, tr("Invalid name"));
-			}
 		
-		}
 	
-	/**
-	 * Action: Add/import datasets
-	 */
-	public void actionAddDatasets()
-		{
-		QFileDialog dia=new QFileDialog();
-		dia.setFileMode(FileMode.ExistingFiles);
-		dia.setDirectory(lastDirectory.getAbsolutePath());
-		dia.setNameFilter(tr(tr("FCS files")+" (*.fcs *.txt *.lmd)"));
-		if(dia.exec()!=0)
-			{
-			try
-				{
-				for(String sf:dia.selectedFiles())
-					{
-					File f=new File(sf);
-					lastDirectory=f.getParentFile();
-					loadFile(f);
-					}
-				}
-			catch (IOException e)
-				{
-				QTutil.showNotice(this, e.getMessage());
-				e.printStackTrace();
-				}
-			}		
-		updateDatasetList();
-		}
-	
-	
-	/**
-	 * Action: Remove selected gates
-	 */
-	public void actionRemoveGates()
-		{
-		Collection<Gate> gates=getSelectedGates();
-		gates.remove(project.gateset.getRootGate());
-		//Should include gates recursively!
-
-		for(Gate g:gates)
-			g.detachParent();
-
-		for(ViewSettings vs:new LinkedList<ViewSettings>(project.views))
-			if(gates.contains(vs.gate))
-				project.views.remove(vs);
-		updateGatesList();
-		updateViewsList();
-		dothelayout();
-		}
-	
-	/**
-	 * Add a new gate
-	 */
-	public void addGate(Gate g)
-		{
-		g.name=project.gateset.getFreeName();
-		Gate parent=getCurrentGate();
-		if(parent==null)
-			parent=project.gateset.getRootGate();
-		parent.attachChild(g);
-		
-		updateGatesList();
-		}
-
-	
-	
-	/**
-	 * Get the currently selected gate or null
-	 */
-	private Gate getCurrentGate()
-		{
-		QTreeWidgetItem it=treeGates.currentItem();
-		if(it!=null)
-			return (Gate)it.data(0,Qt.ItemDataRole.UserRole);
-		else
-			return null;
-		}
 
 
-
-	/**
-	 * Action: Remove selected views
-	 */
-	public void actionRemoveView()
-		{
-		project.views.removeAll(getSelectedViews());
-		updateViewsList();
-		}
-
-	
-	/**
-	 * Action: Create a new view
-	 */
-	public void actionNewView()
-		{
-		ViewSettings vs=new ViewSettings();
-		vs.gate=project.gateset.getRootGate();
-		vs.indexX=0;
-		vs.indexY=1;                                                    
-		if(project.getNumChannels()>vs.indexX)
-			vs.indexX=0;
-		if(project.getNumChannels()>vs.indexY)
-			vs.indexY=0;
-		
-		//autoscale here the first time?
-		
-		project.views.add(vs);
-		updateViewsList();
-		}
 	
 	
 	/**
@@ -505,7 +291,7 @@ public class MainWindow extends QMainWindow
 	public void loadFile(File path) throws IOException
 		{
 		project.addDataset(path);
-		updateDatasetList();
+		handleEvent(new EventDatasetsChanged());
 		}
 
 	
@@ -514,10 +300,7 @@ public class MainWindow extends QMainWindow
 	 */
 	public LinkedList<ViewSettings> getSelectedViews()
 		{
-		LinkedList<ViewSettings> selviews=new LinkedList<ViewSettings>();
-		for(QModelIndex in:tableViews.selectionModel().selectedRows())
-			selviews.add((ViewSettings)tableViews.item(in.row(),0).data(Qt.ItemDataRole.UserRole));
-		return selviews;
+		return viewsw.getSelectedViews();
 		}
 
 	/**
@@ -525,10 +308,7 @@ public class MainWindow extends QMainWindow
 	 */
 	public LinkedList<Dataset> getSelectedDatasets()
 		{
-		LinkedList<Dataset> selviews=new LinkedList<Dataset>();
-		for(QModelIndex in:tableDatasets.selectionModel().selectedRows())
-			selviews.add((Dataset)tableDatasets.item(in.row(),0).data(Qt.ItemDataRole.UserRole));
-		return selviews;
+		return datasetsw.getSelectedDatasets();
 		}
 
 	/**
@@ -536,10 +316,7 @@ public class MainWindow extends QMainWindow
 	 */
 	public LinkedList<Gate> getSelectedGates()
 		{
-		LinkedList<Gate> selviews=new LinkedList<Gate>();
-		for(QTreeWidgetItem it:treeGates.selectedItems())
-			selviews.add((Gate)it.data(0,Qt.ItemDataRole.UserRole));
-		return selviews;
+		return gatesw.getSelectedGates();
 		}
 
 
@@ -554,83 +331,7 @@ public class MainWindow extends QMainWindow
 	
 
 	
-	
-	/**
-	 * Update list with views
-	 */
-	private void updateViewsList()
-		{
-		boolean wasUpdating=isUpdating;
-		isUpdating=true;
-		tableViews.clear(); //clears title?
-		
-		tableViews.setColumnCount(1);
-		tableViews.setHorizontalHeaderLabels(Arrays.asList(tr("View")));
 
-		tableViews.setRowCount(project.views.size());
-		int row=0;
-		for(ViewSettings vs:project.views)
-			{
-			String showname=vs.gate.name+": ";
-			if(!project.datasets.isEmpty())
-				{
-				Dataset ds=project.datasets.get(0);
-				showname+=ds.getChannelInfo().get(vs.indexX).getShortestName()+" / "+ds.getChannelInfo().get(vs.indexY).getShortestName();
-				}
-			
-			
-			QTableWidgetItem it=QTutil.createReadOnlyItem(showname);
-			it.setData(Qt.ItemDataRole.UserRole, vs);
-			tableViews.setItem(row, 0, it);
-			row++;
-			}
-		isUpdating=wasUpdating;
-		}
-	
-	/**
-	 * Update list with datasets
-	 */
-	private void updateDatasetList()
-		{
-		boolean wasUpdating=isUpdating;
-		isUpdating=false;
-		tableDatasets.setRowCount(project.datasets.size());
-		int row=0;
-		for(Dataset ds:project.datasets)
-			{
-			System.out.println(ds.source);
-			QTableWidgetItem it=QTutil.createReadOnlyItem(ds.source.getName());
-			it.setData(Qt.ItemDataRole.UserRole, ds);
-			tableDatasets.setItem(row, 0, it);
-			row++;
-			}
-		isUpdating=wasUpdating;
-		}
-
-	/**
-	 * Update list with gates
-	 */
-	private void updateGatesList()
-		{
-		boolean wasUpdating=isUpdating;
-		isUpdating=false;
-		treeGates.clear();
-		updateGatesListRecursive(null, project.gateset.getRootGate());
-		treeGates.expandAll();
-		isUpdating=wasUpdating;
-		}
-	private void updateGatesListRecursive(QTreeWidgetItem parentItem, Gate g)
-		{
-		QTreeWidgetItem item;
-		if(parentItem==null)
-			item=new QTreeWidgetItem(treeGates);
-		else
-			item=new QTreeWidgetItem(parentItem);
-		item.setData(0,Qt.ItemDataRole.UserRole, g);
-		item.setText(0, g.name);
-		for(Gate child:g.children)
-			updateGatesListRecursive(item, child);
-		}
 
 	
 	/**
@@ -648,16 +349,25 @@ public class MainWindow extends QMainWindow
 	/**
 	 * Event bus
 	 */
-	public void handleEvent(QuickfacsEvent event)
+	public void handleEvent(FacsanaduEvent event)
 		{
 		if(event instanceof EventGatesChanged)
 			{
-			updateGatesList();
+			gatesw.updateGatesList();
 			dothelayout();
 			}
-		else if(event instanceof EventViewsChanged || event instanceof EventGatesMoved)
+		else if(event instanceof EventViewsChanged)
+			{
+			viewsw.updateViewsList(); //just added. problem?
+			dothelayout();
+			}
+		else if(event instanceof EventGatesMoved)
 			{
 			dothelayout();
+			}
+		else if(event instanceof EventDatasetsChanged)
+			{
+			datasetsw.updateDatasetList();
 			}
 		else
 			throw new RuntimeException("!!!");
@@ -702,9 +412,14 @@ public class MainWindow extends QMainWindow
 			}
 		catch (IOException e)
 			{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			}
+		}
+
+
+	public void addGate(Gate g)
+		{
+		gatesw.addGate(g);
 		}
 	
 	}

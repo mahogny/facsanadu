@@ -64,7 +64,7 @@ Section "Dummy Section" SecDummy
   File /r "facsanadu\*.*"  
   File /r "jre\*.*"  
   
-  CreateShortCut "$SMPROGRAMS\FACSanadu.lnk" "$INSTDIR\facsanadu.exe"
+  CreateShortCut "$SMPROGRAMS\FACSanadu.lnk" "$INSTDIR\start.exe"
   
   ;Store installation folder
   WriteRegStr HKCU "Software\FACSanadu" "" $INSTDIR

@@ -24,7 +24,7 @@ import facsanadu.gui.MainWindow;
 import facsanadu.gui.FacsanaduProject;
 import facsanadu.gui.events.EventGatesMoved;
 import facsanadu.gui.events.EventViewsChanged;
-import facsanadu.gui.events.QuickfacsEvent;
+import facsanadu.gui.events.FacsanaduEvent;
 import facsanadu.gui.view.gate.GateHandle;
 import facsanadu.gui.view.tool.ViewTool;
 import facsanadu.gui.view.tool.ViewToolDrawPoly;
@@ -311,7 +311,7 @@ public class ViewWidget extends QWidget
 		return viewsettings.indexY;
 		}
 
-	public void sendEvent(QuickfacsEvent event)
+	public void sendEvent(FacsanaduEvent event)
 		{
 		mw.handleEvent(event);
 		}

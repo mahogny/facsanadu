@@ -1,6 +1,13 @@
 package facsanadu.gui.events;
 
-public class EventViewsChanged implements QuickfacsEvent
+/**
+ * 
+ * Event: The list of views changed
+ * 
+ * @author Johan Henriksson
+ *
+ */
+public class EventViewsChanged implements FacsanaduEvent
 	{
 
 	}

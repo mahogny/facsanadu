@@ -1,6 +1,13 @@
 package facsanadu.gui.events;
 
-public class EventGatesChanged implements QuickfacsEvent
+/**
+ * 
+ * Event: List of gates was changed
+ * 
+ * @author Johan Henriksson
+ *
+ */
+public class EventGatesChanged implements FacsanaduEvent
 	{
 
 	}
