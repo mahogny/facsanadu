@@ -1,4 +1,4 @@
-package facsanadu.gui.view;
+package facsanadu.gui.panes;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -15,6 +15,8 @@ import facsanadu.gates.Gate;
 import facsanadu.gui.MainWindow;
 import facsanadu.gui.FacsanaduProject;
 import facsanadu.gui.qt.QVLabel;
+import facsanadu.gui.view.ViewSettings;
+import facsanadu.gui.view.ViewWidget;
 
 /**
  * 
@@ -23,7 +25,7 @@ import facsanadu.gui.qt.QVLabel;
  * @author Johan Henriksson
  *
  */
-public class GateViewsPane extends QWidget
+public class ViewsMatrix extends QWidget
 	{
 	private QGridLayout layViews=new QGridLayout();
 	private MainWindow mw;
@@ -33,14 +35,15 @@ public class GateViewsPane extends QWidget
 	private ArrayList<ArrayList<ViewWidget>> prevChanWidget=new ArrayList<ArrayList<ViewWidget>>();
 	private boolean orderDataset=false;
 
-
-	public GateViewsPane(MainWindow mw)
+	
+	public ViewsMatrix(MainWindow mw)
 		{
 		this.mw=mw;
-		setStyleSheet("QWidget {background: white;}");
-		setLayout(layViews);
+
 		layViews.setMargin(2);
 		layViews.setSpacing(2);
+		setLayout(layViews);
+		setStyleSheet("QWidget {background: white;}");
 		}
 
 
@@ -195,7 +198,19 @@ public class GateViewsPane extends QWidget
 		//Get the size of one. rescale. then rerender all
 		for(ArrayList<ViewWidget> row:prevChanWidget)
 			for(ViewWidget w:row)
+				{
+				w.maxevents=maxevents;
 				w.render();
+				}
+		}
+
+
+
+	private int maxevents;
+	public void setMaxEvents(int maxevents)
+		{
+		this.maxevents=maxevents;
+		updateViews();
 		}
 
 	}

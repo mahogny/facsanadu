@@ -48,6 +48,14 @@ public class ViewWidget extends QWidget
 	public ViewSettings viewsettings=new ViewSettings();
 
 	LinkedList<GateHandle> handles=new LinkedList<GateHandle>();
+	
+	GateHandle curhandle=null;
+	
+	QPointF pointLast=new QPointF();
+	public int maxevents;
+
+	
+	
 
 	public ViewWidget(MainWindow mw)
 		{
@@ -82,7 +90,7 @@ public class ViewWidget extends QWidget
 		QPainter pm=new QPainter(this);
 		pm.setBrush(new QBrush(QColor.white));
 		pm.drawRect(-5,-5,10000,10000);
-		ViewRenderer.render(viewsettings, dataset, gr, trans, pm, handles, 10000); //how many? TODO
+		ViewRenderer.render(viewsettings, dataset, gr, trans, pm, handles, maxevents); 
 				
 		//Now render handles?
 		for(GateHandle h:handles)
@@ -122,9 +130,6 @@ public class ViewWidget extends QWidget
 			return null;
 		}
 	
-	GateHandle curhandle=null;
-	
-	QPointF pointLast=new QPointF();
 	
 	@Override
 	protected void mousePressEvent(QMouseEvent event)

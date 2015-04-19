@@ -52,6 +52,8 @@ public class ImgResource
 	public static QPixmap moveRight=getIcon("tango-go-next.png");
 	public static QPixmap moveLeft=getIcon("tango-go-previous.png");
 
+	public static QPixmap delete=getIcon("tango-trash.png");
+
 	
 	
 	public static void setWindowIcon(QWidget w)

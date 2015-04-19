@@ -1,4 +1,4 @@
-package facsanadu.gui;
+package facsanadu.gui.panes;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +21,7 @@ import facsanadu.data.Dataset;
 import facsanadu.gates.Gate;
 import facsanadu.gates.GatingResult;
 import facsanadu.gates.IntArray;
+import facsanadu.gui.MainWindow;
 import facsanadu.gui.qt.QTableWidgetWithCSVcopy;
 import facsanadu.gui.qt.QTutil;
 

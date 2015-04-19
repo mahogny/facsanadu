@@ -8,6 +8,8 @@ import com.trolltech.qt.gui.QPainter;
 import com.trolltech.qt.gui.QPixmap;
 import com.trolltech.qt.gui.QSizePolicy.Policy;
 
+import facsanadu.gates.GateColor;
+
 /**
  * 
  * Combo box: List of colors
@@ -23,7 +25,7 @@ public class QColorCombo extends QComboBox
 
 	public QColorCombo()
 		{
-		setSizePolicy(Policy.MinimumExpanding, Policy.Minimum);
+		setSizePolicy(Policy.Minimum, Policy.Minimum);
 		fillColorCombo();
 		}
 	

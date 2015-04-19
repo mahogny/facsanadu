@@ -7,7 +7,6 @@ import java.util.LinkedList;
 
 import com.trolltech.qt.core.QCoreApplication;
 import com.trolltech.qt.core.QUrl;
-import com.trolltech.qt.core.Qt.ScrollBarPolicy;
 import com.trolltech.qt.gui.QApplication;
 import com.trolltech.qt.gui.QFileDialog;
 import com.trolltech.qt.gui.QFileDialog.AcceptMode;
@@ -17,8 +16,6 @@ import com.trolltech.qt.gui.QMainWindow;
 import com.trolltech.qt.gui.QMenu;
 import com.trolltech.qt.gui.QMenuBar;
 import com.trolltech.qt.gui.QResizeEvent;
-import com.trolltech.qt.gui.QScrollArea;
-import com.trolltech.qt.gui.QSizePolicy.Policy;
 import com.trolltech.qt.gui.QDropEvent;
 import com.trolltech.qt.gui.QTabWidget;
 import com.trolltech.qt.gui.QVBoxLayout;
@@ -32,9 +29,10 @@ import facsanadu.gui.events.EventGatesMoved;
 import facsanadu.gui.events.EventViewsChanged;
 import facsanadu.gui.events.FacsanaduEvent;
 import facsanadu.gui.lengthprofile.ProfilePane;
+import facsanadu.gui.panes.GateStatsPane;
+import facsanadu.gui.panes.ViewsPane;
 import facsanadu.gui.qt.QTutil;
 import facsanadu.gui.resource.ImgResource;
-import facsanadu.gui.view.GateViewsPane;
 import facsanadu.gui.view.GraphExporter;
 import facsanadu.gui.view.ViewSettings;
 import facsanadu.io.FacsanaduXML;
@@ -58,7 +56,7 @@ public class MainWindow extends QMainWindow
 	private ViewsListWidget viewsw=new ViewsListWidget(this);
 	private DatasetListWidget datasetsw=new DatasetListWidget(this);
 	
-	private GateViewsPane paneViews;
+	private ViewsPane paneViews;
 	private GateStatsPane paneStats;
 	private ProfilePane paneProfile;
 	
@@ -78,7 +76,7 @@ public class MainWindow extends QMainWindow
 
 		ImgResource.setWindowIcon(this);
 		
-		paneViews=new GateViewsPane(this);
+		paneViews=new ViewsPane(this);
 		paneStats=new GateStatsPane(this);
 		paneProfile=new ProfilePane(this);
 		
@@ -123,14 +121,8 @@ public class MainWindow extends QMainWindow
 		//loadFile(new File("/ztuff/ztufffromvenus/ztuff/customer/jin/rpt-5/rp5-larva-PMT530-day8-2010-09-11.txt"));
 		
 
-		QScrollArea scrollArea=new QScrollArea();
-		scrollArea.setWidgetResizable(true);
-		scrollArea.setWidget(paneViews);
 		
-		scrollArea.setSizePolicy(Policy.Expanding, Policy.Expanding);
-		scrollArea.setVerticalScrollBarPolicy(ScrollBarPolicy.ScrollBarAlwaysOn);
-		
-		tabwidget.addTab(scrollArea, tr("Graphs"));
+		tabwidget.addTab(paneViews, tr("Graphs"));
 		tabwidget.addTab(paneStats, tr("Statistics"));
 		tabwidget.addTab(paneProfile, tr("Length profiles"));
 

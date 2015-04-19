@@ -15,6 +15,9 @@ public abstract class Gate
 	public Gate parent;
 	public LinkedList<Gate> children=new LinkedList<Gate>();
 	public String name="";
+	public GateColor color=new GateColor();
+	
+	public LinkedList<GateCalc> calculations=new LinkedList<GateCalc>();
 	
 	public abstract boolean classify(double[] obs);
 	public abstract void updateInternal();

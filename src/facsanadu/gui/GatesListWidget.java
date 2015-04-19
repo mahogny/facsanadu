@@ -16,7 +16,9 @@ import com.trolltech.qt.gui.QLineEdit.EchoMode;
 import com.trolltech.qt.gui.QSizePolicy.Policy;
 
 import facsanadu.gates.Gate;
+import facsanadu.gui.colors.QColorCombo;
 import facsanadu.gui.events.EventGatesChanged;
+import facsanadu.gui.events.EventGatesMoved;
 import facsanadu.gui.events.EventViewsChanged;
 import facsanadu.gui.events.FacsanaduEvent;
 import facsanadu.gui.qt.QTutil;
@@ -42,11 +44,10 @@ public class GatesListWidget extends QVBoxLayout
 		this.mw=mw;
 		setMargin(0);
 		
-		treeGates.setHeaderLabels(Arrays.asList(tr("Gate")));
+		treeGates.setHeaderLabels(Arrays.asList(tr("Gate"),tr("Color")));
 		treeGates.setSelectionBehavior(SelectionBehavior.SelectRows);
 		treeGates.setSelectionMode(SelectionMode.MultiSelection);
-		treeGates.selectionModel().selectionChanged.connect(this,"dothelayout()");
-
+		treeGates.selectionModel().selectionChanged.connect(this,"dothelayout()");		
 		treeGates.setSizePolicy(Policy.Minimum, Policy.Expanding);
 
 		QPushButton bSelectAllGates=new QPushButton(tr("Select all"));
@@ -96,12 +97,20 @@ public class GatesListWidget extends QVBoxLayout
 		}
 
 	
+	private interface CallbackColor
+		{
+		public void set();
+		}
+
+	private LinkedList<CallbackColor> cb=new LinkedList<GatesListWidget.CallbackColor>();
+	
 	/**
 	 * Update list with gates
 	 */
 	public void updateGatesList()
 		{
 		boolean wasUpdating=isUpdating;
+		cb.clear();
 		LinkedList<Gate> selgates=getSelectedGates();
 		isUpdating=false;
 		treeGates.clear();
@@ -109,7 +118,7 @@ public class GatesListWidget extends QVBoxLayout
 		treeGates.expandAll();
 		isUpdating=wasUpdating;
 		}
-	private void updateGatesListRecursive(QTreeWidgetItem parentItem, Gate g, LinkedList<Gate> selgates)
+	private void updateGatesListRecursive(QTreeWidgetItem parentItem, final Gate g, LinkedList<Gate> selgates)
 		{
 		QTreeWidgetItem item;
 		if(parentItem==null)
@@ -118,12 +127,29 @@ public class GatesListWidget extends QVBoxLayout
 			item=new QTreeWidgetItem(parentItem);
 		item.setData(0,Qt.ItemDataRole.UserRole, g);
 		item.setText(0, g.name);
+		final QColorCombo combocolor=new QColorCombo();
+		treeGates.setItemWidget(item, 1, combocolor);
+		combocolor.setColor(g.color);
+		CallbackColor cb=new CallbackColor()
+			{
+			public void set()
+				{
+				g.color=combocolor.getCurrentColor();
+				emitEvent(new EventGatesMoved()); //Smaller change?
+				}
+		};
+		this.cb.add(cb);
+		combocolor.currentIndexChanged.connect(cb,"set()");
+		
 		if(selgates.contains(g))
 			item.setSelected(true);
 		for(Gate child:g.children)
 			updateGatesListRecursive(item, child, selgates);
 		}
 
+	
+	
+	
 	/**
 	 * Rename current gate
 	 */
@@ -141,8 +167,7 @@ public class GatesListWidget extends QVBoxLayout
 				}
 			else
 				QTutil.showNotice(mw, tr("Invalid name"));
-			}
-		
+			}		
 		}
 
 
