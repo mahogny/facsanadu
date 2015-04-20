@@ -22,6 +22,13 @@ public abstract class Gate
 	public abstract boolean classify(double[] obs);
 	public abstract void updateInternal();
 
+	private static int idgen=0;
+	private int intid=++idgen;
+	
+	public int getIntID()
+		{
+		return intid;
+		}
 	
 	public void attachChild(Gate g)
 		{

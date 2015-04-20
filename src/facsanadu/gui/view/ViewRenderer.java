@@ -13,6 +13,7 @@ import com.trolltech.qt.gui.QPen;
 import facsanadu.data.ChannelInfo;
 import facsanadu.data.Dataset;
 import facsanadu.gates.Gate;
+import facsanadu.gates.GateColor;
 import facsanadu.gates.GatingResult;
 import facsanadu.gates.IntArray;
 import facsanadu.gui.view.gate.GateHandle;
@@ -80,10 +81,27 @@ public class ViewRenderer
 		{
 		ArrayList<ChannelInfo> chans=segment.getChannelInfo();
 
+		ArrayList<Gate> listgates=gr.getIdGates();
+		int colr[]=new int[listgates.size()];
+		int colg[]=new int[listgates.size()];
+		int colb[]=new int[listgates.size()];
+		for(int i=0;i<listgates.size();i++)
+			{
+			Gate g=listgates.get(i);
+			if(g!=null)
+				{
+				GateColor c=g.color;
+				colr[i]=c.r;
+				colg[i]=c.g;
+				colb[i]=c.b;
+				}
+			}
+		
 		QPen pen=new QPen(QColor.fromRgb(0,0,255));
 		pen.setWidth(2);
 		pm.setPen(pen);
-		
+
+		QColor thecol=new QColor();
 		IntArray accepted=gr.acceptedFromGate.get(viewsettings.gate);
 		if(accepted!=null)
 			for(int i=0;i<accepted.size() && i<rendermax;i++)
@@ -94,6 +112,10 @@ public class ViewRenderer
 				
 				int x=trans.mapFcsToScreenX(chanX);
 				int y=trans.mapFcsToScreenY(chanY);
+				int colid=gr.getGateIntIDForObs(ind);
+				thecol.setRgb(colr[colid], colg[colid], colb[colid]);
+				pen.setColor(thecol);
+				pm.setPen(pen);
 				pm.drawPoint(x, y);			
 				}
 		else

@@ -51,6 +51,18 @@ public class IntArray
 		arr[len]=value;
 		len++;
 		}
+
+	public void set(int id, int value)
+		{
+		if(id>=arr.length)
+			{
+			int newarr[]=new int[id+1];
+			System.arraycopy(arr, 0, newarr, 0, arr.length);
+			arr=newarr;
+			len=arr.length;
+			}
+		arr[id]=value;
+		}
 	
 	
 
