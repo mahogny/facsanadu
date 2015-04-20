@@ -26,8 +26,11 @@ import facsanadu.gui.events.EventGatesMoved;
 import facsanadu.gui.events.EventViewsChanged;
 import facsanadu.gui.events.FacsanaduEvent;
 import facsanadu.gui.view.gate.GateHandle;
+import facsanadu.gui.view.tool.ViewToolChoice;
 import facsanadu.gui.view.tool.ViewTool;
 import facsanadu.gui.view.tool.ViewToolDrawPoly;
+import facsanadu.gui.view.tool.ViewToolDrawRect;
+import facsanadu.gui.view.tool.ViewToolDrawSelect;
 
 /**
  * 
@@ -42,7 +45,7 @@ public class ViewWidget extends QWidget
 	public MainWindow mw;
 
 	private LinkedList<Callback> setchans=new LinkedList<Callback>();
-	private ViewTool tool=new ViewToolDrawPoly(this);
+	private ViewTool tool;
 
 	public ViewTransform trans=new ViewTransform();
 	public ViewSettings viewsettings=new ViewSettings();
@@ -62,6 +65,7 @@ public class ViewWidget extends QWidget
 		this.mw=mw;
 		setMouseTracking(true);
 		setSizePolicy(Policy.Expanding, Policy.Expanding);
+		setTool(ViewToolChoice.SELECT);
 		}
 
 	
@@ -319,6 +323,27 @@ public class ViewWidget extends QWidget
 	public void sendEvent(FacsanaduEvent event)
 		{
 		mw.handleEvent(event);
+		}
+
+
+
+
+	public void setTool(ViewToolChoice t)
+		{
+		if(t==ViewToolChoice.SELECT)
+			tool=new ViewToolDrawSelect(this);
+		else if(t==ViewToolChoice.POLY)
+			tool=new ViewToolDrawPoly(this);
+		else if(t==ViewToolChoice.RECT)
+			tool=new ViewToolDrawRect(this);
+		else
+			throw new RuntimeException("Unsupported tool");
+		}
+
+
+	public void addGate(Gate g)
+		{
+		mw.addGate(viewsettings.gate, g);
 		}
 
 	}

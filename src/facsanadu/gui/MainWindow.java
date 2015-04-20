@@ -35,6 +35,7 @@ import facsanadu.gui.qt.QTutil;
 import facsanadu.gui.resource.ImgResource;
 import facsanadu.gui.view.GraphExporter;
 import facsanadu.gui.view.ViewSettings;
+import facsanadu.gui.view.tool.EventSetViewTool;
 import facsanadu.io.FacsanaduXML;
 
 /**
@@ -115,7 +116,6 @@ public class MainWindow extends QMainWindow
 			}
 		catch (IOException e)
 			{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			}
 		//loadFile(new File("/ztuff/ztufffromvenus/ztuff/customer/jin/rpt-5/rp5-larva-PMT530-day8-2010-09-11.txt"));
@@ -361,6 +361,10 @@ public class MainWindow extends QMainWindow
 			{
 			datasetsw.updateDatasetList();
 			}
+		else if(event instanceof EventSetViewTool)
+			{
+			paneViews.setTool(((EventSetViewTool) event).choice);
+			}
 		else
 			throw new RuntimeException("!!!");
 		}
@@ -409,9 +413,9 @@ public class MainWindow extends QMainWindow
 		}
 
 
-	public void addGate(Gate g)
+	public void addGate(Gate suggestParent, Gate g)
 		{
-		gatesw.addGate(g);
+		gatesw.addGate(suggestParent, g);
 		}
 	
 	}

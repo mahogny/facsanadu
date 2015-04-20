@@ -1,6 +1,7 @@
 package facsanadu.gui.view;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 import facsanadu.data.Dataset;
@@ -172,6 +173,15 @@ public class ViewSettings
 	public void setHistogram(int chanid)
 		{
 		indexX=indexY=chanid;
+		}
+
+
+	public boolean coversXY(int indexX2, int indexY2)
+		{
+		HashSet<Integer> ind=new HashSet<Integer>();
+		ind.add(indexX);
+		ind.add(indexY);
+		return ind.contains(indexX2) && ind.contains(indexY2);
 		}
 	
 	

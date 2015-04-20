@@ -34,6 +34,7 @@ public class ViewToolDrawRect implements ViewTool
 		{
 		isDrawing=null;
 		w.mw.handleEvent(new EventGatesMoved());
+		w.sendEvent(new EventSetViewTool(ViewToolChoice.SELECT));
 		}
 
 	/**
@@ -72,7 +73,7 @@ public class ViewToolDrawRect implements ViewTool
 			grect.updateInternal();
 			isDrawing=grect;
 
-			w.mw.addGate(grect);
+			w.addGate(grect);
 			w.sendEvent(new EventGatesChanged());
 			}
 		

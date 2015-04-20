@@ -14,6 +14,7 @@ import com.trolltech.qt.gui.QSizePolicy.Policy;
 
 import facsanadu.gui.MainWindow;
 import facsanadu.gui.resource.ImgResource;
+import facsanadu.gui.view.tool.ViewToolChoice;
 
 /**
  * 
@@ -28,16 +29,16 @@ public class ViewsPane extends QWidget
 	private QCheckBox cbMaxEvents=new QCheckBox(tr("Show max events:"));
 
 	private ViewsMatrix matrix;
-	
+	private QButtonGroup bgroup=new QButtonGroup(this);
+
+	private QPushButton bGateSelect=new QPushButton(new QIcon(ImgResource.gateSelect),"");
+	private QPushButton bGatePoly=new QPushButton(new QIcon(ImgResource.gatePolygon),"");
+	private QPushButton bGateRect=new QPushButton(new QIcon(ImgResource.gateRect),"");
+
 	public ViewsPane(MainWindow mw)
 		{
 		matrix=new ViewsMatrix(mw);
-	
-		QPushButton bGateSelect=new QPushButton(new QIcon(ImgResource.gateSelect),"");
-		QPushButton bGatePoly=new QPushButton(new QIcon(ImgResource.gatePolygon),"");
-		QPushButton bGateRect=new QPushButton(new QIcon(ImgResource.gateRect),"");
 		
-		QButtonGroup bgroup=new QButtonGroup(this);
 		bgroup.addButton(bGateSelect);
 		bgroup.addButton(bGateRect);
 		bgroup.addButton(bGatePoly);
@@ -46,6 +47,10 @@ public class ViewsPane extends QWidget
 		bGateRect.setCheckable(true);
 		bGateSelect.setCheckable(true);
 		bGateSelect.setChecked(true);
+		
+		bGatePoly.toggled.connect(this,"actionSetTool()");
+		bGateRect.toggled.connect(this,"actionSetTool()");
+		bGateSelect.toggled.connect(this,"actionSetTool()");
 		
 		spMaxEvents.setMinimum(100);
 		spMaxEvents.setMaximum(10000000);
@@ -93,4 +98,24 @@ public class ViewsPane extends QWidget
 		matrix.setMaxEvents(maxevents);
 		}
 
+	public void actionSetTool()
+		{
+		if(bgroup.checkedButton()==bGatePoly)
+			setTool(ViewToolChoice.POLY);
+		else if(bgroup.checkedButton()==bGateSelect)
+			setTool(ViewToolChoice.SELECT);
+		else if(bgroup.checkedButton()==bGateRect)
+			setTool(ViewToolChoice.RECT);
+		}
+
+	public void setTool(ViewToolChoice t)
+		{
+		if(t==ViewToolChoice.SELECT)
+			bGateSelect.setChecked(true);
+		else if(t==ViewToolChoice.POLY)
+			bGatePoly.setChecked(true);
+		else if(t==ViewToolChoice.RECT)
+			bGateRect.setChecked(true);
+		matrix.setTool(t);
+		}
 	}

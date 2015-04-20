@@ -208,13 +208,21 @@ public class GatesListWidget extends QVBoxLayout
 	/**
 	 * Add a new gate
 	 */
-	public void addGate(Gate g)
+	public void addGate(Gate suggestParent, Gate g)
 		{
 		FacsanaduProject project=mw.project;
 		g.name=project.gateset.getFreeName();
 		Gate parent=getCurrentGate();
 		if(parent==null)
 			parent=project.gateset.getRootGate();
+		
+		//It need be a gate beneath the suggested parent!
+		if(suggestParent!=null)
+			{
+			if(!suggestParent.children.contains(parent))
+				parent=suggestParent;
+			}
+		
 		parent.attachChild(g);
 		
 		updateGatesList();

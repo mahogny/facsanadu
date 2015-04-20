@@ -17,6 +17,7 @@ import facsanadu.gui.FacsanaduProject;
 import facsanadu.gui.qt.QVLabel;
 import facsanadu.gui.view.ViewSettings;
 import facsanadu.gui.view.ViewWidget;
+import facsanadu.gui.view.tool.ViewToolChoice;
 
 /**
  * 
@@ -34,7 +35,9 @@ public class ViewsMatrix extends QWidget
 	private LinkedList<QVLabel> headerVertical=new LinkedList<QVLabel>();
 	private ArrayList<ArrayList<ViewWidget>> prevChanWidget=new ArrayList<ArrayList<ViewWidget>>();
 	private boolean orderDataset=false;
+	private int maxevents;
 
+	public ViewToolChoice currentTool=ViewToolChoice.SELECT;
 	
 	public ViewsMatrix(MainWindow mw)
 		{
@@ -144,6 +147,7 @@ public class ViewsMatrix extends QWidget
 				{
 				int col=onerow.size();
 				ViewWidget lab=new ViewWidget(mw);
+				lab.setTool(currentTool);
 				lab.setSizePolicy(Policy.Expanding, Policy.Expanding);
 				lab.setMinimumHeight(200);
 				lab.setMinimumWidth(200);
@@ -206,11 +210,18 @@ public class ViewsMatrix extends QWidget
 
 
 
-	private int maxevents;
 	public void setMaxEvents(int maxevents)
 		{
 		this.maxevents=maxevents;
 		updateViews();
 		}
 
+	
+	public void setTool(ViewToolChoice choice)
+		{
+		currentTool=choice;
+		for(ArrayList<ViewWidget> row:prevChanWidget)
+			for(ViewWidget w:row)
+				w.setTool(currentTool);
+		}
 	}

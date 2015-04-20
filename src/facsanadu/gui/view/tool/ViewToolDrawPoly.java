@@ -47,7 +47,7 @@ public class ViewToolDrawPoly implements ViewTool
 				g.indexX=w.getIndexX();
 				g.indexY=w.getIndexY();
 				isDrawing=g;
-				w.mw.addGate(g);
+				w.addGate(g);
 				}
 			g.addPoint(p.x(), p.y());
 			if(justcreated)
@@ -96,6 +96,7 @@ public class ViewToolDrawPoly implements ViewTool
 			{
 			isDrawing.removeRedundantPoints();
 			isDrawing=null;
+			w.sendEvent(new EventSetViewTool(ViewToolChoice.SELECT));
 			}
 		}
 
