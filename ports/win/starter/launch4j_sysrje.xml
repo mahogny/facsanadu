@@ -1,14 +1,14 @@
 <launch4jConfig>
   <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>facscanadu.jar</jar>
+  <jar>facsanadu.jar</jar>
   <outfile>/home/mahogny/javaproj/quickfacs/ports/win/starter/facsanadu_sysjre.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir></chdir>
   <priority>normal</priority>
   <downloadUrl>http://java.com/download</downloadUrl>
-  <supportUrl>http://www.ecobima.com/labstory/</supportUrl>
+  <supportUrl>http://www.facsanadu.org</supportUrl>
   <stayAlive>false</stayAlive>
   <manifest></manifest>
   <icon>/home/mahogny/javaproj/quickfacs/ports/win/starter/facsanadu.ico</icon>

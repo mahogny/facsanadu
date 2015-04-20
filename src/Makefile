@@ -11,6 +11,7 @@ jars:
 	*/*/*.class \
 	*/*/*/*.class \
 	*/*/*/*/*.class \
+	*/*/*/*.txt \
 	*/*/*/*.png
 
 ############################################################################################
@@ -68,7 +69,17 @@ winportjre: jars
 	cd ../release/winjre; mv install.exe ../facsanadu_winjre.exe
 
 
-winport: winportjre # winport32 winport64 winportjre
+winportzip: jars
+	rm -Rf ../release/facsanadu_win/
+	mkdir -p ../release/facsanadu_win
+	cd ..; cp ports/win/starter/facsanadu_bundledjre.exe release/facsanadu_win/facsanadu.exe
+	cd ..; cp facsanadu.jar lib/*jar lib/win32/*jar release/facsanadu_win/
+	cd ..; cp -r ../support_programs/jre/* release/facsanadu_win/
+	cd ../release/; zip -r facsanadu_win facsanadu_win
+
+
+
+winport: winportzip # winportjre # winport32 winport64 winportjre
 
 
 ############################################################################################
@@ -92,7 +103,7 @@ cleanports:
 
 upload:
 #	cd ../release; scp *.dmg *.zip *.deb facsanadu_winjre.exe qtversion.txt mahogny@www.endrov.net:/home/mahogny/hp/facsanadu
-	cd ../release; scp *.dmg *.zip *.deb facsanadu_winjre.exe qtversion.txt 177655_mahogny@ssh.binero.se:/storage/content/55/177655/facsanadu.org/public_html/release/
+	cd ../release; scp *.dmg *.zip *.deb qtversion.txt 177655_mahogny@ssh.binero.se:/storage/content/55/177655/facsanadu.org/public_html/release/
 
 uploadwin:
 	cd ../release; scp *.exe 177655_mahogny@ssh.binero.se:/storage/content/55/177655/facsanadu.se/public_html/release/

@@ -62,7 +62,9 @@ Section "Dummy Section" SecDummy
 ;  CopyFiles files\*.* $INSTDIR
 
   File /r "facsanadu\*.*"  
+  IfErrors FileError
   File /r "jre\*.*"  
+  IfErrors FileError
   
   CreateShortCut "$SMPROGRAMS\FACSanadu.lnk" "$INSTDIR\start.exe"
   
@@ -71,6 +73,15 @@ Section "Dummy Section" SecDummy
 
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
+
+Goto FileEnd
+
+  FileError:
+  DetailPrint "Could not install some files"
+  SetDetailsView show
+  MessageBox MB_OK|MB_ICONSTOP|MB_TOPMOST "Could not install some files"
+  Abort
+  FileEnd:
 
 SectionEnd
 
