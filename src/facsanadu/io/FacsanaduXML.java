@@ -83,6 +83,9 @@ public class FacsanaduXML
 			{
 			Element ge=new Element("gate");
 			ge.setAttribute("name",g.name);
+			ge.setAttribute("colr",""+g.color.r);
+			ge.setAttribute("colg",""+g.color.g);
+			ge.setAttribute("colb",""+g.color.b);
 			String type=null;
 			if(g instanceof GateRect)
 				{
@@ -158,11 +161,12 @@ public class FacsanaduXML
 									epoint.getAttribute("x").getDoubleValue(),
 									epoint.getAttribute("y").getDoubleValue());
 						}
-						
-					
 					if(g==null)
 						throw new IOException("Unknown gate type "+type);
 					g.name=one.getAttributeValue("name");
+					g.color.r=one.getAttribute("colr").getIntValue();
+					g.color.g=one.getAttribute("colg").getIntValue();
+					g.color.b=one.getAttribute("colb").getIntValue();
 					parent.attachChild(g);
 					g.updateInternal();
 					
