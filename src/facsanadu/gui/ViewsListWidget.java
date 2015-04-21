@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.trolltech.qt.core.QModelIndex;
 import com.trolltech.qt.core.Qt;
+import com.trolltech.qt.gui.QItemSelectionModel.SelectionFlag;
 import com.trolltech.qt.gui.QPushButton;
 import com.trolltech.qt.gui.QTableWidget;
 import com.trolltech.qt.gui.QTableWidgetItem;
@@ -105,14 +106,17 @@ public class ViewsListWidget extends QVBoxLayout
 			if(!project.datasets.isEmpty())
 				{
 				Dataset ds=project.datasets.get(0);
-				showname+=ds.getChannelInfo().get(vs.indexX).getShortestName()+" / "+ds.getChannelInfo().get(vs.indexY).getShortestName();
+				if(vs.indexX==vs.indexY)
+					showname+=ds.getChannelInfo().get(vs.indexX).getShortestName();
+				else
+					showname+=ds.getChannelInfo().get(vs.indexX).getShortestName()+" / "+ds.getChannelInfo().get(vs.indexY).getShortestName();
 				}
 			
 			QTableWidgetItem it=QTutil.createReadOnlyItem(showname);
 			it.setData(Qt.ItemDataRole.UserRole, vs);
 			tableViews.setItem(row, 0, it);
 			if(selviews.contains(vs))
-				tableViews.selectRow(row);
+				tableViews.selectionModel().select(tableViews.model().index(row, 0), SelectionFlag.Rows, SelectionFlag.Select);
 			row++;
 			}
 		

@@ -27,7 +27,7 @@ public class Histogram
 	public void countEvent(double x)
 		{
 		double bin=numbin*(x-from)/(to-from);		
-		if(bin==numbin)
+		if(bin>=numbin)
 			{
 			bin=numbin-1;
 			}
