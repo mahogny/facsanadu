@@ -11,6 +11,7 @@ import com.trolltech.qt.gui.QApplication;
 import com.trolltech.qt.gui.QFileDialog;
 import com.trolltech.qt.gui.QFileDialog.AcceptMode;
 import com.trolltech.qt.gui.QFileDialog.FileMode;
+import com.trolltech.qt.gui.QDesktopServices;
 import com.trolltech.qt.gui.QHBoxLayout;
 import com.trolltech.qt.gui.QMainWindow;
 import com.trolltech.qt.gui.QMenu;
@@ -41,7 +42,7 @@ import facsanadu.io.FacsanaduXML;
 
 /**
  * 
- * Main window for this software
+ * The main window
  * 
  * @author Johan Henriksson
  *
@@ -95,8 +96,10 @@ public class MainWindow extends QMainWindow
 		mExport.addAction(tr("Graphs"), this, "actionExportGraphs()");
 		mExport.addAction(tr("Statistics"), this, "actionExportStatistics()");
 
-		
-
+		menubar.addSeparator();
+		QMenu mHelp=menubar.addMenu(tr("Help"));
+		mHelp.addAction(tr("About"), this, "actionAbout()");
+		mHelp.addAction(tr("Website"), this, "actionWebsite()");
 
 		QVBoxLayout layLeft=new QVBoxLayout();
 		layLeft.addLayout(datasetsw);
@@ -151,6 +154,9 @@ public class MainWindow extends QMainWindow
 		updateall();
 		}
 	
+	/**
+	 * Update all widgets
+	 */
 	private void updateall()
 		{
 		boolean wasUpdating=isUpdating;
@@ -162,7 +168,9 @@ public class MainWindow extends QMainWindow
 		dothelayout();
 		}
 	
-
+	/**
+	 * Open a project
+	 */
 	public void actionOpenProject()
 		{
 		QFileDialog dia=new QFileDialog();
@@ -279,7 +287,6 @@ public class MainWindow extends QMainWindow
 	
 	/**
 	 * Load one file
-	 * @throws IOException 
 	 */
 	public void loadFile(File path) throws IOException
 		{
@@ -370,8 +377,10 @@ public class MainWindow extends QMainWindow
 			throw new RuntimeException("!!!");
 		}
 
-	
-	@Override
+
+	/**
+	 * Event: Widget resized
+	 */
 	protected void resizeEvent(QResizeEvent e)
 		{
 		super.resizeEvent(e);
@@ -389,13 +398,18 @@ public class MainWindow extends QMainWindow
 			}
 		}
 	
+	/**
+	 * Event: User drags something onto widget
+	 */
 	protected void dragEnterEvent(com.trolltech.qt.gui.QDragEnterEvent event) 
 		{
 	   if(event.mimeData().hasFormat("text/uri-list"))
        event.acceptProposedAction();
 		}
 
-	@Override
+	/**
+	 * Event: User drops MIME onto widget
+	 */
 	protected void dropEvent(QDropEvent event)
 		{
 		try
@@ -413,16 +427,35 @@ public class MainWindow extends QMainWindow
 			}
 		}
 
-
+	/**
+	 * Add a gate with a suggested parent
+	 */
 	public void addGate(Gate suggestParent, Gate g)
 		{
 		gatesw.addGate(suggestParent, g);
 		}
 
-
+	/**
+	 * Get currently selected measures
+	 */
 	public LinkedList<GateMeasure> getSelectedMeasures()
 		{
 		return gatesw.getSelectedMeasures();
 		}
 	
+	/**
+	 * Show About-information
+	 */
+	public void actionAbout()
+		{
+		new DialogAbout().exec();
+		}
+	
+	/**
+	 * Open up website
+	 */
+	public void actionWebsite()
+		{
+		QDesktopServices.openUrl(new QUrl("http://www.facsanadu.org"));
+		}
 	}
