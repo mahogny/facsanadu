@@ -169,19 +169,16 @@ public class ViewWidget extends QWidget
 				for(int i=0;i<chans.size();i++)
 					{
 					ChannelInfo ci=chans.get(i);
-					if(!ci.isProfile)
-						{
-						CallbackSetChannel set=new CallbackSetChannel();
-						set.chanid=i;
-						set.forx=lastwasx;
-						menu2.addAction(ci.formatName(), set, "actionSet()");
-						setchans.add(set);
-						
-						CallbackSetHistogram sethist=new CallbackSetHistogram();
-						sethist.chanid=i;
-						menuHist.addAction(ci.formatName(), sethist, "actionSet()");
-						setchans.add(sethist);
-						}
+					CallbackSetChannel set=new CallbackSetChannel();
+					set.chanid=i;
+					set.forx=lastwasx;
+					menu2.addAction(ci.formatName(), set, "actionSet()");
+					setchans.add(set);
+					
+					CallbackSetHistogram sethist=new CallbackSetHistogram();
+					sethist.chanid=i;
+					menuHist.addAction(ci.formatName(), sethist, "actionSet()");
+					setchans.add(sethist);
 					}
 				
 

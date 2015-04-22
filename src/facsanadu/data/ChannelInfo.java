@@ -11,7 +11,6 @@ public class ChannelInfo
 	{
 	public String label;
 	public String name;
-	public boolean isProfile;
 	
 	public String formatName()
 		{

@@ -21,6 +21,7 @@ import facsanadu.data.Dataset;
 import facsanadu.gates.Gate;
 import facsanadu.gates.GatingResult;
 import facsanadu.gates.IntArray;
+import facsanadu.gates.measure.GateMeasure;
 import facsanadu.gui.MainWindow;
 import facsanadu.gui.qt.QTableWidgetWithCSVcopy;
 import facsanadu.gui.qt.QTutil;
@@ -72,14 +73,15 @@ public class GateStatsPane extends QWidget
 
 
 		LinkedList<Gate> listGates=mw.getSelectedGates();
+		LinkedList<GateMeasure> listCalc=mw.getSelectedMeasures();
 		LinkedList<Dataset> listDatasets=mw.getSelectedDatasets();
 
-		int perg=0;
+		int perGateNumStat=0;
 		if(cbShowParent.isChecked())
-			perg++;
+			perGateNumStat++;
 		if(cbShowTotal.isChecked())
-			perg++;
-		tableStats.setColumnCount(listGates.size()*perg+1);
+			perGateNumStat++;
+		tableStats.setColumnCount(listGates.size()*perGateNumStat + listCalc.size() + 1);
 		LinkedList<String> header=new LinkedList<String>();
 		header.add(tr("Dataset"));
 		for(Gate g:listGates)
@@ -88,6 +90,10 @@ public class GateStatsPane extends QWidget
 				header.add(g.name+ " (parent)");
 			if(cbShowTotal.isChecked())
 				header.add(g.name+" (total)");
+			}
+		for(GateMeasure calc:listCalc)
+			{
+			header.add(calc.gate.name+"/"+calc.getDesc(mw.project));
 			}
 		
 		
@@ -134,6 +140,17 @@ public class GateStatsPane extends QWidget
 					}
 				}
 
+			for(int i=0;i<listCalc.size();i++)
+				{
+				GateMeasure calc=listCalc.get(i);
+				
+				Double v=gr.getCalcResult(calc);
+				QTableWidgetItem it=QTutil.createReadOnlyItem(v!=null ? ""+v : tr("N/A"));
+				it.setData(Qt.ItemDataRole.UserRole, v);
+				tableStats.setItem(row, curcol, it);
+				curcol++;
+				}
+			
 			QTableWidgetItem it=QTutil.createReadOnlyItem(dataset.source.getName());
 			tableStats.setItem(row, 0, it);
 			}

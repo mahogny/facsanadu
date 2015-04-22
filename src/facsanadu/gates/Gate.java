@@ -1,6 +1,9 @@
 package facsanadu.gates;
 
+import java.util.Collection;
 import java.util.LinkedList;
+
+import facsanadu.gates.measure.GateMeasure;
 
 /**
  * 
@@ -17,7 +20,7 @@ public abstract class Gate
 	public String name="";
 	public GateColor color=new GateColor();
 	
-	public LinkedList<GateCalc> calculations=new LinkedList<GateCalc>();
+	LinkedList<GateMeasure> calculations=new LinkedList<GateMeasure>();
 	
 	public abstract boolean classify(double[] obs);
 	public abstract void updateInternal();
@@ -36,6 +39,12 @@ public abstract class Gate
 		g.parent=this;
 		}
 	
+	public void attachMeasure(GateMeasure calc)
+		{
+		calc.gate=this;
+		calculations.add(calc);
+		}
+	
 	public void setParent(Gate parent)
 		{
 		this.parent=parent;
@@ -46,5 +55,16 @@ public abstract class Gate
 		{
 		parent.children.remove(this);
 		parent=null;
+		}
+	
+	public Collection<GateMeasure> getMeasures()
+		{
+		return calculations;
+		}
+	
+	public void removeMeasure(GateMeasure calc)
+		{
+		calculations.remove(calc);
+		calc.gate=null;
 		}
 	}

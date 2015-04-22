@@ -16,6 +16,7 @@ import com.trolltech.qt.gui.QLineEdit.EchoMode;
 import com.trolltech.qt.gui.QSizePolicy.Policy;
 
 import facsanadu.gates.Gate;
+import facsanadu.gates.measure.GateMeasure;
 import facsanadu.gui.colors.QColorCombo;
 import facsanadu.gui.events.EventGatesChanged;
 import facsanadu.gui.events.EventGatesMoved;
@@ -38,7 +39,15 @@ public class GatesListWidget extends QVBoxLayout
 
 	private QTreeWidget treeGates=new QTreeWidget();
 	private MainWindow mw;
-	
+	private LinkedList<CallbackColor> callbacks=new LinkedList<GatesListWidget.CallbackColor>();
+
+	private interface CallbackColor
+		{
+		public void set();
+		}
+
+
+
 	public GatesListWidget(MainWindow mw)
 		{
 		this.mw=mw;
@@ -52,14 +61,16 @@ public class GatesListWidget extends QVBoxLayout
 
 		QPushButton bSelectAllGates=new QPushButton(tr("Select all"));
 		QPushButton bRenameGate=new QPushButton(tr("Rename gate"));
-		QPushButton bRemoveGate=new QPushButton(tr("Remove gate"));
+		QPushButton bRemoveGate=new QPushButton(tr("Remove"));
+		QPushButton bMeasure=new QPushButton(tr("Measure"));
 
+		bMeasure.clicked.connect(this,"actionAddMeasure()");
 		bRenameGate.clicked.connect(this,"actionRenameGate()");
 		bRemoveGate.clicked.connect(this,"actionRemoveGates()");
 		bSelectAllGates.clicked.connect(this,"actionSelectAllGates()");
 
 		addWidget(treeGates);
-		addLayout(QTutil.layoutHorizontal(bSelectAllGates, bRenameGate, bRemoveGate));
+		addLayout(QTutil.layoutHorizontal(bMeasure, bSelectAllGates, bRenameGate, bRemoveGate));
 		}
 	
 	
@@ -92,17 +103,30 @@ public class GatesListWidget extends QVBoxLayout
 		{
 		LinkedList<Gate> selviews=new LinkedList<Gate>();
 		for(QTreeWidgetItem it:treeGates.selectedItems())
-			selviews.add((Gate)it.data(0,Qt.ItemDataRole.UserRole));
+			{
+			Object ob=it.data(0,Qt.ItemDataRole.UserRole);
+			if(ob instanceof Gate)
+				selviews.add((Gate)ob);
+			}
 		return selviews;
 		}
 
-	
-	private interface CallbackColor
+	/**
+	 * Get selected measures
+	 */
+	public LinkedList<GateMeasure> getSelectedMeasures()
 		{
-		public void set();
+		LinkedList<GateMeasure> selviews=new LinkedList<GateMeasure>();
+		for(QTreeWidgetItem it:treeGates.selectedItems())
+			{
+			Object ob=it.data(0,Qt.ItemDataRole.UserRole);
+			if(ob instanceof GateMeasure)
+				selviews.add((GateMeasure)ob);
+			}
+		return selviews;
 		}
-
-	private LinkedList<CallbackColor> cb=new LinkedList<GatesListWidget.CallbackColor>();
+	
+	
 	
 	/**
 	 * Update list with gates
@@ -110,15 +134,19 @@ public class GatesListWidget extends QVBoxLayout
 	public void updateGatesList()
 		{
 		boolean wasUpdating=isUpdating;
-		cb.clear();
+		callbacks.clear();
 		LinkedList<Gate> selgates=getSelectedGates();
+		LinkedList<GateMeasure> selcalc=getSelectedMeasures();
 		isUpdating=false;
 		treeGates.clear();
-		updateGatesListRecursive(null, mw.project.gateset.getRootGate(), selgates);
+		updateGatesListRecursive(null, mw.project.gateset.getRootGate(), selgates, selcalc);
 		treeGates.expandAll();
+
+		treeGates.resizeColumnToContents(0);
+		
 		isUpdating=wasUpdating;
 		}
-	private void updateGatesListRecursive(QTreeWidgetItem parentItem, final Gate g, LinkedList<Gate> selgates)
+	private void updateGatesListRecursive(QTreeWidgetItem parentItem, final Gate g, LinkedList<Gate> selgates, LinkedList<GateMeasure> selcalc)
 		{
 		QTreeWidgetItem item;
 		if(parentItem==null)
@@ -126,7 +154,7 @@ public class GatesListWidget extends QVBoxLayout
 		else
 			item=new QTreeWidgetItem(parentItem);
 		item.setData(0,Qt.ItemDataRole.UserRole, g);
-		item.setText(0, g.name);
+		item.setText(0, g.name+"     "); //spacing, can we do better?
 		final QColorCombo combocolor=new QColorCombo();
 		treeGates.setItemWidget(item, 1, combocolor);
 		combocolor.setColor(g.color);
@@ -138,17 +166,56 @@ public class GatesListWidget extends QVBoxLayout
 				emitEvent(new EventGatesMoved()); //Smaller change?
 				}
 		};
-		this.cb.add(cb);
+		this.callbacks.add(cb);
 		combocolor.currentIndexChanged.connect(cb,"set()");
 		
 		if(selgates.contains(g))
 			item.setSelected(true);
+		
+		addMeasures(item, g, selcalc);
+		
 		for(Gate child:g.children)
-			updateGatesListRecursive(item, child, selgates);
+			updateGatesListRecursive(item, child, selgates, selcalc);
+		}
+	private void addMeasures(QTreeWidgetItem parentItem, Gate g, LinkedList<GateMeasure> selcalc)
+		{
+		for(GateMeasure calc:g.getMeasures())
+			{
+			QTreeWidgetItem item;
+			if(parentItem==null)
+				item=new QTreeWidgetItem(treeGates);
+			else
+				item=new QTreeWidgetItem(parentItem);
+			item.setData(0,Qt.ItemDataRole.UserRole, calc); //g and calc needed here. or get parent?
+			item.setText(0, calc.getDesc(mw.project));
+			if(selcalc.contains(g))
+				item.setSelected(true);
+			}
+		
 		}
 
-	
-	
+
+	/**
+	 * Add a measurement
+	 */
+	public void actionAddMeasure()
+		{
+		LinkedList<Gate> gates=getSelectedGates();
+		if(gates.isEmpty())
+			QTutil.showNotice(mw, tr("First select some gates"));
+		else
+			{
+			AddMeasureDialog w=new AddMeasureDialog(mw.project);
+			w.exec();
+			
+			for(Gate g:gates)
+				{
+				for(GateMeasure calc:w.getMeasures())
+					g.attachMeasure(calc);
+				emitEvent(new EventGatesChanged()); 
+				}
+			}
+		}
 	
 	/**
 	 * Rename current gate
@@ -184,25 +251,27 @@ public class GatesListWidget extends QVBoxLayout
 		{
 		FacsanaduProject project=mw.project;
 		Collection<Gate> gates=getSelectedGates();
+		Collection<GateMeasure> calcs=getSelectedMeasures();
 		gates.remove(project.gateset.getRootGate());
 		//Should include gates recursively!
 
 		for(Gate g:gates)
 			g.detachParent();
+		for(GateMeasure calc:calcs)
+			calc.detachFromGate();
 
 		boolean changedViews=false;
 		for(ViewSettings vs:new LinkedList<ViewSettings>(project.views))
-			if(gates.contains(vs.gate))  //TODO or any gate below!!
+			{
+			if(gates.contains(vs.gate) || gates.contains(vs.gate.children))  //TODO or any gate below!!   contains - is this AND or OR?
 				{
 				project.views.remove(vs);
 				changedViews=true;
 				}
+			}
 		emitEvent(new EventGatesChanged());
 		if(changedViews)
 			emitEvent(new EventViewsChanged());
-//		updateGatesList();
-//		mw.updateViewsList();  //use a signal instead
-//		dothelayout();
 		}
 	
 	/**

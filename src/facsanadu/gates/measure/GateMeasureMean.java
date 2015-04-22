@@ -1,6 +1,10 @@
-package facsanadu.gates;
+package facsanadu.gates.measure;
 
 import facsanadu.data.Dataset;
+import facsanadu.gates.Gate;
+import facsanadu.gates.GatingResult;
+import facsanadu.gates.IntArray;
+import facsanadu.gui.FacsanaduProject;
 
 /**
  * 
@@ -9,7 +13,7 @@ import facsanadu.data.Dataset;
  * @author Johan Henriksson
  *
  */
-public class GateCalcMean extends GateCalcUnivariate
+public class GateMeasureMean extends GateMeasureUnivariate
 	{
 	public double calc(Dataset ds, Gate g, GatingResult res)
 		{
@@ -22,6 +26,12 @@ public class GateCalcMean extends GateCalcUnivariate
 			sum+=ds.getAsFloat(ind)[channelIndex];
 			}
 		return sum/arr.size();
+		}
+
+	@Override
+	public String getDesc(FacsanaduProject proj)
+		{
+		return "Mean: "+proj.getChannelInfo().get(channelIndex).formatName();
 		}
 	
 	

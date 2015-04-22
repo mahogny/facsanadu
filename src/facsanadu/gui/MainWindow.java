@@ -23,6 +23,7 @@ import com.trolltech.qt.gui.QWidget;
 
 import facsanadu.data.Dataset;
 import facsanadu.gates.Gate;
+import facsanadu.gates.measure.GateMeasure;
 import facsanadu.gui.events.EventDatasetsChanged;
 import facsanadu.gui.events.EventGatesChanged;
 import facsanadu.gui.events.EventGatesMoved;
@@ -416,6 +417,12 @@ public class MainWindow extends QMainWindow
 	public void addGate(Gate suggestParent, Gate g)
 		{
 		gatesw.addGate(suggestParent, g);
+		}
+
+
+	public LinkedList<GateMeasure> getSelectedMeasures()
+		{
+		return gatesw.getSelectedMeasures();
 		}
 	
 	}

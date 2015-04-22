@@ -2,9 +2,11 @@ package facsanadu.gui;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import facsanadu.data.ChannelInfo;
 import facsanadu.data.Dataset;
 import facsanadu.gates.GateSet;
 import facsanadu.gates.GatingResult;
@@ -78,6 +80,18 @@ public class FacsanaduProject
 			return 0;
 		else
 			return datasets.get(0).getChannelInfo().size();
+		}
+
+
+	public ArrayList<ChannelInfo> getChannelInfo()
+		{
+		ArrayList<ChannelInfo> names=new ArrayList<ChannelInfo>();
+		if(!datasets.isEmpty())
+			{
+			Dataset ds=datasets.get(0);
+			names=ds.getChannelInfo();
+			}
+		return names;
 		}
 
 
