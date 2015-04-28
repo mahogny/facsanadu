@@ -17,7 +17,7 @@ public class GateMeasureMean extends GateMeasureUnivariate
 	{
 	public double calc(Dataset ds, Gate g, GatingResult res)
 		{
-		IntArray arr=res.acceptedFromGate.get(g);
+		IntArray arr=res.getAcceptedFromGate(g);
 		
 		double sum=0;
 		for(int i=0;i<arr.size();i++)

@@ -13,6 +13,7 @@ import com.trolltech.qt.gui.QFileDialog.AcceptMode;
 import com.trolltech.qt.gui.QFileDialog.FileMode;
 import com.trolltech.qt.gui.QDesktopServices;
 import com.trolltech.qt.gui.QHBoxLayout;
+import com.trolltech.qt.gui.QInputDialog;
 import com.trolltech.qt.gui.QMainWindow;
 import com.trolltech.qt.gui.QMenu;
 import com.trolltech.qt.gui.QMenuBar;
@@ -50,6 +51,12 @@ import facsanadu.io.FacsanaduXML;
 public class MainWindow extends QMainWindow
 	{
 	public FacsanaduProject project=new FacsanaduProject();
+	public GateCalcThread calcthread=new GateCalcThread(){
+		public FacsanaduProject getProject()
+			{
+			return project;
+			}
+	};
 
 	public File lastDirectory=new File(".");
 
@@ -96,7 +103,9 @@ public class MainWindow extends QMainWindow
 		mExport.addAction(tr("Graphs"), this, "actionExportGraphs()");
 		mExport.addAction(tr("Statistics"), this, "actionExportStatistics()");
 
-		menubar.addSeparator();
+		QMenu mSettings=menubar.addMenu(tr("Settings"));
+		mSettings.addAction(tr("Set number of CPU cores"), this, "actionSetNumCores()");
+		
 		QMenu mHelp=menubar.addMenu(tr("Help"));
 		mHelp.addAction(tr("About"), this, "actionAbout()");
 		mHelp.addAction(tr("Website"), this, "actionWebsite()");
@@ -457,5 +466,15 @@ public class MainWindow extends QMainWindow
 	public void actionWebsite()
 		{
 		QDesktopServices.openUrl(new QUrl("http://www.facsanadu.org"));
+		}
+	
+	/**
+	 * Set number of CPU cores
+	 */
+	public void actionSetNumCores()
+		{
+		int th=QInputDialog.getInt(this, QtProgramInfo.programName, tr("Number of cores: "), calcthread.getNumCores());
+		if(th>=1 && th<=128)
+			calcthread.setNumCores(th);
 		}
 	}

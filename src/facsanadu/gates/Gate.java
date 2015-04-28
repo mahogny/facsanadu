@@ -28,6 +28,8 @@ public abstract class Gate
 	private static int idgen=0;
 	private int intid=++idgen;
 	
+	public long lastModified=System.currentTimeMillis();
+	
 	public int getIntID()
 		{
 		return intid;

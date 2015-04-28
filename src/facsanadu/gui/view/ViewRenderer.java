@@ -102,7 +102,7 @@ public class ViewRenderer
 		pm.setPen(pen);
 
 		QColor thecol=new QColor();
-		IntArray accepted=gr.acceptedFromGate.get(viewsettings.gate);
+		IntArray accepted=gr.getAcceptedFromGate(viewsettings.gate);
 		if(accepted!=null)
 			for(int i=0;i<accepted.size() && i<rendermax;i++)
 				{

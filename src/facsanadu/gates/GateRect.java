@@ -22,7 +22,7 @@ public class GateRect extends Gate
 		
 		ix2=Math.max(x1, x2);
 		iy2=Math.max(y1, y2);
-		
+		lastModified=System.currentTimeMillis();
 		}
 	
 	public boolean classify(double[] obs)

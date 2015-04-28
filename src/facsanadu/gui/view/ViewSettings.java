@@ -150,7 +150,7 @@ public class ViewSettings
 		{
 		Histogram h=new Histogram();
 		h.setup(0, 1.0/scaleX, 50);
-		IntArray accepted=gr.acceptedFromGate.get(gate);
+		IntArray accepted=gr.getAcceptedFromGate(gate);
 		if(accepted!=null)
 			for(int i=0;i<accepted.size();i++)
 				{

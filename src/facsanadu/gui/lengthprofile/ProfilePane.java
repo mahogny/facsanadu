@@ -115,7 +115,7 @@ public class ProfilePane extends QWidget
 		if(ds!=null)
 			{
 			GatingResult gres=mw.project.getGatingResult(ds);
-			IntArray arr=gres.acceptedFromGate.get(getCurrentGate());
+			IntArray arr=gres.getAcceptedFromGate(getCurrentGate());
 			for(int i=arr.size()-1;i>=0;i--)
 				if(arr.get(i)<id)
 					{
@@ -131,7 +131,7 @@ public class ProfilePane extends QWidget
 		if(ds!=null)
 			{
 			GatingResult gres=mw.project.getGatingResult(ds);
-			IntArray arr=gres.acceptedFromGate.get(getCurrentGate());
+			IntArray arr=gres.getAcceptedFromGate(getCurrentGate());
 			for(int i=0;i<arr.size();i++)
 				if(arr.get(i)>id)
 					{
@@ -147,7 +147,7 @@ public class ProfilePane extends QWidget
 		if(ds!=null)
 			{
 			GatingResult gres=mw.project.getGatingResult(ds);
-			IntArray arr=gres.acceptedFromGate.get(getCurrentGate());
+			IntArray arr=gres.getAcceptedFromGate(getCurrentGate());
 			ArrayList<Integer> list=new ArrayList<Integer>(arr.size());
 			for(int i=0;i<arr.size();i++)
 				list.add(arr.get(i));
