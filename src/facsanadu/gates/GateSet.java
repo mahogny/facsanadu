@@ -1,5 +1,6 @@
 package facsanadu.gates;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -83,6 +84,21 @@ public class GateSet
 				return got;
 			}
 		return null;
+		}
+
+	public ArrayList<Gate> getIdGates()
+		{
+		ArrayList<Gate> list=new ArrayList<Gate>();
+		getIdGates(getRootGate(), list);
+		return list;
+		}
+	private void getIdGates(Gate g, ArrayList<Gate> list)
+		{
+		while(list.size()<=g.getIntID())
+			list.add(null);
+		list.set(g.getIntID(), g);
+		for(Gate child:g.children)
+			getIdGates(child, list);
 		}
 	
 	}

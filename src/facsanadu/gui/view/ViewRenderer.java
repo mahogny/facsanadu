@@ -82,6 +82,7 @@ public class ViewRenderer
 		ArrayList<ChannelInfo> chans=segment.getChannelInfo();
 
 		ArrayList<Gate> listgates=gr.getIdGates();
+		System.out.println(listgates);
 		int colr[]=new int[listgates.size()];
 		int colg[]=new int[listgates.size()];
 		int colb[]=new int[listgates.size()];
@@ -92,7 +93,7 @@ public class ViewRenderer
 				{
 				GateColor c=g.color;
 				colr[i]=c.r;
-				colg[i]=c.g;
+				colg[i]=c.g;  
 				colb[i]=c.b;
 				}
 			}
@@ -113,7 +114,10 @@ public class ViewRenderer
 				int x=trans.mapFcsToScreenX(chanX);
 				int y=trans.mapFcsToScreenY(chanY);
 				int colid=gr.getGateIntIDForObs(ind);
-				thecol.setRgb(colr[colid], colg[colid], colb[colid]);
+				if(colid<colr.length) //TODO //note: there are some nasty cases when i can be outside range. race condition!
+					thecol.setRgb(colr[colid], colg[colid], colb[colid]);  
+	//			else
+//					System.out.println("warning race condition: id out of range "+colid+", has up to "+colr.length);
 				pen.setColor(thecol);
 				pm.setPen(pen);
 				pm.drawPoint(x, y);			

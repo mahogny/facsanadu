@@ -57,13 +57,19 @@ public class IntArray
 		if(id>=arr.length)
 			{
 			int newarr[]=new int[id+1];
-			System.arraycopy(arr, 0, newarr, 0, arr.length);
+//			System.out.println("id "+id+"   "+arr.length+"  "+newarr.length+"   "+arr);
+			System.arraycopy(arr, 0, newarr, 0, arr.length);  //orig
 			arr=newarr;
 			len=arr.length;
 			}
 		arr[id]=value;
 		}
 	
-	
+
+	public void setUnchecked(int id, int value)
+		{
+		arr[id]=value;
+		}
+
 
 	}

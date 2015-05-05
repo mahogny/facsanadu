@@ -56,6 +56,18 @@ public class MainWindow extends QMainWindow
 			{
 			return project;
 			}
+		public void callbackDoneCalc(Dataset dataset, Gate g)
+			{
+			 QApplication.invokeLater(new Runnable()
+         {
+         public void run()
+                 {
+                 updateall();
+                 System.out.println("Thread called");
+                 }
+         });
+			}
+
 	};
 
 	public File lastDirectory=new File(".");
@@ -335,7 +347,9 @@ public class MainWindow extends QMainWindow
 	public void dogating()
 		{
 		//For speed, only do selected ones
-		project.performGating(getSelectedDatasets());
+		//project.performGating(getSelectedDatasets());
+		
+		calcthread.wakeup();
 		}
 	
 
@@ -406,6 +420,8 @@ public class MainWindow extends QMainWindow
 			paneProfile.updateViews();
 			}
 		}
+
+	
 	
 	/**
 	 * Event: User drags something onto widget

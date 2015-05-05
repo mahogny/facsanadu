@@ -20,7 +20,7 @@ public class GatingResult
 	
 	private HashMap<Gate, Long> lastUpdateGate=new HashMap<Gate, Long>();
 	
-	GateSet gating;
+	GateSet gating=new GateSet();
 
 	public int getGateIntIDForObs(int obs)
 		{
@@ -34,22 +34,28 @@ public class GatingResult
 		{
 		this.gating=gating;
 		Gate gRoot=gating.getRootGate();
-		int n=ds.getNumObservations();
-				
-		//Initial reverse map
-		dogate(gRoot, ds, n);
-		
-		//Recursively do gating
-		for(Gate child:gRoot.children)
-			dogate(gRoot,child, ds);
+		dogateRec(gRoot, ds);
 		}
 
 	/**
 	 * Calculate for one gate
 	 */
-	private void dogate(Gate g, Dataset ds, int n)
+	public void doOneGate(Gate g, Dataset ds, boolean approximate)
 		{
-		boolean approximate=true;
+		approximate=false;
+		int n;
+		if(g.parent==null) //This is the root
+			{
+			n=ds.getNumObservations();
+			gateForObs=new IntArray(n); //Should never need to be resized
+			}
+		else
+			{
+			IntArray arr=acceptedFromGate.get(g.parent);
+			if(arr==null)
+				throw new RuntimeException("Parent gate not calculated "+g);
+			n=arr.size();
+			}
 		int inc=1;
 		if(approximate && n>10000)
 			inc=n/10000;
@@ -57,28 +63,38 @@ public class GatingResult
 		for(int i=0;i<n;i+=inc)
 			classifyobs(g, ds, res, i);
 		setAcceptedFromGate(g, res);
+		lastUpdateGate.put(g, g.lastModified);
+		
+		System.out.println("Calculated gate "+g+" for ds "+ds);
+		
+		//TODO separate these out
 		for(GateMeasure calc:g.getMeasures())
 			gatecalc.put(calc,calc.calc(ds, g, this));		
 		}
+	
+	
 	
 	/**
 	 * Set accepted result from a gate
 	 */
 	public void setAcceptedFromGate(Gate g, IntArray res)
 		{
-		acceptedFromGate.put(g, res);
-		lastUpdateGate.put(g, g.lastModified);
+		//may need to synchronize!
+		synchronized (acceptedFromGate)
+			{
+			acceptedFromGate.put(g, res);
+			lastUpdateGate.put(g, g.lastModified);
+			}
 		}
 	
 	/**
 	 * Do gating for a gate with a parent
 	 */
-	private void dogate(Gate parent, Gate g, Dataset ds)
+	private void dogateRec(Gate g, Dataset ds)
 		{
-		IntArray prevres=acceptedFromGate.get(parent);
-		dogate(g, ds, prevres.size());
+		doOneGate(g, ds, true);
 		for(Gate child:g.children)
-			dogate(g, child, ds);
+			dogateRec(child, ds);
 		}
 	
 	private void classifyobs(Gate g, Dataset segment, IntArray res, int id)
@@ -86,25 +102,14 @@ public class GatingResult
 		if(g.classify(segment.eventsFloat.get(id)))
 			{
 			res.addUnchecked(id);
-			gateForObs.set(id,g.getIntID());
+			gateForObs.setUnchecked(id,g.getIntID());
 			}
 		}
 	
 	public ArrayList<Gate> getIdGates()
 		{
-		ArrayList<Gate> list=new ArrayList<Gate>();
-		getIdGates(getRootGate(), list);
-		return list;
+		return gating.getIdGates();
 		}
-	private void getIdGates(Gate g, ArrayList<Gate> list)
-		{
-		while(list.size()<=g.getIntID())
-			list.add(null);
-		list.set(g.getIntID(), g);
-		for(Gate child:g.children)
-			getIdGates(child, list);
-		}
-	
 
 	public int getTotalCount()
 		{

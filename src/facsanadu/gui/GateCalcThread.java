@@ -27,7 +27,10 @@ public abstract class GateCalcThread
 	 */
 	public void wakeup()
 		{
-		lockGetGate.notifyAll();
+		synchronized (lockGetGate)
+			{
+			lockGetGate.notifyAll();
+			}
 		}
 	
 	/**
@@ -35,6 +38,8 @@ public abstract class GateCalcThread
 	 */
 	public abstract	FacsanaduProject getProject();
 	
+	
+	public abstract void callbackDoneCalc(Dataset dataset, Gate g);
 	
 	/**
 	 * Constructor
@@ -98,6 +103,8 @@ public abstract class GateCalcThread
 						//Need to lock datasets too! synchronized class?
 						//GatingResult gr=proj.gatingResult.get(ds);
 						task=getTaskToWorkOn(ds, proj.gateset.getRootGate());
+						if(task!=null)
+							break;
 						}
 					//Wait until the thread is needed again if there is nothing to do
 					if(task==null)
@@ -108,14 +115,17 @@ public abstract class GateCalcThread
 						catch (InterruptedException e)
 							{
 							}
+					else
+						currentTasks.add(task);
 					}
 				
 				//Run task
 				if(task!=null)
 					{
 					task.exec();
+					currentTasks.remove(task);
 					//Because there might be more than one child, but only one thread currently running, ensure to wake up all threads
-					lockGetGate.notifyAll();
+					wakeup();
 					}
 				}
 			synchronized (threads)
@@ -133,7 +143,7 @@ public abstract class GateCalcThread
 	public Task getTaskToWorkOn(Dataset ds, Gate g)
 		{
 		FacsanaduProject proj=getProject();
-		GatingResult gr=proj.gatingResult.get(ds);
+		GatingResult gr=proj.getCreateGatingResult(ds);
 		
 		if(gr.gateNeedsUpdate(g))
 			{
@@ -144,7 +154,12 @@ public abstract class GateCalcThread
 			if(currentTasks.contains(task))
 				return null;
 			else
+				{
+				System.out.println(currentTasks);
+				System.out.println("scheduling "+task.g+ "   "+task.ds);
+				System.out.println();
 				return task;
+				}
 			}
 		for(GateMeasure calc:g.getMeasures())
 			{
@@ -199,7 +214,15 @@ public abstract class GateCalcThread
 		
 		public void exec()
 			{
-			// TODO Auto-generated method stub
+			GatingResult gr=getProject().getCreateGatingResult(ds);
+			gr.doOneGate(g, ds, true); //TODO approximate?
+			callbackDoneCalc(ds, g);
+			}
+		
+		@Override
+		public String toString()
+			{
+			return "(calcgate "+g+"  "+ds+")";
 			}
 		}
 		

@@ -40,6 +40,18 @@ public class FacsanaduProject
 			return gatingResult.get(segment);
 		}
 
+	public GatingResult getCreateGatingResult(Dataset segment)
+		{
+		synchronized (gatingResult)
+			{
+			if(gatingResult.get(segment)==null)
+				{
+				gatingResult.put(segment, new GatingResult());
+				return new GatingResult();
+				}
+			return gatingResult.get(segment);
+			}
+		}
 	
 	/**
 	 * Update gating results
@@ -53,7 +65,6 @@ public class FacsanaduProject
 			gr.perform(gateset, ds);
 			gatingResult.put(ds, gr);
 			}
-		
 		}
 
 
