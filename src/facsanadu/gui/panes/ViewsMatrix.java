@@ -13,7 +13,6 @@ import com.trolltech.qt.gui.QSizePolicy.Policy;
 import facsanadu.data.Dataset;
 import facsanadu.gates.Gate;
 import facsanadu.gui.MainWindow;
-import facsanadu.gui.FacsanaduProject;
 import facsanadu.gui.qt.QVLabel;
 import facsanadu.gui.view.ViewSettings;
 import facsanadu.gui.view.ViewWidget;
@@ -57,7 +56,7 @@ public class ViewsMatrix extends QWidget
 	 */
 	public void updateViews()
 		{
-		FacsanaduProject project=mw.project;
+		//FacsanaduProject project=mw.project;
 		LinkedList<Dataset> selds=mw.getSelectedDatasets();
 		LinkedList<ViewSettings> selviews=mw.getSelectedViews();
 		
@@ -191,12 +190,21 @@ public class ViewsMatrix extends QWidget
 			}
 
 		//Update headers
-		for(int i=0;i<headerHorizontal.size();i++)
-			headerHorizontal.get(i).setText(project.datasets.get(i).source.getName());
-		for(int i=0;i<headerVertical.size();i++)
+		for(int i=0;i<selds.size();i++)
+			{
+			String name=selds.get(i).getName();
+			if(orderDataset)
+				headerVertical.get(i).setText(name);
+			else
+				headerHorizontal.get(i).setText(name);
+			}
+		for(int i=0;i<selviews.size();i++)
 			{
 			Gate g=selviews.get(i).gate;
-			headerVertical.get(i).setText(g.name);
+			if(orderDataset)
+				headerHorizontal.get(i).setText(g.name);
+			else
+				headerVertical.get(i).setText(g.name);
 			}
 		
 		//Get the size of one. rescale. then rerender all
