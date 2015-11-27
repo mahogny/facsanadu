@@ -59,6 +59,7 @@ public class FacsanaduXML
 		//Store gates
 		Element egate=new Element("gateset");
 		storeGate(proj.gateset.getRootGate(), egate);
+		etot.addContent(egate);
 		
 		//Store views
 		for(ViewSettings vs:proj.views)
@@ -67,6 +68,10 @@ public class FacsanaduXML
 			eview.setAttribute("indexX",""+vs.indexX);
 			eview.setAttribute("indexY",""+vs.indexY);
 			eview.setAttribute("gate",""+vs.gate.name);
+
+			eview.setAttribute("scaleX",""+vs.scaleX);
+			eview.setAttribute("scaleY",""+vs.scaleY);
+			
 			etot.addContent(eview);
 			}
 		
@@ -112,14 +117,16 @@ public class FacsanaduXML
 					{
 					Element epoint=new Element("point");
 					epoint.setAttribute("x",""+gr.arrX.get(i));
-					epoint.setAttribute("x",""+gr.arrY.get(i));
-					e.addContent(epoint);
+					epoint.setAttribute("y",""+gr.arrY.get(i));
+					ge.addContent(epoint);
 					}
 				}
 
 			if(type==null)
 				throw new IOException("gate cannot be stored "+g);
 			ge.setAttribute("type",type);
+			e.addContent(ge);
+			
 			
 			storeGate(g, ge);
 			}
@@ -129,11 +136,11 @@ public class FacsanaduXML
 	/**
 	 * Load gates recursively
 	 */
-	private static void loadGate(Gate parent, Element e) throws IOException
+	private static void loadGate(Gate parent, Element eParent) throws IOException
 		{
 		try
 			{
-			for(Element one:e.getChildren())
+			for(Element one:eParent.getChildren())
 				{
 				if(one.getName().equals("gate"))
 					{
@@ -156,10 +163,11 @@ public class FacsanaduXML
 						g=gr;
 						gr.indexX=one.getAttribute("ix").getIntValue();
 						gr.indexY=one.getAttribute("iy").getIntValue();
-						for(Element epoint:e.getChildren())
-							gr.addPoint(
-									epoint.getAttribute("x").getDoubleValue(),
-									epoint.getAttribute("y").getDoubleValue());
+						for(Element epoint:one.getChildren())
+							if(epoint.getName().equals("point"))
+								gr.addPoint(
+										epoint.getAttribute("x").getDoubleValue(),
+										epoint.getAttribute("y").getDoubleValue());
 						}
 					if(g==null)
 						throw new IOException("Unknown gate type "+type);
@@ -202,6 +210,12 @@ public class FacsanaduXML
 					vs.gate=proj.gateset.getGate(one.getAttributeValue("gate"));
 					vs.indexX=one.getAttribute("indexX").getIntValue();
 					vs.indexY=one.getAttribute("indexY").getIntValue();
+					if(one.getAttribute("scaleX")!=null)
+						{
+						vs.scaleX=one.getAttribute("scaleX").getDoubleValue();
+						vs.scaleY=one.getAttribute("scaleY").getDoubleValue();
+						}
+					
 					proj.views.add(vs);
 					}
 				else if(one.getName().equals("dataset"))
@@ -240,6 +254,7 @@ public class FacsanaduXML
 			}
 		catch (Exception e)
 			{
+			e.printStackTrace();
 			throw new IOException(e.getMessage());
 			}
 		return proj;

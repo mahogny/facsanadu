@@ -28,6 +28,9 @@ public class ViewSettings
 	public double scaleX=1;
 	public double scaleY=1;
 	
+	public double zoomX=1; //For speed, this is integrated into the scale whenever needed
+	public double zoomY=1;
+	
 	/**
 	 * Set the scale to cover the given max and min values
 	 */
@@ -36,8 +39,8 @@ public class ViewSettings
 		//Currently min values are not used
 		double maxx=max[indexX];
 		double maxy=max[indexY];
-		scaleX=1.0/maxx;
-		scaleY=1.0/maxy;
+		scaleX=1.0/maxx*zoomX;
+		scaleY=1.0/maxy*zoomY;
 		} 
 
 

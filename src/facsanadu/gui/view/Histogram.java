@@ -31,6 +31,8 @@ public class Histogram
 			{
 			bin=numbin-1;
 			}
+		else if(bin<0)
+			bin=0;
 		bins[(int)bin]++;
 		eventcount++;
 		}

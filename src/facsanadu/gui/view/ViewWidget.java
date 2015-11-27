@@ -191,6 +191,20 @@ public class ViewWidget extends QWidget
 					setchans.add(sg);
 					mSetSource.addAction(g.name, sg, "actionSet()");
 					}
+				
+				//Menu to set scaling
+				QMenu mSetScaling=menu.addMenu(tr("Set zoom"));
+				for(double d:new double[]{1,2,5,10,20,50})
+					{
+					CallbackSetZoom sg=new CallbackSetZoom();
+					sg.scale=d;
+					sg.isx=lastwasx;
+					setchans.add(sg);
+					mSetScaling.addAction(""+d, sg, "actionSet()");
+					}
+
+				
+				
 				menu.exec(event.globalPos());
 				}
 			else
@@ -307,6 +321,19 @@ public class ViewWidget extends QWidget
 			}
 		}
 
+	public class CallbackSetZoom implements Callback
+		{
+		double scale;
+		boolean isx;
+		public void actionSet()
+			{
+			if(isx)
+				viewsettings.zoomX=scale;
+			else
+				viewsettings.zoomY=scale;
+			mw.handleEvent(new EventViewsChanged());
+			}
+		}
 
 	public int getIndexX()
 		{

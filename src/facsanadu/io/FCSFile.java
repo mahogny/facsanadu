@@ -228,6 +228,7 @@ public class FCSFile
 			DataInputStream rHeader=new DataInputStream(fi);
 			
 			fcsversion=FCSFile.readString(rHeader, 10);
+			System.out.println("FCS version: "+fcsversion);
 			
 			long offsetTextStart=FCSFile.readOffset(rHeader);
 			long offsetTextEnd=FCSFile.readOffset(rHeader);
@@ -247,6 +248,7 @@ public class FCSFile
 			DataInputStream rText=new DataInputStream(new FileInputStream(f));
 			rText.skip(offsetTextStart);
 			String textSeg=FCSFile.readString(rText,(int)(offsetTextEnd-offsetTextStart));
+			System.out.println("text from to "+offsetTextStart+"  "+offsetTextEnd);
 			
 			//The first char in text segment is delimiter
 			char delimiter=textSeg.charAt(0);
