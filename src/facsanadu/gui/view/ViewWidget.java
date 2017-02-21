@@ -164,7 +164,9 @@ public class ViewWidget extends QWidget
 					lastwasx=true;
 				else
 					lastwasx=false;
-							
+
+				menu.addAction(tr("Swap axis"),this,"actionSwapAxis()");
+				
 				ArrayList<ChannelInfo> chans=dataset.getChannelInfo();
 				for(int i=0;i<chans.size();i++)
 					{
@@ -351,6 +353,11 @@ public class ViewWidget extends QWidget
 
 
 
+	public void actionSwapAxis()
+		{
+		viewsettings.swapAxis();
+		mw.handleEvent(new EventViewsChanged());
+		}
 
 	public void setTool(ViewToolChoice t)
 		{

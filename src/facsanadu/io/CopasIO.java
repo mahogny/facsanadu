@@ -287,11 +287,13 @@ public class CopasIO
 			{
 			ChannelInfo ci=new ChannelInfo();
 			ci.name=chans.get(i);
-			fcs.ci.add(ci);
+			fcs.channelInfo.add(ci);
 			}
 		//Convert events
+		ArrayList<double[]> eventsFloat=new ArrayList<double[]>();
 		for(CopasEvent e:profiles.values())
-			fcs.eventsFloat.add(e.toDoubleArr(chans,hasProfile));
+			eventsFloat.add(e.toDoubleArr(chans,hasProfile));
+		fcs.setEvents(eventsFloat);
 		if(hasProfile)
 			{
 			int numchan=profiles.firstEntry().getValue().levels.length;
@@ -305,6 +307,7 @@ public class CopasIO
 				{
 				LengthProfileData d=new LengthProfileData();
 				d.data=e.levels;
+				d.calcCumsum();
 				fcs.lengthprofsData.add(d);
 				}
 			}

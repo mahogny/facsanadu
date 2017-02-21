@@ -11,7 +11,6 @@ import com.trolltech.qt.gui.QTreeWidget;
 import com.trolltech.qt.gui.QTreeWidgetItem;
 import com.trolltech.qt.gui.QVBoxLayout;
 import com.trolltech.qt.gui.QAbstractItemView.SelectionBehavior;
-import com.trolltech.qt.gui.QAbstractItemView.SelectionMode;
 import com.trolltech.qt.gui.QLineEdit.EchoMode;
 import com.trolltech.qt.gui.QSizePolicy.Policy;
 
@@ -55,7 +54,7 @@ public class GatesListWidget extends QVBoxLayout
 		
 		treeGates.setHeaderLabels(Arrays.asList(tr("Gate"),tr("Color")));
 		treeGates.setSelectionBehavior(SelectionBehavior.SelectRows);
-		treeGates.setSelectionMode(SelectionMode.MultiSelection);
+		//treeGates.setSelectionMode(SelectionMode.MultiSelection);
 		treeGates.selectionModel().selectionChanged.connect(this,"dothelayout()");		
 		treeGates.setSizePolicy(Policy.Minimum, Policy.Expanding);
 

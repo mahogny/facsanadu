@@ -18,6 +18,7 @@ import com.trolltech.qt.gui.QVBoxLayout;
 import com.trolltech.qt.gui.QWidget;
 
 import facsanadu.data.Dataset;
+import facsanadu.data.ProfChannel;
 import facsanadu.gates.Gate;
 import facsanadu.gates.GatingResult;
 import facsanadu.gates.IntArray;
@@ -39,7 +40,7 @@ public class ProfilePane extends QWidget
 	private QCheckBox cbNormalizeLength=new QCheckBox();
 	private QCheckBox cbShowAll=new QCheckBox();
 	
-	private ProfileView view=new ProfileView();
+	private ProfileView view;
 	private MainWindow mw;
 	
 	private QGridLayout laychans=new QGridLayout();
@@ -49,6 +50,7 @@ public class ProfilePane extends QWidget
 	public ProfilePane(MainWindow mw)
 		{
 		this.mw=mw;
+		view=new ProfileView(mw);
 		
 		tfID.setValidator(new QIntValidator(this));
 		tfID.setMaximumWidth(100);
@@ -90,12 +92,19 @@ public class ProfilePane extends QWidget
 		tfID.editingFinished.connect(this,"updateViews()");
 		bNextProf.clicked.connect(this,"actionNextProf()");
 		bPrevProf.clicked.connect(this,"actionPrevProf()");
-		cbNormalizeLength.stateChanged.connect(this,"updateViews()");
+		cbNormalizeLength.stateChanged.connect(this,"cbNormalizeLength()");
 		cbShowAll.stateChanged.connect(this,"updateViews()");
 		
 		setLayout(lay);
 		}
 
+	public void cbNormalizeLength()
+		{
+		if(view.curchannel!=null)
+			view.curchannel.forNormalized=cbNormalizeLength.isChecked();
+		updateViews();
+		}
+	
 	
 	public Gate getCurrentGate()
 		{
@@ -197,7 +206,7 @@ public class ProfilePane extends QWidget
 				{
 				showchan.add(cbShowChannel.get(i).isChecked());
 				double pos=sScaleChannel.get(i).value()/1000.0;
-				scale.add(pos/20000.0);
+				scale.add(pos/400000.0);
 				}
 			view.showchan=showchan;
 			view.scale=scale;
@@ -233,4 +242,24 @@ public class ProfilePane extends QWidget
 
 		}
 	
+	
+	public ArrayList<Integer> getSelChans()
+		{
+		Dataset ds=getCurrentDataset();
+		ArrayList<Integer> showchan=new ArrayList<Integer>();
+		if(ds!=null)
+			for(int i=0;i<ds.getNumLengthProfiles();i++)
+				{
+				if(cbShowChannel.get(i).isChecked())
+					showchan.add(i);
+				}
+		return showchan;
+		}
+	
+	
+	public void setCurChan(ProfChannel pc)
+		{
+		view.curchannel=pc;
+		view.repaint();
+		}
 	}

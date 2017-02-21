@@ -8,6 +8,7 @@ import java.util.LinkedList;
 
 import facsanadu.data.ChannelInfo;
 import facsanadu.data.Dataset;
+import facsanadu.data.ProfChannel;
 import facsanadu.gates.GateSet;
 import facsanadu.gates.GatingResult;
 import facsanadu.gui.view.ViewSettings;
@@ -26,6 +27,7 @@ public class FacsanaduProject
 	public GateSet gateset=new GateSet();
 	public LinkedList<Dataset> datasets=new LinkedList<Dataset>();
 	public LinkedList<ViewSettings> views=new LinkedList<ViewSettings>();
+	public LinkedList<ProfChannel> profchan=new LinkedList<ProfChannel>();
 
 	public HashMap<Dataset, GatingResult> gatingResult=new HashMap<Dataset, GatingResult>();
 	
@@ -62,17 +64,24 @@ public class FacsanaduProject
 		if(FCSFile.isFCSfile(path))
 			{
 			//Assume it is an FCS file
-			datasets.add(FCSFile.load(path));
+			addDataset(FCSFile.load(path));
 			}
 		else if(CopasIO.isCopasFile(path))
 			{
 			//Assume COPAS file
-			datasets.add(CopasIO.readAll(path));
+			addDataset(CopasIO.readAll(path));
 			}
 		else
 			throw new IOException("Cannot recognize file");
+		recalcProfChan();
 		}
 
+	public void addDataset(Dataset ds)
+		{
+		ds.computeProfChannel(this, null);
+		datasets.add(ds);
+		//What about gating?
+		}
 
 	public int getNumChannels()
 		{
@@ -92,6 +101,17 @@ public class FacsanaduProject
 			names=ds.getChannelInfo();
 			}
 		return names;
+		}
+
+
+	public void recalcProfChan()
+		{
+		recalcProfChan(null);
+		}
+	public void recalcProfChan(ProfChannel chChanged)
+		{
+		for(Dataset ds:datasets)
+			ds.computeProfChannel(this, chChanged);
 		}
 
 

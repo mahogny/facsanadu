@@ -13,6 +13,7 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 import facsanadu.data.Dataset;
+import facsanadu.data.ProfChannel;
 import facsanadu.gates.Gate;
 import facsanadu.gates.GatePolygon;
 import facsanadu.gates.GateRect;
@@ -60,6 +61,17 @@ public class FacsanaduXML
 		Element egate=new Element("gateset");
 		storeGate(proj.gateset.getRootGate(), egate);
 		etot.addContent(egate);
+
+		//Store prof channels
+		for(ProfChannel pc:proj.profchan)
+			{
+			Element epc=new Element("profchan");
+			epc.setAttribute("chan",""+pc.channel);
+			epc.setAttribute("from",""+pc.from);
+			epc.setAttribute("to",""+pc.to);
+			epc.setAttribute("normalize",""+pc.forNormalized);
+			etot.addContent(epc);
+			}
 		
 		//Store views
 		for(ViewSettings vs:proj.views)
@@ -74,6 +86,8 @@ public class FacsanaduXML
 			
 			etot.addContent(eview);
 			}
+		
+		
 		
 		return etot;
 		}
@@ -218,6 +232,15 @@ public class FacsanaduXML
 					
 					proj.views.add(vs);
 					}
+				else if(one.getName().equals("profchan"))
+					{
+					ProfChannel pc=new ProfChannel();
+					pc.channel=one.getAttribute("chan").getIntValue();
+					pc.from=one.getAttribute("from").getIntValue();
+					pc.to=one.getAttribute("to").getIntValue();
+					pc.forNormalized=one.getAttribute("normalize").getBooleanValue();
+					proj.profchan.add(pc);
+					}
 				else if(one.getName().equals("dataset"))
 					{
 					String n=one.getAttributeValue("path");
@@ -235,6 +258,9 @@ public class FacsanaduXML
 			e.printStackTrace();
 			throw new IOException("read error");
 			}
+		
+		
+		//TODO compute virtual channels
 		}
 	
 
