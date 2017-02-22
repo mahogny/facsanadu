@@ -24,6 +24,8 @@ import com.trolltech.qt.gui.QVBoxLayout;
 import com.trolltech.qt.gui.QWidget;
 
 import facsanadu.data.Dataset;
+import facsanadu.data.ExportFcsToCSV;
+import facsanadu.data.ProfChannel;
 import facsanadu.gates.Gate;
 import facsanadu.gates.measure.GateMeasure;
 import facsanadu.gui.events.EventDatasetsChanged;
@@ -61,10 +63,10 @@ public class MainWindow extends QMainWindow
 			 QApplication.invokeLater(new Runnable()
          {
          public void run()
-                 {
-                 updateall();
-                 System.out.println("Thread called");
-                 }
+           {
+           updateall();
+           System.out.println("Thread called");
+           }
          });
 			}
 
@@ -75,6 +77,7 @@ public class MainWindow extends QMainWindow
 	private QTabWidget tabwidget=new QTabWidget();
 	private QMenuBar menubar=new QMenuBar();
 	private GatesListWidget gatesw=new GatesListWidget(this);
+	private ProfileChannelWidget pc=new ProfileChannelWidget(this);
 	private ViewsListWidget viewsw=new ViewsListWidget(this);
 	private DatasetListWidget datasetsw=new DatasetListWidget(this);
 	
@@ -101,6 +104,7 @@ public class MainWindow extends QMainWindow
 		paneViews=new ViewsPane(this);
 		paneStats=new GateStatsPane(this);
 		paneProfile=new ProfilePane(this);
+		pc.paneProfile=paneProfile;
 		
 		QMenu mFile=menubar.addMenu(tr("File"));
 		mFile.addAction(tr("New project"), this, "actionNewProject()");
@@ -114,9 +118,11 @@ public class MainWindow extends QMainWindow
 		QMenu mExport=menubar.addMenu(tr("Export"));
 		mExport.addAction(tr("Graphs"), this, "actionExportGraphs()");
 		mExport.addAction(tr("Statistics"), this, "actionExportStatistics()");
+		mExport.addAction(tr("Dataset as CSV"), this, "actionExportCSV()");
 
 		QMenu mSettings=menubar.addMenu(tr("Settings"));
 		mSettings.addAction(tr("Set number of CPU cores"), this, "actionSetNumCores()");
+		menubar.addSeparator();
 		
 		QMenu mHelp=menubar.addMenu(tr("Help"));
 		mHelp.addAction(tr("About"), this, "actionAbout()");
@@ -126,6 +132,7 @@ public class MainWindow extends QMainWindow
 		layLeft.addLayout(datasetsw);
 		layLeft.addLayout(viewsw);
 		layLeft.addLayout(gatesw);
+		layLeft.addLayout(pc);
 
 		viewsw.actionNewView();
 
@@ -185,6 +192,7 @@ public class MainWindow extends QMainWindow
 		viewsw.updateViewsList();
 		gatesw.updateGatesList();
 		datasetsw.updateDatasetList();
+		pc.updateChannelList();
 		isUpdating=wasUpdating;
 		dothelayout();
 		}
@@ -306,6 +314,75 @@ public class MainWindow extends QMainWindow
 		paneStats.actionExportCSV();
 		}
 	
+	public void actionExportCSV()
+		{
+		try
+			{
+			LinkedList<Dataset> dsList=datasetsw.getSelectedDatasets();
+
+			if(dsList.isEmpty())
+				{
+				QTutil.printError(this, tr("No datasets selected"));
+				}
+			else if(dsList.size()==1)
+				{
+				QFileDialog dia=new QFileDialog();
+				dia.setFileMode(FileMode.AnyFile);
+				dia.setNameFilter(tr("CSV files (*.csv)"));
+				dia.setAcceptMode(AcceptMode.AcceptSave);
+				dia.setDefaultSuffix("csv");
+
+				if(dia.exec()!=0)
+					{
+					try
+						{
+						ExportFcsToCSV.save(dsList.get(0), new File(dia.selectedFiles().get(0)));
+						/*
+						PrintWriter fw=new PrintWriter();
+						fw.println(tableStats.allToCSV());
+						fw.close();
+						*/
+						}
+					catch (IOException e)
+						{
+						QTutil.showNotice(this, e.getMessage());
+						e.printStackTrace();
+						}
+					}		
+				}
+			else
+				{
+				QFileDialog dia=new QFileDialog();
+				dia.setFileMode(FileMode.DirectoryOnly);
+				//dia.setNameFilter(tr("CSV files (*.csv)"));
+				dia.setAcceptMode(AcceptMode.AcceptSave);
+				//dia.setDefaultSuffix("csv");
+
+				if(dia.exec()!=0)
+					{
+					try
+						{
+						for(Dataset oneDataset:dsList)
+							{
+							File parent=new File(dia.selectedFiles().get(0));
+							ExportFcsToCSV.save(oneDataset, new File(parent, oneDataset.getName()+".csv"));
+							}
+						}
+					catch (IOException e)
+						{
+						QTutil.showNotice(this, e.getMessage());
+						e.printStackTrace();
+						}
+					}		
+				}
+			}
+		catch (Exception e)
+			{
+			QTutil.printError(this, tr("Failed to save file: ")+e.getMessage());
+			e.printStackTrace();
+			}
+		}
+	
 	/**
 	 * Load one file
 	 */
@@ -414,10 +491,12 @@ public class MainWindow extends QMainWindow
 		{
 		if(!isUpdating)
 			{
+			System.out.println("!startdolayout");
 			dogating();
 			paneViews.updateViews();
 			paneStats.updateStats();
 			paneProfile.updateViews();
+			System.out.println("!enddolayout");
 			}
 		}
 
@@ -492,5 +571,13 @@ public class MainWindow extends QMainWindow
 		int th=QInputDialog.getInt(this, QtProgramInfo.programName, tr("Number of cores: "), calcthread.getNumCores());
 		if(th>=1 && th<=128)
 			calcthread.setNumCores(th);
+		}
+
+	public void recalcProfChan(ProfChannel chChanged)
+		{
+		// TODO Auto-generated method stub
+		project.recalcProfChan(chChanged);
+		dothelayout();
+		//handleEvent(new EventViewsChanged()); //maybe too light
 		}
 	}

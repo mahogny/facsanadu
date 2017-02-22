@@ -42,4 +42,8 @@ public class ChannelInfo
 	public HashMap<Integer, String> detectorVoltage=new HashMap<Integer, String>();
 	public HashMap<Integer, String> amplifierGain=new HashMap<Integer, String>();
 	*/
+	
+	
+	
+	public ProfChannel pc=null;
 	}

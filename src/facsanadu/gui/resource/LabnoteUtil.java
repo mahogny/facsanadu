@@ -450,7 +450,7 @@ public class LabnoteUtil
 			{
 			for(int i=0;i<n;i++)
 				sb.append(is.readChar());
-			System.out.println("So far: \""+sb.toString()+"\"");
+			System.err.println("So far: \""+sb.toString()+"\"");
 			throw new IOException("String too long, max "+n);
 			}
 		for(int i=0;i<len;i++)
@@ -510,7 +510,7 @@ public class LabnoteUtil
 		s2=s2.substring(0,Math.min(s2.length(),4));
 		
 		if(!s1.equals(s2))	
-			System.out.println("eek: "+x1+"  "+x12);
+			System.err.println("eek: "+x1+"  "+x12);
 		
 		return s1.equals(s2);
 		}

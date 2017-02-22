@@ -291,7 +291,7 @@ public class GatesListWidget extends QVBoxLayout
 			if(!suggestParent.children.contains(parent))
 				parent=suggestParent;
 			}
-		
+		System.out.println("attaching to parent: "+parent);
 		parent.attachChild(g);
 		
 		updateGatesList();

@@ -17,6 +17,7 @@ import facsanadu.data.ChannelInfo;
 import facsanadu.data.Dataset;
 import facsanadu.data.LengthProfile;
 import facsanadu.data.LengthProfileData;
+import facsanadu.data.LengthProfileFlipper;
 
 
 
@@ -187,7 +188,6 @@ public class CopasIO
 		File fBinaryProfile=new File(f.getParent(),name+".dat");
 		File fTextProfile=new File(f.getParent(),name+"_profile.txt");
 		
-		System.out.println(fOverview);
 		TreeMap<Integer,CopasEvent> destOverview=readTextOverview(fOverview);
 		
 		boolean hasProfile=false;
@@ -209,6 +209,7 @@ public class CopasIO
 			System.out.println("No profile present, not loading");
 		Dataset ds=convertEvents(destOverview, hasProfile);
 		ds.source=f;
+		LengthProfileFlipper.run(ds);
 		return ds;
 		}
 
@@ -287,11 +288,13 @@ public class CopasIO
 			{
 			ChannelInfo ci=new ChannelInfo();
 			ci.name=chans.get(i);
-			fcs.ci.add(ci);
+			fcs.channelInfo.add(ci);
 			}
 		//Convert events
+		ArrayList<double[]> eventsFloat=new ArrayList<double[]>();
 		for(CopasEvent e:profiles.values())
-			fcs.eventsFloat.add(e.toDoubleArr(chans,hasProfile));
+			eventsFloat.add(e.toDoubleArr(chans,hasProfile));
+		fcs.setEvents(eventsFloat);
 		if(hasProfile)
 			{
 			int numchan=profiles.firstEntry().getValue().levels.length;
@@ -305,11 +308,10 @@ public class CopasIO
 				{
 				LengthProfileData d=new LengthProfileData();
 				d.data=e.levels;
+				d.calcCumsum();
 				fcs.lengthprofsData.add(d);
 				}
 			}
-			
-			
 		return fcs;
 		}
 
@@ -408,7 +410,6 @@ public class CopasIO
 		CsvFileReader csv=new CsvFileReader(f,'\t');
 		ArrayList<String> titles=csv.readLine(); //Skip titles
 		
-		System.out.println(titles.size());
 		if(titles.size()!=27)
 			throw new IOException("Wrong number of headers in file; is this really a COPAS file?");
 		

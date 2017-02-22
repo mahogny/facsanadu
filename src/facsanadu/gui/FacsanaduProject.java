@@ -8,6 +8,7 @@ import java.util.LinkedList;
 
 import facsanadu.data.ChannelInfo;
 import facsanadu.data.Dataset;
+import facsanadu.data.ProfChannel;
 import facsanadu.gates.GateSet;
 import facsanadu.gates.GatingResult;
 import facsanadu.gui.view.ViewSettings;
@@ -26,30 +27,38 @@ public class FacsanaduProject
 	public GateSet gateset=new GateSet();
 	public LinkedList<Dataset> datasets=new LinkedList<Dataset>();
 	public LinkedList<ViewSettings> views=new LinkedList<ViewSettings>();
+	public LinkedList<ProfChannel> profchan=new LinkedList<ProfChannel>();
 
 	public HashMap<Dataset, GatingResult> gatingResult=new HashMap<Dataset, GatingResult>();
 	
 	/**
 	 * Get gating result for dataset
 	 */
-	public GatingResult getGatingResult(Dataset segment)
+	public GatingResult getGatingResult(Dataset ds)
 		{
-		if(gatingResult.get(segment)==null)
+		return getCreateGatingResult(ds); //Why a separate method here??
+		/*
+		if(gatingResult.get(ds)==null)
 			return new GatingResult();
 		else
-			return gatingResult.get(segment);
+			return gatingResult.get(ds);
+			*/
 		}
 
-	public GatingResult getCreateGatingResult(Dataset segment)
+	/**
+	 * Get an existing or create a new gating result for a particular dataset. Each dataset should have one
+	 */
+	public GatingResult getCreateGatingResult(Dataset ds)
 		{
 		synchronized (gatingResult)
 			{
-			if(gatingResult.get(segment)==null)
+			if(gatingResult.get(ds)==null)
 				{
-				gatingResult.put(segment, new GatingResult());
-				return new GatingResult();
+				GatingResult gr=new GatingResult(gateset);
+				gatingResult.put(ds, gr);
+				return gr;
 				}
-			return gatingResult.get(segment);
+			return gatingResult.get(ds);
 			}
 		}
 	
@@ -61,7 +70,7 @@ public class FacsanaduProject
 		gatingResult.clear();
 		for(Dataset ds:listDatasets)
 			{
-			GatingResult gr=new GatingResult();
+			GatingResult gr=getCreateGatingResult(ds);//new GatingResult();
 			gr.perform(gateset, ds);
 			gatingResult.put(ds, gr);
 			}
@@ -73,17 +82,24 @@ public class FacsanaduProject
 		if(FCSFile.isFCSfile(path))
 			{
 			//Assume it is an FCS file
-			datasets.add(FCSFile.load(path));
+			addDataset(FCSFile.load(path));
 			}
 		else if(CopasIO.isCopasFile(path))
 			{
 			//Assume COPAS file
-			datasets.add(CopasIO.readAll(path));
+			addDataset(CopasIO.readAll(path));
 			}
 		else
 			throw new IOException("Cannot recognize file");
+		recalcProfChan();
 		}
 
+	public void addDataset(Dataset ds)
+		{
+		ds.computeProfChannel(this, null);
+		datasets.add(ds);
+		//What about gating?
+		}
 
 	public int getNumChannels()
 		{
@@ -103,6 +119,17 @@ public class FacsanaduProject
 			names=ds.getChannelInfo();
 			}
 		return names;
+		}
+
+
+	public void recalcProfChan()
+		{
+		recalcProfChan(null);
+		}
+	public void recalcProfChan(ProfChannel chChanged)
+		{
+		for(Dataset ds:datasets)
+			ds.computeProfChannel(this, chChanged);
 		}
 
 

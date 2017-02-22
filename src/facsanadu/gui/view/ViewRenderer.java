@@ -82,7 +82,6 @@ public class ViewRenderer
 		ArrayList<ChannelInfo> chans=segment.getChannelInfo();
 
 		ArrayList<Gate> listgates=gr.getIdGates();
-		System.out.println(listgates);
 		int colr[]=new int[listgates.size()];
 		int colg[]=new int[listgates.size()];
 		int colb[]=new int[listgates.size()];

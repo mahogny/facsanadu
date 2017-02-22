@@ -1,15 +1,12 @@
 package facsanadu.io;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
@@ -47,21 +44,34 @@ public class FCSFile
 		{		
 		byte[] buf=new byte[count];
 		r.readFully(buf);
-		
-		InputStream is=new ByteArrayInputStream(buf);
-		BufferedReader r2=new BufferedReader(new InputStreamReader(is));
-		return r2.readLine();
+		StringBuilder sb=new StringBuilder(); //or make a string array, faster?
+		for(byte c:buf)
+			sb.append((char)c);
+		return sb.toString();
 		}
 	
 	static long readOffset(DataInputStream r) throws IOException
 		{
 		String s=readString(r,8);
+		return Long.parseLong(s.trim());
+		/*
 		int i=0;
 		while(s.charAt(i)==' ')
 			i++;
 		s=s.substring(i);
 		return Long.parseLong(s);
+		*/
 		}
+
+	/*
+	static long parseLongWspace(String s)
+		{
+		int i=0;
+		while(s.charAt(i)==' ')
+			i++;
+		s=s.substring(i);
+		return Long.parseLong(s);
+		}*/
 	
 	static int readA(DataInputStream r, int count) throws IOException
 		{
@@ -204,8 +214,12 @@ public class FCSFile
 			{
 			ArrayList<ChannelInfo> list=new ArrayList<ChannelInfo>();
 			
+			//hack
 			int numchan=0;
-			numchan=eventsFloat.get(0).length; //hack
+			if(eventsInt!=null)
+				numchan=eventsInt.get(0).length; 
+			else
+				numchan=eventsFloat.get(0).length; 
 			
 			for(int id=1;id<=numchan;id++)
 				{
@@ -228,6 +242,7 @@ public class FCSFile
 			DataInputStream rHeader=new DataInputStream(fi);
 			
 			fcsversion=FCSFile.readString(rHeader, 10);
+			System.out.println("FCS version: "+fcsversion);
 			
 			long offsetTextStart=FCSFile.readOffset(rHeader);
 			long offsetTextEnd=FCSFile.readOffset(rHeader);
@@ -247,6 +262,7 @@ public class FCSFile
 			DataInputStream rText=new DataInputStream(new FileInputStream(f));
 			rText.skip(offsetTextStart);
 			String textSeg=FCSFile.readString(rText,(int)(offsetTextEnd-offsetTextStart));
+			System.out.println("text from to "+offsetTextStart+"  "+offsetTextEnd);
 			
 			//The first char in text segment is delimiter
 			char delimiter=textSeg.charAt(0);
@@ -287,6 +303,7 @@ public class FCSFile
 						invertByteOrder=true;
 					else
 						invertByteOrder=false; //1,2,3,4 assumed
+					System.out.println("invert byteord: "+invertByteOrder);
 					}
 				else if(tok.equals("$DATATYPE")) //$DATATYPE Type of data in DATA segment (ASCII, integer, floating point).
 					{
@@ -302,7 +319,8 @@ public class FCSFile
 					}
 				else if(tok.equals("$ENDSTEXT")) //$ENDSTEXT Byte-offset to the last byte of a supplemental TEXT segment.
 					{
-					offsetTextEnd=Long.parseLong(tokText.nextToken());
+					String s=tokText.nextToken();
+					offsetTextEnd=Long.parseLong(s.trim());
 					}
 				else if(tok.equals("$MODE")) //$MODE Data mode (list mode - preferred, histogram - deprecated).
 					{
@@ -311,7 +329,7 @@ public class FCSFile
 					}
 				else if(tok.equals("$NEXTDATA")) //$NEXTDATA Byte offset to next data set in the file.
 					{
-					nextData=Long.parseLong(tokText.nextToken());
+					nextData=Long.parseLong(tokText.nextToken().trim());//Long.parseLong(tokText.nextToken());
 					if(nextData==0)
 						nextData=null; //This is the last one
 					}
@@ -533,7 +551,7 @@ public class FCSFile
 
 				for(int i=0;i<numEvents;i++)
 					{
-					System.out.println("event");
+					//System.out.println("event");
 					int[] event=new int[numParam];
 					eventsInt.add(event);
 					
@@ -547,20 +565,31 @@ public class FCSFile
 						
 						System.out.println(v);*/
 						
+						//16, false
+						//System.out.println("#bits "+numbits[j]+"  "+invertByteOrder);
 						
 						//this works with byte order 1,2,3,4. others might be needed!
 						int v=0;
 						if(numbits[j]==32)
 							v=rData.readInt();
 						else if(numbits[j]==16)
+							{
+							int b0=rData.readUnsignedByte();
+							int b1=rData.readUnsignedByte();
+							
+							int l = (int)b0 & 0xFF;
+							l += ((int)b1 & 0xFF) << 8;
+							v=l;
+//							read
 //								readUnsignedShort(rData, invertByteOrder);
-							v=rData.readUnsignedShort();
+//							v=rData.readUnsignedShort();
+							}
 						else if(numbits[j]==8)
 							v=rData.readUnsignedByte();
 						else
 							System.out.println("Unknown #bits: "+numbits[j]);
 						
-						System.out.println("invertbyteorder: "+invertByteOrder);
+						//System.out.println("invertbyteorder: "+invertByteOrder);
 						//todo, Some bits should be ignored according to range. nitpicking?
 						
 						event[j]=v;
@@ -635,16 +664,15 @@ public class FCSFile
 		public Dataset getDataset()
 			{
 			Dataset dataset=new Dataset();
-			dataset.eventsFloat=eventsFloat;
+			dataset.setEvents(eventsFloat);
 			//dataset.eventsInt=eventsInt;
 			dataset.source=source;
-			dataset.ci.addAll(getChannelInfo());
+			dataset.channelInfo.addAll(getChannelInfo());
 			
 			//Convert int events to float
 			if(eventsInt!=null)
 				{
 				ArrayList<double[]> arr=new ArrayList<double[]>(eventsInt.size());
-				dataset.eventsFloat=arr;
 				for(int[] one:eventsInt)
 					{
 					double[] onef=new double[one.length];
@@ -652,6 +680,8 @@ public class FCSFile
 						onef[i]=one[i];
 					arr.add(onef);
 					}
+				//dataset.eventsFloat=arr;
+				dataset.setEvents(arr);
 				}
 			
 			return dataset;

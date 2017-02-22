@@ -28,6 +28,9 @@ public class ViewSettings
 	public double scaleX=1;
 	public double scaleY=1;
 	
+	public double zoomX=1; //For speed, this is integrated into the scale whenever needed
+	public double zoomY=1;
+	
 	/**
 	 * Set the scale to cover the given max and min values
 	 */
@@ -36,8 +39,8 @@ public class ViewSettings
 		//Currently min values are not used
 		double maxx=max[indexX];
 		double maxy=max[indexY];
-		scaleX=1.0/maxx;
-		scaleY=1.0/maxy;
+		scaleX=1.0/maxx*zoomX;
+		scaleY=1.0/maxy*zoomY;
 		} 
 
 
@@ -49,7 +52,7 @@ public class ViewSettings
 		double max[]=new double[dataset.getNumChannels()];
 		for(int i=0;i<max.length;i++)
 			max[i]=-Double.MAX_VALUE;
-		for(int i=0;i<dataset.eventsFloat.size();i++)
+		for(int i=0;i<dataset.getNumObservations();i++)
 			for(int j=0;j<max.length;j++)
 					max[j]=Math.max(max[j],dataset.getAsFloat(i,j));
 		return max;
@@ -63,7 +66,7 @@ public class ViewSettings
 		double val[]=new double[dataset.getNumChannels()];
 		for(int i=0;i<val.length;i++)
 			val[i]=Double.MAX_VALUE;
-		for(int i=0;i<dataset.eventsFloat.size();i++)
+		for(int i=0;i<dataset.getNumObservations();i++)
 			for(int j=0;j<val.length;j++)
 					val[j]=Math.min(val[j],dataset.getAsFloat(i,j));
 		return val;
@@ -182,6 +185,22 @@ public class ViewSettings
 		ind.add(indexX);
 		ind.add(indexY);
 		return ind.contains(indexX2) && ind.contains(indexY2);
+		}
+
+
+	public void swapAxis()
+		{
+		int axis=indexX;
+		indexX=indexY;
+		indexY=axis;
+		
+		double scale=scaleX;
+		scaleX=scaleY;
+		scaleY=scale;
+		
+		double zoom=zoomX;
+		zoomX=zoomY;
+		zoomY=zoom;
 		}
 	
 	

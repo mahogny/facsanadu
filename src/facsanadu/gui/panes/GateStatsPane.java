@@ -119,7 +119,11 @@ public class GateStatsPane extends QWidget
 				if(gparent==null)
 					gparent=gr.getRootGate();
 				IntArray arrParent=gr.getAcceptedFromGate(gparent);
-				double percParent=arr.size()/(double)arrParent.size();
+				double percParent;
+				if(arrParent!=null)
+					percParent=arr.size()/(double)arrParent.size();
+				else
+					percParent=-1; //Cannot be calculated yes
 				
 				//Compute percent of total
 				double percTotal=arr.size()/(double)gr.getTotalCount(); 

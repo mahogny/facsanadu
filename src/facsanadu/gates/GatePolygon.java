@@ -63,11 +63,6 @@ public class GatePolygon extends Gate
 	
 	public void removeRedundantPoints()
 		{
-		/*
-		System.out.println("before");
-		for(int i=0;i<getNumPoints();i++)
-			System.out.println("("+arrX.get(i)+","+arrY.get(i)+")");
-		*/
 		for(int i=1;i<getNumPoints();)
 			if(almostEqual(arrX.get(i),arrX.get(i-1)) && almostEqual(arrY.get(i),arrY.get(i-1)))
 				{
@@ -75,15 +70,7 @@ public class GatePolygon extends Gate
 				arrY.remove(i);
 				}
 			else
-				{
-				//System.out.println("diff "+(arrX.get(i)-arrX.get(i-1))+"   "+(arrY.get(i)-arrY.get(i-1)));
 				i++;
-				}
-		/*
-		System.out.println("after");
-		for(int i=0;i<getNumPoints();i++)
-			System.out.println("("+arrX.get(i)+","+arrY.get(i)+")");
-			*/
 		}
 	
 	}

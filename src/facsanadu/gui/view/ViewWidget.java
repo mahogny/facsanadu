@@ -28,9 +28,6 @@ import facsanadu.gui.events.FacsanaduEvent;
 import facsanadu.gui.view.gate.GateHandle;
 import facsanadu.gui.view.tool.ViewToolChoice;
 import facsanadu.gui.view.tool.ViewTool;
-import facsanadu.gui.view.tool.ViewToolDrawPoly;
-import facsanadu.gui.view.tool.ViewToolDrawRect;
-import facsanadu.gui.view.tool.ViewToolDrawSelect;
 
 /**
  * 
@@ -82,6 +79,7 @@ public class ViewWidget extends QWidget
 	@Override
 	protected void paintEvent(QPaintEvent pe)
 		{
+		System.out.println("!start repaint");
 		super.paintEvent(pe);
 		FacsanaduProject project=mw.project;
 		GatingResult gr=project.gatingResult.get(dataset);
@@ -108,6 +106,7 @@ public class ViewWidget extends QWidget
 		
 		
 		pm.end();
+		System.out.println("!end repaint");
 		}
 	
 
@@ -164,7 +163,9 @@ public class ViewWidget extends QWidget
 					lastwasx=true;
 				else
 					lastwasx=false;
-							
+
+				menu.addAction(tr("Swap axis"),this,"actionSwapAxis()");
+				
 				ArrayList<ChannelInfo> chans=dataset.getChannelInfo();
 				for(int i=0;i<chans.size();i++)
 					{
@@ -191,6 +192,20 @@ public class ViewWidget extends QWidget
 					setchans.add(sg);
 					mSetSource.addAction(g.name, sg, "actionSet()");
 					}
+				
+				//Menu to set scaling
+				QMenu mSetScaling=menu.addMenu(tr("Set zoom"));
+				for(double d:new double[]{1,2,5,10,20,50})
+					{
+					CallbackSetZoom sg=new CallbackSetZoom();
+					sg.scale=d;
+					sg.isx=lastwasx;
+					setchans.add(sg);
+					mSetScaling.addAction(""+d, sg, "actionSet()");
+					}
+
+				
+				
 				menu.exec(event.globalPos());
 				}
 			else
@@ -307,6 +322,19 @@ public class ViewWidget extends QWidget
 			}
 		}
 
+	public class CallbackSetZoom implements Callback
+		{
+		double scale;
+		boolean isx;
+		public void actionSet()
+			{
+			if(isx)
+				viewsettings.zoomX=scale;
+			else
+				viewsettings.zoomY=scale;
+			mw.handleEvent(new EventViewsChanged());
+			}
+		}
 
 	public int getIndexX()
 		{
@@ -324,17 +352,15 @@ public class ViewWidget extends QWidget
 
 
 
+	public void actionSwapAxis()
+		{
+		viewsettings.swapAxis();
+		mw.handleEvent(new EventViewsChanged());
+		}
 
 	public void setTool(ViewToolChoice t)
 		{
-		if(t==ViewToolChoice.SELECT)
-			tool=new ViewToolDrawSelect(this);
-		else if(t==ViewToolChoice.POLY)
-			tool=new ViewToolDrawPoly(this);
-		else if(t==ViewToolChoice.RECT)
-			tool=new ViewToolDrawRect(this);
-		else
-			throw new RuntimeException("Unsupported tool");
+		tool=ViewToolChoice.getTool(this, t);
 		}
 
 

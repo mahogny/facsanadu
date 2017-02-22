@@ -38,7 +38,9 @@ public abstract class GateCalcThread
 	 */
 	public abstract	FacsanaduProject getProject();
 	
-	
+	/**
+	 * Function to call once work done
+	 */
 	public abstract void callbackDoneCalc(Dataset dataset, Gate g);
 	
 	/**
@@ -65,6 +67,7 @@ public abstract class GateCalcThread
 		numcores=th;
 		synchronized (threads)
 			{
+			//Start more threads if needed. Old ones will die automatically if value reduced
 			for(int i=threads.size();i<numcores;i++)
 				{
 				Worker w=new Worker(threads.size());
@@ -87,11 +90,9 @@ public abstract class GateCalcThread
 			}
 		public void run()
 			{
-			System.out.println("Running thread "+id);
 			while(id<=numcores)
 				{
 				//and other criteria
-				
 				FacsanaduProject proj=getProject();
 
 				//Get a task that needs doing
@@ -130,7 +131,6 @@ public abstract class GateCalcThread
 				}
 			synchronized (threads)
 				{
-				System.out.println("Stopping "+id);
 				threads.remove(this);
 				}
 			}
@@ -143,24 +143,28 @@ public abstract class GateCalcThread
 	public Task getTaskToWorkOn(Dataset ds, Gate g)
 		{
 		FacsanaduProject proj=getProject();
-		GatingResult gr=proj.getCreateGatingResult(ds);
 		
+		//First checking if there is any work in terms of gating
+		GatingResult gr=proj.getCreateGatingResult(ds);
 		if(gr.gateNeedsUpdate(g))
 			{
 			TaskGate task=new TaskGate();
 			task.g=g;
 			task.ds=ds;
-			//Check if already processed. If so, also cannot process children here yet, nor measures, so just give up on this node
+			//Check if already processed. If so, also cannot process children here yet,
+			//nor measures, so just give up on this node
 			if(currentTasks.contains(task))
 				return null;
 			else
 				{
-				System.out.println(currentTasks);
+				System.out.println("c tasks "+currentTasks);
 				System.out.println("scheduling "+task.g+ "   "+task.ds);
 				System.out.println();
 				return task;
 				}
 			}
+		
+		//After gates, check if there are any measures to be done
 		for(GateMeasure calc:g.getMeasures())
 			{
 			TaskMeasure task=new TaskMeasure();

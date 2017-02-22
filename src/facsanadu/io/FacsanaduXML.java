@@ -13,7 +13,10 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 import facsanadu.data.Dataset;
+import facsanadu.data.LengthProfileData;
+import facsanadu.data.ProfChannel;
 import facsanadu.gates.Gate;
+import facsanadu.gates.GateEllipse;
 import facsanadu.gates.GatePolygon;
 import facsanadu.gates.GateRect;
 import facsanadu.gui.FacsanaduProject;
@@ -29,7 +32,6 @@ import facsanadu.gui.view.ViewSettings;
  */
 public class FacsanaduXML
 	{
-	
 	/**
 	 * Export a project
 	 */
@@ -53,12 +55,34 @@ public class FacsanaduXML
 			
 			Element eSeq=new Element("dataset");
 			eSeq.setAttribute("path",relpath);
+
+			//Attach information about profiles being flipped, if profile data is included
+			if(ds.getNumObservations()>0 && ds.lengthprofsData.get(0).getLength()>0)
+				{
+				StringBuilder sb=new StringBuilder();
+				for(LengthProfileData d:ds.lengthprofsData)
+					sb.append(d.isFlipped ? "F" : "0");
+				eSeq.setAttribute("pflip",sb.toString());
+				}
+			
 			etot.addContent(eSeq);
 			}
 		
 		//Store gates
 		Element egate=new Element("gateset");
 		storeGate(proj.gateset.getRootGate(), egate);
+		etot.addContent(egate);
+
+		//Store prof channels
+		for(ProfChannel pc:proj.profchan)
+			{
+			Element epc=new Element("profchan");
+			epc.setAttribute("chan",""+pc.channel);
+			epc.setAttribute("from",""+pc.from);
+			epc.setAttribute("to",""+pc.to);
+			epc.setAttribute("normalize",""+pc.forNormalized);
+			etot.addContent(epc);
+			}
 		
 		//Store views
 		for(ViewSettings vs:proj.views)
@@ -67,8 +91,14 @@ public class FacsanaduXML
 			eview.setAttribute("indexX",""+vs.indexX);
 			eview.setAttribute("indexY",""+vs.indexY);
 			eview.setAttribute("gate",""+vs.gate.name);
+
+			eview.setAttribute("scaleX",""+vs.scaleX);
+			eview.setAttribute("scaleY",""+vs.scaleY);
+			
 			etot.addContent(eview);
 			}
+		
+		
 		
 		return etot;
 		}
@@ -100,6 +130,19 @@ public class FacsanaduXML
 				ge.setAttribute("y1",""+gr.y1);
 				ge.setAttribute("y2",""+gr.y2);
 				}
+			if(g instanceof GateEllipse)
+				{
+				GateEllipse gr=(GateEllipse)g;
+				type="ellipse";
+				
+				ge.setAttribute("ix",""+gr.indexX);
+				ge.setAttribute("iy",""+gr.indexY);
+
+				ge.setAttribute("x",""+gr.x);
+				ge.setAttribute("rx",""+gr.rx);
+				ge.setAttribute("y",""+gr.y);
+				ge.setAttribute("ry",""+gr.ry);
+				}
 			else if(g instanceof GatePolygon)
 				{
 				GatePolygon gr=(GatePolygon)g;
@@ -112,14 +155,16 @@ public class FacsanaduXML
 					{
 					Element epoint=new Element("point");
 					epoint.setAttribute("x",""+gr.arrX.get(i));
-					epoint.setAttribute("x",""+gr.arrY.get(i));
-					e.addContent(epoint);
+					epoint.setAttribute("y",""+gr.arrY.get(i));
+					ge.addContent(epoint);
 					}
 				}
 
 			if(type==null)
 				throw new IOException("gate cannot be stored "+g);
 			ge.setAttribute("type",type);
+			e.addContent(ge);
+			
 			
 			storeGate(g, ge);
 			}
@@ -129,11 +174,11 @@ public class FacsanaduXML
 	/**
 	 * Load gates recursively
 	 */
-	private static void loadGate(Gate parent, Element e) throws IOException
+	private static void loadGate(Gate parent, Element eParent) throws IOException
 		{
 		try
 			{
-			for(Element one:e.getChildren())
+			for(Element one:eParent.getChildren())
 				{
 				if(one.getName().equals("gate"))
 					{
@@ -150,16 +195,28 @@ public class FacsanaduXML
 						gr.y1=one.getAttribute("y1").getDoubleValue();
 						gr.y2=one.getAttribute("y2").getDoubleValue();
 						}
+					else if(type.equals("ellipse"))
+						{
+						GateEllipse gr=new GateEllipse();
+						g=gr;
+						gr.indexX=one.getAttribute("ix").getIntValue();
+						gr.indexY=one.getAttribute("iy").getIntValue();
+						gr.x=one.getAttribute("x").getDoubleValue();
+						gr.y=one.getAttribute("y").getDoubleValue();
+						gr.rx=one.getAttribute("rx").getDoubleValue();
+						gr.ry=one.getAttribute("ry").getDoubleValue();
+						}
 					else if(type.equals("poly"))
 						{
 						GatePolygon gr=new GatePolygon();
 						g=gr;
 						gr.indexX=one.getAttribute("ix").getIntValue();
 						gr.indexY=one.getAttribute("iy").getIntValue();
-						for(Element epoint:e.getChildren())
-							gr.addPoint(
-									epoint.getAttribute("x").getDoubleValue(),
-									epoint.getAttribute("y").getDoubleValue());
+						for(Element epoint:one.getChildren())
+							if(epoint.getName().equals("point"))
+								gr.addPoint(
+										epoint.getAttribute("x").getDoubleValue(),
+										epoint.getAttribute("y").getDoubleValue());
 						}
 					if(g==null)
 						throw new IOException("Unknown gate type "+type);
@@ -202,7 +259,22 @@ public class FacsanaduXML
 					vs.gate=proj.gateset.getGate(one.getAttributeValue("gate"));
 					vs.indexX=one.getAttribute("indexX").getIntValue();
 					vs.indexY=one.getAttribute("indexY").getIntValue();
+					if(one.getAttribute("scaleX")!=null)
+						{
+						vs.scaleX=one.getAttribute("scaleX").getDoubleValue();
+						vs.scaleY=one.getAttribute("scaleY").getDoubleValue();
+						}
+					
 					proj.views.add(vs);
+					}
+				else if(one.getName().equals("profchan"))
+					{
+					ProfChannel pc=new ProfChannel();
+					pc.channel=one.getAttribute("chan").getIntValue();
+					pc.from=one.getAttribute("from").getIntValue();
+					pc.to=one.getAttribute("to").getIntValue();
+					pc.forNormalized=one.getAttribute("normalize").getBooleanValue();
+					proj.profchan.add(pc);
 					}
 				else if(one.getName().equals("dataset"))
 					{
@@ -221,6 +293,9 @@ public class FacsanaduXML
 			e.printStackTrace();
 			throw new IOException("read error");
 			}
+		
+		
+		//TODO compute virtual channels
 		}
 	
 
@@ -240,6 +315,7 @@ public class FacsanaduXML
 			}
 		catch (Exception e)
 			{
+			e.printStackTrace();
 			throw new IOException(e.getMessage());
 			}
 		return proj;

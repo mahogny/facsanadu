@@ -94,9 +94,12 @@ public class GateSet
 		}
 	private void getIdGates(Gate g, ArrayList<Gate> list)
 		{
+		//Prepare a list with place holders - expand if needed
 		while(list.size()<=g.getIntID())
 			list.add(null);
+		//Set this particular gate in the list
 		list.set(g.getIntID(), g);
+		//Recurse to child gates
 		for(Gate child:g.children)
 			getIdGates(child, list);
 		}

@@ -21,6 +21,11 @@ public class GatingResult
 	private HashMap<Gate, Long> lastUpdateGate=new HashMap<Gate, Long>();
 	
 	GateSet gating=new GateSet();
+	public GatingResult(GateSet gating)
+		{
+		this.gating=gating;
+		}
+	
 
 	public int getGateIntIDForObs(int obs)
 		{
@@ -42,7 +47,7 @@ public class GatingResult
 	 */
 	public void doOneGate(Gate g, Dataset ds, boolean approximate)
 		{
-		approximate=false;
+		approximate=false;  //TODO disabling approximation. this is hard to implement!
 		int n;
 		if(g.parent==null) //This is the root
 			{
@@ -113,7 +118,14 @@ public class GatingResult
 
 	public int getTotalCount()
 		{
-		return acceptedFromGate.get(gating.getRootGate()).size();
+		IntArray ra=acceptedFromGate.get(gating.getRootGate());
+		if(ra==null)
+			{
+			System.err.println("No root gate array yet");
+			return 1;
+			}
+		else
+			return ra.size();
 		}
 
 	public Gate getRootGate()
@@ -126,6 +138,10 @@ public class GatingResult
 		return gatecalc.get(calc);
 		}
 
+	/**
+	 * Check if this gate needs any updating.
+	 * Done by having a time last computed vs a time for when last modified
+	 */
 	public boolean gateNeedsUpdate(Gate g)
 		{
 		Long lastupd=lastUpdateGate.get(g);
