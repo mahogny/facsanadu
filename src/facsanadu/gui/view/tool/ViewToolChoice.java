@@ -1,5 +1,7 @@
 package facsanadu.gui.view.tool;
 
+import facsanadu.gui.view.ViewWidget;
+
 /**
  * 
  * Currently selected tool
@@ -9,5 +11,20 @@ package facsanadu.gui.view.tool;
  */
 public enum ViewToolChoice
 	{
-	SELECT, RECT, POLY
+	SELECT, RECT, POLY, ELLIPSE;
+	
+
+	public static ViewTool getTool(ViewWidget w, ViewToolChoice t)
+		{
+		if(t==ViewToolChoice.SELECT)
+			return new ViewToolDrawSelect(w);
+		else if(t==ViewToolChoice.POLY)
+			return new ViewToolDrawPoly(w);
+		else if(t==ViewToolChoice.RECT)
+			return new ViewToolDrawRect(w);
+		else if(t==ViewToolChoice.ELLIPSE)
+			return new ViewToolDrawEllipse(w);
+		else
+			throw new RuntimeException("Unsupported tool");
+		}
 	}

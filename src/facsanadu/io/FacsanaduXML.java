@@ -16,6 +16,7 @@ import facsanadu.data.Dataset;
 import facsanadu.data.LengthProfileData;
 import facsanadu.data.ProfChannel;
 import facsanadu.gates.Gate;
+import facsanadu.gates.GateEllipse;
 import facsanadu.gates.GatePolygon;
 import facsanadu.gates.GateRect;
 import facsanadu.gui.FacsanaduProject;
@@ -129,6 +130,19 @@ public class FacsanaduXML
 				ge.setAttribute("y1",""+gr.y1);
 				ge.setAttribute("y2",""+gr.y2);
 				}
+			if(g instanceof GateEllipse)
+				{
+				GateEllipse gr=(GateEllipse)g;
+				type="ellipse";
+				
+				ge.setAttribute("ix",""+gr.indexX);
+				ge.setAttribute("iy",""+gr.indexY);
+
+				ge.setAttribute("x",""+gr.x);
+				ge.setAttribute("rx",""+gr.rx);
+				ge.setAttribute("y",""+gr.y);
+				ge.setAttribute("ry",""+gr.ry);
+				}
 			else if(g instanceof GatePolygon)
 				{
 				GatePolygon gr=(GatePolygon)g;
@@ -180,6 +194,17 @@ public class FacsanaduXML
 						gr.x2=one.getAttribute("x2").getDoubleValue();
 						gr.y1=one.getAttribute("y1").getDoubleValue();
 						gr.y2=one.getAttribute("y2").getDoubleValue();
+						}
+					else if(type.equals("ellipse"))
+						{
+						GateEllipse gr=new GateEllipse();
+						g=gr;
+						gr.indexX=one.getAttribute("ix").getIntValue();
+						gr.indexY=one.getAttribute("iy").getIntValue();
+						gr.x=one.getAttribute("x").getDoubleValue();
+						gr.y=one.getAttribute("y").getDoubleValue();
+						gr.rx=one.getAttribute("rx").getDoubleValue();
+						gr.ry=one.getAttribute("ry").getDoubleValue();
 						}
 					else if(type.equals("poly"))
 						{

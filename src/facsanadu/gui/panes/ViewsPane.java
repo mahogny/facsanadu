@@ -34,23 +34,20 @@ public class ViewsPane extends QWidget
 	private QPushButton bGateSelect=new QPushButton(new QIcon(ImgResource.gateSelect),"");
 	private QPushButton bGatePoly=new QPushButton(new QIcon(ImgResource.gatePolygon),"");
 	private QPushButton bGateRect=new QPushButton(new QIcon(ImgResource.gateRect),"");
+	private QPushButton bGateEllipse=new QPushButton(new QIcon(ImgResource.gateEllipse),"");
+	QPushButton[] tb=new QPushButton[]{bGateSelect, bGatePoly, bGateRect, bGateEllipse};
 
 	public ViewsPane(MainWindow mw)
 		{
 		matrix=new ViewsMatrix(mw);
 		
-		bgroup.addButton(bGateSelect);
-		bgroup.addButton(bGateRect);
-		bgroup.addButton(bGatePoly);
-		
-		bGatePoly.setCheckable(true);
-		bGateRect.setCheckable(true);
-		bGateSelect.setCheckable(true);
+		for(QPushButton t:tb)
+			bgroup.addButton(t);
+		for(QPushButton t:tb)
+			t.setCheckable(true);
 		bGateSelect.setChecked(true);
-		
-		bGatePoly.toggled.connect(this,"actionSetTool()");
-		bGateRect.toggled.connect(this,"actionSetTool()");
-		bGateSelect.toggled.connect(this,"actionSetTool()");
+		for(QPushButton t:tb)
+			t.toggled.connect(this,"actionSetTool()");
 		
 		spMaxEvents.setMinimum(100);
 		spMaxEvents.setMaximum(10000000);
@@ -58,9 +55,8 @@ public class ViewsPane extends QWidget
 		cbMaxEvents.setChecked(true);
 		
 		QHBoxLayout laytop=new QHBoxLayout();
-		laytop.addWidget(bGateSelect);
-		laytop.addWidget(bGatePoly);
-		laytop.addWidget(bGateRect);
+		for(QPushButton t:tb)
+			laytop.addWidget(t);
 		laytop.addStretch();
 		laytop.addWidget(cbMaxEvents);
 		laytop.addWidget(spMaxEvents);
@@ -106,6 +102,8 @@ public class ViewsPane extends QWidget
 			setTool(ViewToolChoice.SELECT);
 		else if(bgroup.checkedButton()==bGateRect)
 			setTool(ViewToolChoice.RECT);
+		else if(bgroup.checkedButton()==bGateEllipse)
+			setTool(ViewToolChoice.ELLIPSE);
 		}
 
 	public void setTool(ViewToolChoice t)

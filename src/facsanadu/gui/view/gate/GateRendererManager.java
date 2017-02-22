@@ -1,6 +1,7 @@
 package facsanadu.gui.view.gate;
 
 import facsanadu.gates.Gate;
+import facsanadu.gates.GateEllipse;
 import facsanadu.gates.GatePolygon;
 import facsanadu.gates.GateRect;
 import facsanadu.gates.GateRoot;
@@ -25,6 +26,8 @@ public class GateRendererManager
 			return new GateRendererRoot();
 		else if(g instanceof GatePolygon)
 			return new GateRendererPoly();
+		else if(g instanceof GateEllipse)
+			return new GateRendererEllipse();
 		else
 			throw new RuntimeException("no renderer");
 		}
