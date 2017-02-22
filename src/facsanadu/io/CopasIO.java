@@ -17,6 +17,7 @@ import facsanadu.data.ChannelInfo;
 import facsanadu.data.Dataset;
 import facsanadu.data.LengthProfile;
 import facsanadu.data.LengthProfileData;
+import facsanadu.data.LengthProfileFlipper;
 
 
 
@@ -209,6 +210,7 @@ public class CopasIO
 			System.out.println("No profile present, not loading");
 		Dataset ds=convertEvents(destOverview, hasProfile);
 		ds.source=f;
+		LengthProfileFlipper.run(ds);
 		return ds;
 		}
 
@@ -311,8 +313,6 @@ public class CopasIO
 				fcs.lengthprofsData.add(d);
 				}
 			}
-			
-			
 		return fcs;
 		}
 

@@ -13,6 +13,7 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 import facsanadu.data.Dataset;
+import facsanadu.data.LengthProfileData;
 import facsanadu.data.ProfChannel;
 import facsanadu.gates.Gate;
 import facsanadu.gates.GatePolygon;
@@ -30,7 +31,6 @@ import facsanadu.gui.view.ViewSettings;
  */
 public class FacsanaduXML
 	{
-	
 	/**
 	 * Export a project
 	 */
@@ -54,6 +54,16 @@ public class FacsanaduXML
 			
 			Element eSeq=new Element("dataset");
 			eSeq.setAttribute("path",relpath);
+
+			//Attach information about profiles being flipped, if profile data is included
+			if(ds.getNumObservations()>0 && ds.lengthprofsData.get(0).getLength()>0)
+				{
+				StringBuilder sb=new StringBuilder();
+				for(LengthProfileData d:ds.lengthprofsData)
+					sb.append(d.isFlipped ? "F" : "0");
+				eSeq.setAttribute("pflip",sb.toString());
+				}
+			
 			etot.addContent(eSeq);
 			}
 		

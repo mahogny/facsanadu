@@ -12,6 +12,8 @@ public class LengthProfileData
 	public double[][] data; //[channel][levels]
 	public double[][] cumsum;
 
+	public boolean isFlipped=false;
+	
 	public int getLength()
 		{
 		if(data.length>0)
@@ -35,5 +37,26 @@ public class LengthProfileData
 				last=outarr[j];
 				}
 			}
+		}
+	
+	public double[][] getFlipped()
+		{
+		double[][] n=new double[data.length][];//[data[0].length];
+		for(int i=0;i<data.length;i++)
+			{
+			double[] from=data[i];
+			double[] to=new double[from.length];
+			for(int j=0;j<from.length;j++)
+				to[j]=from[from.length-1-j];
+			n[i]=to;
+			}
+		return n;
+		}
+	
+	public void flip(double[][] newdata)
+		{
+		isFlipped=true;
+		data=newdata;
+		calcCumsum();
 		}
 	}
