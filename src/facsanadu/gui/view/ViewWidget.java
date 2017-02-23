@@ -158,7 +158,7 @@ public class ViewWidget extends QWidget
 				
 				//Menu to set axis, and histogram
 				QMenu menuAxis=menu.addMenu(tr("Set axis"));
-				QMenu menuHist=menu.addMenu(tr("Set histogram"));
+				QMenu menuHist=new QMenu(tr("Set histogram"));
 				boolean lastwasx=true;
 				if(event.pos().x()>invy)
 					lastwasx=true;
@@ -197,7 +197,7 @@ public class ViewWidget extends QWidget
 				
 				//Menu to set scaling
 				QMenu mSetScaling=menu.addMenu(tr("Set zoom"));
-				for(double d:new double[]{1,2,5,10,20,50})
+				for(double d:new double[]{0.1,0.5,1,2,5,10,20,50})
 					{
 					CallbackSetZoom sg=new CallbackSetZoom();
 					sg.scale=d;
@@ -211,6 +211,20 @@ public class ViewWidget extends QWidget
 				CallbackSetTransformation tLog=new CallbackSetTransformation(TransformationType.LOG, lastwasx);
 				menuTrans.addAction("Linear", tLin, "actionSet()");
 				menuTrans.addAction("Log", tLog, "actionSet()");
+				
+
+				
+				QMenu mHistBins=new QMenu(tr("Set histogram bins"));
+				for(int d:new int[]{5,10,15,20,30,40,50,100,200,300})
+					{
+					CallbackSetBins sg=new CallbackSetBins();
+					sg.bins=d;
+					setchans.add(sg);
+					mHistBins.addAction(""+d, sg, "actionSet()");
+					}
+				menu.addSeparator();
+				menu.addMenu(menuHist);
+				menu.addMenu(mHistBins);
 				
 				menu.exec(event.globalPos());
 				}
@@ -245,14 +259,6 @@ public class ViewWidget extends QWidget
 		super.mouseMoveEvent(event);
 		if(curhandle!=null)
 			{
-//			double dx=event.posF().x() - pointLast.x();
-	//		double dy=event.posF().y() - pointLast.y();
-
-			//dx=trans.scaleScreenToFCSx(dx);
-			//dy=trans.scaleScreenToFCSy(dy);
-			
-			//666
-			//dx=dy=0;
 			QPointF p=trans.mapScreenToFcs(event.posF());
 			curhandle.move2(mw, p.x(), p.y());
 			}
@@ -379,6 +385,17 @@ public class ViewWidget extends QWidget
 			}
 		}
 
+
+	public class CallbackSetBins implements Callback
+		{
+		int bins;
+		public void actionSet()
+			{
+			viewsettings.numHistBins=bins;
+			mw.handleEvent(new EventViewsChanged());
+			}
+		}
+	
 	public int getIndexX()
 		{
 		return viewsettings.indexX;

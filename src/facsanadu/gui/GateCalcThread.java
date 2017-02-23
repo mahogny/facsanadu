@@ -82,6 +82,7 @@ public abstract class GateCalcThread
 				threads.add(w);
 				}
 			}
+		wakeup();
 		}
 
 	
@@ -120,6 +121,7 @@ public abstract class GateCalcThread
 						try
 							{
 							lockGetGate.wait();
+							System.out.println("Thread sleeping");
 							}
 						catch (InterruptedException e)
 							{
@@ -137,6 +139,7 @@ public abstract class GateCalcThread
 					wakeup();
 					}
 				}
+			System.out.println("Thread ending");
 			synchronized (threads)
 				{
 				threads.remove(this);

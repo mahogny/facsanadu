@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import com.trolltech.qt.core.QCoreApplication;
 import com.trolltech.qt.core.QUrl;
 import com.trolltech.qt.gui.QApplication;
+import com.trolltech.qt.gui.QCloseEvent;
 import com.trolltech.qt.gui.QFileDialog;
 import com.trolltech.qt.gui.QFileDialog.AcceptMode;
 import com.trolltech.qt.gui.QFileDialog.FileMode;
@@ -604,4 +605,15 @@ public class MainWindow extends QMainWindow
 		dothelayout();
 		//handleEvent(new EventViewsChanged()); //maybe too light
 		}
+
+	/**
+	 * Ensure proper exit
+	 */
+	@Override
+	protected void closeEvent(QCloseEvent arg)
+		{
+		super.closeEvent(arg);
+		System.exit(0);
+		}
+	
 	}

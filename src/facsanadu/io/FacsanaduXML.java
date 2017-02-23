@@ -94,7 +94,9 @@ public class FacsanaduXML
 
 			eview.setAttribute("scaleX",""+vs.scaleX);
 			eview.setAttribute("scaleY",""+vs.scaleY);
-			
+
+			eview.setAttribute("hbins",""+vs.numHistBins);
+
 			etot.addContent(eview);
 			}
 		
@@ -264,7 +266,10 @@ public class FacsanaduXML
 						vs.scaleX=one.getAttribute("scaleX").getDoubleValue();
 						vs.scaleY=one.getAttribute("scaleY").getDoubleValue();
 						}
-					
+
+					if(one.getAttribute("hbins")!=null)
+						vs.numHistBins=one.getAttribute("hbins").getIntValue();
+
 					proj.views.add(vs);
 					}
 				else if(one.getName().equals("profchan"))

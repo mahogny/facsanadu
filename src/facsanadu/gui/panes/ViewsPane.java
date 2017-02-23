@@ -35,7 +35,8 @@ public class ViewsPane extends QWidget
 	private QPushButton bGatePoly=new QPushButton(new QIcon(ImgResource.gatePolygon),"");
 	private QPushButton bGateRect=new QPushButton(new QIcon(ImgResource.gateRect),"");
 	private QPushButton bGateEllipse=new QPushButton(new QIcon(ImgResource.gateEllipse),"");
-	QPushButton[] tb=new QPushButton[]{bGateSelect, bGatePoly, bGateRect, bGateEllipse};
+	private QPushButton bGateRange=new QPushButton(new QIcon(ImgResource.gateRange),"");
+	QPushButton[] tb=new QPushButton[]{bGateSelect, bGatePoly, bGateRect, bGateEllipse, bGateRange};
 
 	public ViewsPane(MainWindow mw)
 		{
@@ -104,6 +105,8 @@ public class ViewsPane extends QWidget
 			setTool(ViewToolChoice.RECT);
 		else if(bgroup.checkedButton()==bGateEllipse)
 			setTool(ViewToolChoice.ELLIPSE);
+		else if(bgroup.checkedButton()==bGateRange)
+			setTool(ViewToolChoice.RANGE);
 		}
 
 	public void setTool(ViewToolChoice t)

@@ -11,7 +11,7 @@ import facsanadu.gui.view.ViewWidget;
  */
 public enum ViewToolChoice
 	{
-	SELECT, RECT, POLY, ELLIPSE;
+	SELECT, RECT, POLY, ELLIPSE, RANGE;
 	
 
 	public static ViewTool getTool(ViewWidget w, ViewToolChoice t)
@@ -22,6 +22,8 @@ public enum ViewToolChoice
 			return new ViewToolDrawPoly(w);
 		else if(t==ViewToolChoice.RECT)
 			return new ViewToolDrawRect(w);
+		else if(t==ViewToolChoice.RANGE)
+			return new ViewToolDrawRange(w);
 		else if(t==ViewToolChoice.ELLIPSE)
 			return new ViewToolDrawEllipse(w);
 		else

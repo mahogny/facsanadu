@@ -60,7 +60,7 @@ public class ImgResource
 	public static QPixmap gateEllipse=getIcon("fugue-shape-ellipse.png");
 	public static QPixmap gateRect=getIcon("fugue-shape-rect.png");
 	public static QPixmap gatePolygon=getIcon("fugue-shape-polygon.png");
-	public static QPixmap gateInterval=getIcon("shape-interval.png");
+	public static QPixmap gateRange=getIcon("shape-interval.png");
 	public static QPixmap gateSelect=getIcon("drawSelect.png");
 	
 	

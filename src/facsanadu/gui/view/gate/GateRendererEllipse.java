@@ -26,7 +26,7 @@ public class GateRendererEllipse implements GateRenderer
 	public void render(final Gate gate, QPainter p, ViewTransform w, final ViewSettings viewsettings, Collection<GateHandle> handles)
 		{
 		final GateEllipse cg=(GateEllipse)gate;
-		if(viewsettings.coversXY(cg.indexX, cg.indexY))
+		if(viewsettings.coversXandY(cg.indexX, cg.indexY))
 			{
 			//Figure out which dimension is what
 			final double x[]=new double[]{0,0};

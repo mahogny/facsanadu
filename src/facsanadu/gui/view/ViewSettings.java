@@ -33,6 +33,8 @@ public class ViewSettings
 	public double zoomY=1;
 
 	public TransformationStack transformation=new TransformationStack();
+
+	public int numHistBins=50;
 	
 	/**
 	 * Set the scale to cover the given max and min values
@@ -160,13 +162,14 @@ public class ViewSettings
 	public Histogram computeHistogram(Dataset data, GatingResult gr)
 		{
 		Histogram h=new Histogram();
-		h.setup(0, 1.0/scaleX, 50);
+		h.setup(0, 1.0/scaleX, numHistBins);
 		IntArray accepted=gr.getAcceptedFromGate(gate);
 		if(accepted!=null)
 			for(int i=0;i<accepted.size();i++)
 				{
 				int ind=accepted.get(i);
-				h.countEvent(data.getAsFloat(ind, indexX));
+				double x=transformation.perform(data.getAsFloat(ind, indexX), indexX);
+				h.countEvent(x);
 				}
 		return h;
 		}
@@ -187,12 +190,20 @@ public class ViewSettings
 		}
 
 
-	public boolean coversXY(int indexX2, int indexY2)
+	public boolean coversXandY(int indexX2, int indexY2)
 		{
 		HashSet<Integer> ind=new HashSet<Integer>();
 		ind.add(indexX);
 		ind.add(indexY);
 		return ind.contains(indexX2) && ind.contains(indexY2);
+		}
+
+	public boolean coversX(int indexX2)
+		{
+		HashSet<Integer> ind=new HashSet<Integer>();
+		ind.add(indexX);
+		ind.add(indexY);
+		return ind.contains(indexX2);
 		}
 
 

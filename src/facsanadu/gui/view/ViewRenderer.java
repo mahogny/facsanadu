@@ -37,7 +37,7 @@ public class ViewRenderer
 	public static void render(ViewSettings viewsettings, Dataset segment, GatingResult gr, ViewTransform trans, QPainter pm, LinkedList<GateHandle> handles, int rendermax)
 		{
 		if(viewsettings.isHistogram())
-			renderHistogram(viewsettings, segment, gr, trans, pm);
+			renderHistogram(viewsettings, segment, gr, trans, pm, handles);
 		else
 			renderXY(viewsettings, segment, gr, trans, pm, handles, rendermax);
 		}
@@ -45,8 +45,9 @@ public class ViewRenderer
 	
 	/**
 	 * Render histogram
+	 * @param handles 
 	 */
-	private static void renderHistogram(ViewSettings viewsettings, Dataset segment, GatingResult gr, ViewTransform trans, QPainter pm)
+	private static void renderHistogram(ViewSettings viewsettings, Dataset segment, GatingResult gr, ViewTransform trans, QPainter pm, LinkedList<GateHandle> handles)
 		{
 		ArrayList<ChannelInfo> chans=segment.getChannelInfo();
 		//Headache - for scaling, here it would make more sense to scale by the output histograms rather than just datasize
@@ -55,15 +56,18 @@ public class ViewRenderer
 		
 		pm.setPen(new QPen(QColor.fromRgb(0,0,0)));
 		pm.setBrush(new QBrush(QColor.gray));
-		
+
+		double magicConstant=0.2*Math.sqrt(h.getNumBins())*viewsettings.zoomY;
+
 		double binw=1.0/(h.getNumBins()+1);
 		for(int i=0;i<h.getNumBins();i++)
 			{
+			
 			double frac=h.getFrac(i);
 			int x1=trans.mapGeneralToScreenX(i*binw);
 			int x2=trans.mapGeneralToScreenX((i+1)*binw);
 			int y1=trans.mapGeneralToScreenY(0); 
-			int y2=trans.mapGeneralToScreenY(frac*8); //here is the problem
+			int y2=trans.mapGeneralToScreenY(frac*magicConstant); //here is the problem
 			pm.drawRect(new QRect(x1,y1,x2-x1,y2-y1));
 			}
 
@@ -71,6 +75,10 @@ public class ViewRenderer
 		String labelX=chans.get(viewsettings.indexX).formatName();
 		String labelY="Fraction";
 		drawHeaderLines(pm, trans, labelX, labelY);
+		
+		
+		//Draw all gates
+		drawgatesRecursive(pm, trans, viewsettings.gate, viewsettings, handles);
 		}
 
 	/**

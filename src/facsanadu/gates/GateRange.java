@@ -9,7 +9,7 @@ package facsanadu.gates;
  */
 public class GateRange extends Gate
 	{
-	public int indexX;
+	public int index;
 
 	public double x1, x2;
 	
@@ -25,7 +25,7 @@ public class GateRange extends Gate
 	public boolean classify(double[] obs)
 		{
 		return
-				obs[indexX]>=ix1 && obs[indexX]<=ix2;
+				obs[index]>=ix1 && obs[index]<=ix2;
 				
 		}
 
