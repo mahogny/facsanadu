@@ -16,12 +16,14 @@ import com.trolltech.qt.gui.QVBoxLayout;
 import com.trolltech.qt.gui.QAbstractItemView.SelectionBehavior;
 import com.trolltech.qt.gui.QFileDialog.FileMode;
 import com.trolltech.qt.gui.QHeaderView.ResizeMode;
+import com.trolltech.qt.gui.QIcon;
 import com.trolltech.qt.gui.QSizePolicy.Policy;
 
 import facsanadu.data.Dataset;
 import facsanadu.gui.events.EventDatasetsChanged;
 import facsanadu.gui.events.FacsanaduEvent;
 import facsanadu.gui.qt.QTutil;
+import facsanadu.gui.resource.ImgResource;
 
 /**
  * 
@@ -56,14 +58,19 @@ public class DatasetListWidget extends QVBoxLayout
 
 		QPushButton bAddDataset=new QPushButton(tr("Add dataset"));
 		QPushButton bSelectAllDataset=new QPushButton(tr("Select all"));
-		QPushButton bRemoveDataset=new QPushButton(tr("Remove dataset"));
+		QPushButton bRemoveDataset=new QPushButton(new QIcon(ImgResource.delete),"");
+		
+		QPushButton bMoveUp=new QPushButton(new QIcon(ImgResource.moveUp),"");
+		QPushButton bMoveDown=new QPushButton(new QIcon(ImgResource.moveDown),"");
 		
 		bAddDataset.clicked.connect(this,"actionAddDatasets()");
 		bRemoveDataset.clicked.connect(this,"actionRemoveDataset()");
 		bSelectAllDataset.clicked.connect(this,"actionSelectAllDataset()");
+		bMoveUp.clicked.connect(this,"actionMoveUp()");
+		bMoveDown.clicked.connect(this,"actionMoveDown()");
 
 		addWidget(tableDatasets);
-		addLayout(QTutil.layoutHorizontal(bAddDataset, bSelectAllDataset, bRemoveDataset));
+		addLayout(QTutil.layoutHorizontal(bMoveUp, bMoveDown, bAddDataset, bSelectAllDataset, bRemoveDataset));
 
 		tableDatasets.setSizePolicy(Policy.Minimum, Policy.Expanding);
 		}
@@ -80,6 +87,8 @@ public class DatasetListWidget extends QVBoxLayout
 	 */
 	void updateDatasetList()
 		{
+		LinkedList<Dataset> prevsel=getSelectedDatasets();
+		
 		FacsanaduProject project=mw.project;
 		boolean wasUpdating=isUpdating;
 		isUpdating=false;
@@ -90,6 +99,10 @@ public class DatasetListWidget extends QVBoxLayout
 			QTableWidgetItem it=QTutil.createReadOnlyItem(ds.source.getName());
 			it.setData(Qt.ItemDataRole.UserRole, ds);
 			tableDatasets.setItem(row, 0, it);
+			if(prevsel.contains(ds))
+				it.setSelected(true);
+			else
+				it.setSelected(false);
 			row++;
 			}
 		isUpdating=wasUpdating;
@@ -150,6 +163,37 @@ public class DatasetListWidget extends QVBoxLayout
 		}
 
 
+	public void actionMoveUp()
+		{
+		LinkedList<Dataset> list=getSelectedDatasets();
+		for(Dataset ds:list)
+			{
+			FacsanaduProject project=mw.project;
+			int i=project.datasets.indexOf(ds);
+			if(i==0)
+				break; //Don't attempt
+			project.datasets.remove(ds);
+			project.datasets.add(i-1, ds);
+			}
+		emitEvent(new EventDatasetsChanged());
+		}
+	
+	
+	public void actionMoveDown()
+		{
+		LinkedList<Dataset> list=getSelectedDatasets();
+		for(int j=list.size()-1;j>=0;j--)
+			{
+			Dataset ds=list.get(j);
+			FacsanaduProject project=mw.project;
+			int i=project.datasets.indexOf(ds);
+			if(i==project.datasets.size()-1)
+				break; //Don't attempt
+			project.datasets.remove(ds);
+			project.datasets.add(i+1, ds);
+			}
+		emitEvent(new EventDatasetsChanged());
+		}
 
 
 	/**
