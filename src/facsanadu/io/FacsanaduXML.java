@@ -18,6 +18,7 @@ import facsanadu.data.ProfChannel;
 import facsanadu.gates.Gate;
 import facsanadu.gates.GateEllipse;
 import facsanadu.gates.GatePolygon;
+import facsanadu.gates.GateRange;
 import facsanadu.gates.GateRect;
 import facsanadu.gui.FacsanaduProject;
 import facsanadu.gui.view.ViewSettings;
@@ -132,7 +133,17 @@ public class FacsanaduXML
 				ge.setAttribute("y1",""+gr.y1);
 				ge.setAttribute("y2",""+gr.y2);
 				}
-			if(g instanceof GateEllipse)
+			else if(g instanceof GateRect)
+				{
+				GateRange gr=(GateRange)g;
+				type="range";
+				
+				ge.setAttribute("i",""+gr.index);
+
+				ge.setAttribute("x1",""+gr.x1);
+				ge.setAttribute("x2",""+gr.x2);
+				}
+			else if(g instanceof GateEllipse)
 				{
 				GateEllipse gr=(GateEllipse)g;
 				type="ellipse";
@@ -196,6 +207,14 @@ public class FacsanaduXML
 						gr.x2=one.getAttribute("x2").getDoubleValue();
 						gr.y1=one.getAttribute("y1").getDoubleValue();
 						gr.y2=one.getAttribute("y2").getDoubleValue();
+						}
+					else if(type.equals("range"))
+						{
+						GateRange gr=new GateRange();
+						g=gr;
+						gr.index=one.getAttribute("i").getIntValue();
+						gr.x1=one.getAttribute("x1").getDoubleValue();
+						gr.x2=one.getAttribute("x2").getDoubleValue();
 						}
 					else if(type.equals("ellipse"))
 						{
