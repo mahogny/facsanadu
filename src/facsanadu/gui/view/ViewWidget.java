@@ -27,6 +27,9 @@ import facsanadu.gui.events.EventViewsChanged;
 import facsanadu.gui.events.FacsanaduEvent;
 import facsanadu.gui.view.gate.GateHandle;
 import facsanadu.gui.view.tool.ViewToolChoice;
+import facsanadu.transformations.Transformation;
+import facsanadu.transformations.TransformationLog;
+import facsanadu.transformations.TransformationType;
 import facsanadu.gui.view.tool.ViewTool;
 
 /**
@@ -73,7 +76,7 @@ public class ViewWidget extends QWidget
 	
 	public void render()
 		{
-		repaint();
+		update();
 		}
 	
 	@Override
@@ -104,9 +107,7 @@ public class ViewWidget extends QWidget
 			pm.drawRect(new QRectF(h.getX()-size, h.getY()-size,2*size,2*size));
 			}
 		
-		
 		pm.end();
-		System.out.println("!end repaint");
 		}
 	
 
@@ -156,7 +157,7 @@ public class ViewWidget extends QWidget
 				QMenu menu=new QMenu();
 				
 				//Menu to set axis, and histogram
-				QMenu menu2=menu.addMenu(tr("Set axis"));
+				QMenu menuAxis=menu.addMenu(tr("Set axis"));
 				QMenu menuHist=menu.addMenu(tr("Set histogram"));
 				boolean lastwasx=true;
 				if(event.pos().x()>invy)
@@ -165,7 +166,8 @@ public class ViewWidget extends QWidget
 					lastwasx=false;
 
 				menu.addAction(tr("Swap axis"),this,"actionSwapAxis()");
-				
+
+
 				ArrayList<ChannelInfo> chans=dataset.getChannelInfo();
 				for(int i=0;i<chans.size();i++)
 					{
@@ -173,7 +175,7 @@ public class ViewWidget extends QWidget
 					CallbackSetChannel set=new CallbackSetChannel();
 					set.chanid=i;
 					set.forx=lastwasx;
-					menu2.addAction(ci.formatName(), set, "actionSet()");
+					menuAxis.addAction(ci.formatName(), set, "actionSet()");
 					setchans.add(set);
 					
 					CallbackSetHistogram sethist=new CallbackSetHistogram();
@@ -204,7 +206,11 @@ public class ViewWidget extends QWidget
 					mSetScaling.addAction(""+d, sg, "actionSet()");
 					}
 
-				
+				QMenu menuTrans=menu.addMenu(tr("Set transform"));
+				CallbackSetTransformation tLin=new CallbackSetTransformation(TransformationType.LINEAR, lastwasx);
+				CallbackSetTransformation tLog=new CallbackSetTransformation(TransformationType.LOG, lastwasx);
+				menuTrans.addAction("Linear", tLin, "actionSet()");
+				menuTrans.addAction("Log", tLog, "actionSet()");
 				
 				menu.exec(event.globalPos());
 				}
@@ -322,6 +328,39 @@ public class ViewWidget extends QWidget
 			}
 		}
 
+	/**
+	 * Callback: set transformation
+	 */
+	public class CallbackSetTransformation implements Callback
+		{
+		TransformationType t;
+		public boolean forx;
+		
+		public CallbackSetTransformation(TransformationType t, boolean forx)
+			{
+			this.t=t;
+			this.forx=forx;
+			}
+		
+		public void actionSet()
+			{
+			int index;
+			if(forx)
+				index=viewsettings.indexX;
+			else
+				index=viewsettings.indexY;
+			Transformation trans=null;
+			if(t==TransformationType.LOG)
+				trans=new TransformationLog();
+			if(t==TransformationType.LINEAR)
+				viewsettings.transformation.set(index, trans);
+			else if(t==TransformationType.LOG)
+				viewsettings.transformation.set(index, trans);
+			mw.handleEvent(new EventViewsChanged());
+			}
+		}
+
+	
 	public class CallbackSetZoom implements Callback
 		{
 		double scale;

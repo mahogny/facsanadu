@@ -8,6 +8,7 @@ import facsanadu.data.Dataset;
 import facsanadu.gates.Gate;
 import facsanadu.gates.GatingResult;
 import facsanadu.gates.IntArray;
+import facsanadu.transformations.TransformationStack;
 
 /**
  * 
@@ -30,6 +31,8 @@ public class ViewSettings
 	
 	public double zoomX=1; //For speed, this is integrated into the scale whenever needed
 	public double zoomY=1;
+
+	public TransformationStack transformation=new TransformationStack();
 	
 	/**
 	 * Set the scale to cover the given max and min values
@@ -41,27 +44,29 @@ public class ViewSettings
 		double maxy=max[indexY];
 		scaleX=1.0/maxx*zoomX;
 		scaleY=1.0/maxy*zoomY;
+		System.out.println("as "+scaleX+ " "+scaleY+ "   "+maxx+"  "+maxy);
 		} 
 
 
 	/**
 	 * Get the maximum for a channel
 	 */
-	public static double[] getMaxForChannel(Dataset dataset)
+	public double[] getMaxForChannel(Dataset dataset)
 		{
-		double max[]=new double[dataset.getNumChannels()];
-		for(int i=0;i<max.length;i++)
-			max[i]=-Double.MAX_VALUE;
+		double val[]=new double[dataset.getNumChannels()];
+		for(int i=0;i<val.length;i++)
+			val[i]=-Double.MAX_VALUE;
 		for(int i=0;i<dataset.getNumObservations();i++)
-			for(int j=0;j<max.length;j++)
-					max[j]=Math.max(max[j],dataset.getAsFloat(i,j));
-		return max;
+			for(int j=0;j<val.length;j++)
+					val[j]=Math.max(val[j],dataset.getAsFloat(i,j));
+		val=transformation.perform(val);
+		return val;
 		}
 
 	/**
 	 * Get the minimum value for channel
 	 */
-	public static double[] getMinForChannel(Dataset dataset)
+	public double[] getMinForChannel(Dataset dataset)
 		{
 		double val[]=new double[dataset.getNumChannels()];
 		for(int i=0;i<val.length;i++)
@@ -69,13 +74,14 @@ public class ViewSettings
 		for(int i=0;i<dataset.getNumObservations();i++)
 			for(int j=0;j<val.length;j++)
 					val[j]=Math.min(val[j],dataset.getAsFloat(i,j));
+		val=transformation.perform(val); //this is kind of cheating
 		return val;
 		}
 
 	/**
 	 * Get the maximum value for all channels
 	 */
-	public static double[] getMaxForChannels(Collection<Dataset> dataset)
+	public double[] getMaxForChannels(Collection<Dataset> dataset)
 		{
 		if(dataset.size()==0)
 			return new double[0];
@@ -99,7 +105,7 @@ public class ViewSettings
 	/**
 	 * Get the minimum value for all channels
 	 */
-	public static double[] getMinForChannels(Collection<Dataset> dataset)
+	public double[] getMinForChannels(Collection<Dataset> dataset)
 		{
 		if(dataset.size()==0)
 			return new double[0];
@@ -128,10 +134,13 @@ public class ViewSettings
 		{
 		if(!selds.isEmpty())
 			{
-			double[] max=ViewSettings.getMaxForChannels(selds);
-			double[] min=ViewSettings.getMinForChannels(selds);
 			for(ViewSettings vs:selviews)
+				{
+				//Might be possible to optimize this if there are many different kind of views
+				double[] max=vs.getMaxForChannels(selds);
+				double[] min=vs.getMinForChannels(selds);
 				vs.autoscale(max,min);
+				}
 			}
 		}
 

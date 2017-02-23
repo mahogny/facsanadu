@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import facsanadu.gates.measure.GateMeasure;
+import facsanadu.transformations.TransformationStack;
 
 /**
  * 
@@ -14,6 +15,10 @@ import facsanadu.gates.measure.GateMeasure;
  */
 public abstract class Gate
 	{
+	//In principle, should here have a hierarchy of transformations. A list of them?
+	public TransformationStack transformations=new TransformationStack();
+	
+	
 	//If we ignore and/or, the hierarchy will be much easier!
 	public Gate parent;
 	public LinkedList<Gate> children=new LinkedList<Gate>();

@@ -135,7 +135,7 @@ public class ProfileView extends QWidget
 		this.ds=ds;
 		eventid.clear();
 		eventid.addAll(ids);
-		repaint();
+		update();
 		}
 
 	
@@ -231,7 +231,7 @@ public class ProfileView extends QWidget
 				curchannel.from=clamp(newx,0,curchannel.to-1);
 			else if(moveBoundary==1)
 				curchannel.to=clamp(newx,curchannel.from+1,1050);
-			repaint();
+			update();
 			}
 		pointLast=event.posF();
 		}

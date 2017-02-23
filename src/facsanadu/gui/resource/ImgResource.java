@@ -41,7 +41,7 @@ public class ImgResource
 			} 
 		catch (IOException e) 
 			{
-			System.out.println("Unable to read "+name+" "+e.getMessage());
+			System.err.println("Unable to read "+name+" "+e.getMessage());
 			return null;
 			}
 		}
@@ -62,7 +62,6 @@ public class ImgResource
 	
 	public static void setWindowIcon(QWidget w)
 		{
-		System.out.println(imgWindowIcon);
 		w.setWindowIcon(new QIcon(imgWindowIcon));
 		}
 

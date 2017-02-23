@@ -28,7 +28,7 @@ public class QVLabel extends QWidget
 	public void setText(String text)
 		{
 		this.text=text;
-		repaint();
+		update();
 		}
 	
 	

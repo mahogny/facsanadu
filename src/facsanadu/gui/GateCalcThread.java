@@ -1,5 +1,6 @@
 package facsanadu.gui;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 
@@ -43,6 +44,11 @@ public abstract class GateCalcThread
 	 */
 	public abstract void callbackDoneCalc(Dataset dataset, Gate g);
 	
+	/**
+	 * Function to check which datasets are selected. Only need to work on these
+	 */
+	public abstract Collection<Dataset> getCurrentDatasets();
+
 	/**
 	 * Constructor
 	 */
@@ -99,7 +105,8 @@ public abstract class GateCalcThread
 				Task task=null;
 				synchronized (lockGetGate)
 					{
-					for(Dataset ds:proj.datasets)
+					for(Dataset ds:getCurrentDatasets())
+					//for(Dataset ds:proj.datasets)
 						{
 						//Need to lock datasets too! synchronized class?
 						//GatingResult gr=proj.gatingResult.get(ds);
@@ -143,6 +150,10 @@ public abstract class GateCalcThread
 	public Task getTaskToWorkOn(Dataset ds, Gate g)
 		{
 		FacsanaduProject proj=getProject();
+	
+		//TODO only update currently visible dataset!!!!
+		//
+		
 		
 		//First checking if there is any work in terms of gating
 		GatingResult gr=proj.getCreateGatingResult(ds);
@@ -157,13 +168,15 @@ public abstract class GateCalcThread
 				return null;
 			else
 				{
+				/*
 				System.out.println("c tasks "+currentTasks);
 				System.out.println("scheduling "+task.g+ "   "+task.ds);
 				System.out.println();
+				*/
 				return task;
 				}
 			}
-		
+	
 		//After gates, check if there are any measures to be done
 		for(GateMeasure calc:g.getMeasures())
 			{

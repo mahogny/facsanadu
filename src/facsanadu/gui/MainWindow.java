@@ -3,6 +3,9 @@ package facsanadu.gui;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 
 import com.trolltech.qt.core.QCoreApplication;
@@ -53,6 +56,8 @@ import facsanadu.io.FacsanaduXML;
 public class MainWindow extends QMainWindow
 	{
 	public FacsanaduProject project=new FacsanaduProject();
+	
+	private Collection<Dataset> selDatasetsCache=new LinkedList<Dataset>();
 	public GateCalcThread calcthread=new GateCalcThread(){
 		public FacsanaduProject getProject()
 			{
@@ -65,9 +70,17 @@ public class MainWindow extends QMainWindow
          public void run()
            {
            updateall();
-           System.out.println("Thread called");
+           //System.out.println("Thread called");
            }
          });
+			}
+		public Collection<Dataset> getCurrentDatasets()
+			{
+			synchronized (selDatasetsCache)
+				{
+				ArrayList<Dataset> d=new ArrayList<Dataset>(selDatasetsCache);
+				return d;
+				}
 			}
 
 	};
@@ -128,6 +141,8 @@ public class MainWindow extends QMainWindow
 		mHelp.addAction(tr("About"), this, "actionAbout()");
 		mHelp.addAction(tr("Website"), this, "actionWebsite()");
 
+		datasetsw.selectionChanged.connect(this,"actionDsChanged()");
+		
 		QVBoxLayout layLeft=new QVBoxLayout();
 		layLeft.addLayout(datasetsw);
 		layLeft.addLayout(viewsw);
@@ -401,6 +416,8 @@ public class MainWindow extends QMainWindow
 		return viewsw.getSelectedViews();
 		}
 
+	
+	
 	/**
 	 * Get selected datasets
 	 */
@@ -408,7 +425,15 @@ public class MainWindow extends QMainWindow
 		{
 		return datasetsw.getSelectedDatasets();
 		}
-
+	public void actionDsChanged()
+		{
+		synchronized (selDatasetsCache)
+			{
+			selDatasetsCache.clear();
+			selDatasetsCache.addAll(datasetsw.getSelectedDatasets());
+			}
+		}
+	
 	/**
 	 * Get selected gates
 	 */
@@ -491,12 +516,12 @@ public class MainWindow extends QMainWindow
 		{
 		if(!isUpdating)
 			{
-			System.out.println("!startdolayout");
 			dogating();
 			paneViews.updateViews();
 			paneStats.updateStats();
 			paneProfile.updateViews();
-			System.out.println("!enddolayout");
+			QApplication.processEvents();
+			//or flush?
 			}
 		}
 

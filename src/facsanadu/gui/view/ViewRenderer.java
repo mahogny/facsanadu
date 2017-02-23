@@ -76,10 +76,10 @@ public class ViewRenderer
 	/**
 	 * Draw scatter plot
 	 */
-	private static void renderXY(ViewSettings viewsettings, Dataset segment, GatingResult gr, ViewTransform trans, QPainter pm, LinkedList<GateHandle> handles,
+	private static void renderXY(ViewSettings viewsettings, Dataset ds, GatingResult gr, ViewTransform trans, QPainter pm, LinkedList<GateHandle> handles,
 			int rendermax)
 		{
-		ArrayList<ChannelInfo> chans=segment.getChannelInfo();
+		ArrayList<ChannelInfo> chans=ds.getChannelInfo();
 
 		ArrayList<Gate> listgates=gr.getIdGates();
 		int colr[]=new int[listgates.size()];
@@ -107,8 +107,23 @@ public class ViewRenderer
 			for(int i=0;i<accepted.size() && i<rendermax;i++)
 				{
 				int ind=accepted.get(i);
-				double chanX=segment.getAsFloat(ind,viewsettings.indexX);
-				double chanY=segment.getAsFloat(ind,viewsettings.indexY);
+				double chanX;
+				double chanY;
+
+				chanX=viewsettings.transformation.transform(ds, ind, viewsettings.indexX);
+				chanY=viewsettings.transformation.transform(ds, ind, viewsettings.indexY);
+				//viewsettings.indexX, ds.getAsFloat(ind,viewsettings.indexX))
+				/*
+				if(viewsettings.transformation.has())
+					{
+					}
+				else
+					{
+					chanX=ds.getAsFloat(ind,viewsettings.indexX);
+					chanY=ds.getAsFloat(ind,viewsettings.indexY);
+					}
+					*/
+				
 				
 				int x=trans.mapFcsToScreenX(chanX);
 				int y=trans.mapFcsToScreenY(chanY);

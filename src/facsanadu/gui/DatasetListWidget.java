@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+import com.trolltech.qt.QSignalEmitter;
 import com.trolltech.qt.core.QModelIndex;
 import com.trolltech.qt.core.Qt;
 import com.trolltech.qt.gui.QFileDialog;
@@ -36,6 +37,8 @@ public class DatasetListWidget extends QVBoxLayout
 	private boolean isUpdating=false;
 
 	private QTableWidget tableDatasets=new QTableWidget();
+
+	public QSignalEmitter.Signal0 selectionChanged=new QSignalEmitter.Signal0();
 	
 	public DatasetListWidget(MainWindow mw)
 		{
@@ -67,6 +70,7 @@ public class DatasetListWidget extends QVBoxLayout
 
 	public void dothelayout()
 		{
+		selectionChanged.emit();
 		mw.dothelayout();
 		}
 	
@@ -83,7 +87,6 @@ public class DatasetListWidget extends QVBoxLayout
 		int row=0;
 		for(Dataset ds:project.datasets)
 			{
-			System.out.println(ds.source);
 			QTableWidgetItem it=QTutil.createReadOnlyItem(ds.source.getName());
 			it.setData(Qt.ItemDataRole.UserRole, ds);
 			tableDatasets.setItem(row, 0, it);

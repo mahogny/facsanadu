@@ -106,6 +106,7 @@ public class ViewTransform
 		return h-((int)(y*h));
 		}
 
+	/*
 	public double scaleScreenToFCSx(double dx)
 		{
 		return dx/getTotalScaleX();
@@ -114,7 +115,7 @@ public class ViewTransform
 		{
 		return dy/getTotalScaleY();
 		}
-
+*/
 
 	
 	}
