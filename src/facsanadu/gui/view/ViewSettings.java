@@ -44,7 +44,6 @@ public class ViewSettings
 		double maxy=max[indexY];
 		scaleX=1.0/maxx*zoomX;
 		scaleY=1.0/maxy*zoomY;
-		System.out.println("as "+scaleX+ " "+scaleY+ "   "+maxx+"  "+maxy);
 		} 
 
 

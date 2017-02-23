@@ -74,4 +74,20 @@ public abstract class Gate
 		calculations.remove(calc);
 		calc.gate=null;
 		}
+	
+	public void setUpdated()
+		{
+		//For now, set the entire list as updated. otherwise color is not handled properly
+		long t=System.currentTimeMillis();
+		Gate pc=this;
+		while(pc.parent!=null)
+			pc=pc.parent;
+		pc.setUpdatedr(t);
+		}
+	private void setUpdatedr(long t)
+		{
+		lastModified=t;
+		for(Gate g:children)
+			g.setUpdatedr(t);
+		}
 	}

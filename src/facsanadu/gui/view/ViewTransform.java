@@ -64,10 +64,11 @@ public class ViewTransform
 	public QPointF mapScreenToFcs(QPointF pos)
 		{
 		int h=internalHeight-1;
-		QPointF p=new QPointF(
-				(pos.x()-graphOffsetXY)/getTotalScaleX(),
-				(h -pos.y())/getTotalScaleY()
-				);
+		double x=(pos.x()-graphOffsetXY)/getTotalScaleX();
+		double y=(h -pos.y())/getTotalScaleY();
+		x=viewsettings.transformation.invert(x, viewsettings.indexX);
+		y=viewsettings.transformation.invert(y, viewsettings.indexY);
+		QPointF p=new QPointF(x,y);
 		return p;
 		}
 
@@ -76,21 +77,23 @@ public class ViewTransform
 	 */
 	public QPointF mapFcsToScreen(QPointF pos)
 		{
-		int h=internalHeight-1;
+//		int h=internalHeight-1;
 		QPointF p=new QPointF(
-				pos.x()*getTotalScaleX()+graphOffsetXY,
-				h - pos.y()*getTotalScaleY()
+				mapFcsToScreenX(pos.x()),//  pos.x()*getTotalScaleX()+graphOffsetXY,
+				mapFcsToScreenY(pos.y())//h - pos.y()*getTotalScaleY()
 				);
 		return p;
 		}
 
 	public int mapFcsToScreenX(double x)
 		{
+		x=viewsettings.transformation.perform(x, viewsettings.indexX);
 		return mapGeneralToScreenX(viewsettings.scaleX*x);
 		}
 
 	public int mapFcsToScreenY(double y)
 		{
+		y=viewsettings.transformation.perform(y, viewsettings.indexY);
 		return mapGeneralToScreenY(viewsettings.scaleY*y);
 		}
 
@@ -99,7 +102,6 @@ public class ViewTransform
 		{
 		return graphOffsetXY+(int)(x*internalWidth);
 		}
-
 	public int mapGeneralToScreenY(double y)
 		{
 		int h=internalHeight-1;

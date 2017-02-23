@@ -19,7 +19,7 @@ public class GateRange extends Gate
 		{
 		ix1=Math.min(x1, x2);
 		ix2=Math.max(x1, x2);
-		lastModified=System.currentTimeMillis();
+		setUpdated();
 		}
 	
 	public boolean classify(double[] obs)

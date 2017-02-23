@@ -39,6 +39,7 @@ public abstract class GateCalcThread
 	 */
 	public abstract	FacsanaduProject getProject();
 	
+
 	/**
 	 * Function to call once work done
 	 */
@@ -198,6 +199,8 @@ public abstract class GateCalcThread
 		}
 	
 	
+
+
 	/**
 	 * One task needing execution
 	 */

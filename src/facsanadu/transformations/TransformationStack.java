@@ -3,8 +3,12 @@ package facsanadu.transformations;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import facsanadu.data.Dataset;
-
+/**
+ * A set of transformations
+ * 
+ * @author Johan Henriksson
+ *
+ */
 public class TransformationStack
 	{
 	public ArrayList<Transformation> list=new ArrayList<Transformation>();
@@ -71,13 +75,33 @@ public class TransformationStack
 			}
 		}
 
+	public double perform(double x, int indexX)
+		{
+		for(Transformation t:list)
+			x=t.transform(x, indexX);
+		return x;
+		}
+
+	public double invert(double x, int indexX)
+		{
+		for(int i=list.size()-1;i>=0;i--)
+			x=list.get(i).invert(x, indexX);
+		return x;
+		}
+
+	public boolean isEmpty()
+		{
+		return list.isEmpty();
+		}
+
+	/*
 	public double transform(Dataset ds, int observationIndex, int index)
 		{
 		double x=ds.getAsFloat(observationIndex,index);
 		for(Transformation t:list)
 			x=t.transform(x, index);
 		return x;
-		}
+		}*/
 	
 	
 	}

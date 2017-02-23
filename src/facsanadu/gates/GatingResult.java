@@ -47,6 +47,7 @@ public class GatingResult
 	 */
 	public void doOneGate(Gate g, Dataset ds, boolean approximate)
 		{
+		long gLastModified=g.lastModified; //g.lastModified
 		approximate=false;  //TODO disabling approximation. this is hard to implement!
 		int n;
 		if(g.parent==null) //This is the root
@@ -67,8 +68,8 @@ public class GatingResult
 		IntArray res=new IntArray(n);
 		for(int i=0;i<n;i+=inc)
 			classifyobs(g, ds, res, i);
-		setAcceptedFromGate(g, res);
-		lastUpdateGate.put(g, g.lastModified);
+		setAcceptedFromGate(g, res, gLastModified);
+		lastUpdateGate.put(g, gLastModified);
 		
 		System.out.println("Calculated gate "+g+" for ds "+ds);
 		
@@ -82,13 +83,13 @@ public class GatingResult
 	/**
 	 * Set accepted result from a gate
 	 */
-	public void setAcceptedFromGate(Gate g, IntArray res)
+	public void setAcceptedFromGate(Gate g, IntArray res, long lastMod)
 		{
 		//may need to synchronize!
 		synchronized (acceptedFromGate)
 			{
 			acceptedFromGate.put(g, res);
-			lastUpdateGate.put(g, g.lastModified);
+			lastUpdateGate.put(g, lastMod); 
 			}
 		}
 	

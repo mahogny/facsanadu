@@ -27,9 +27,10 @@ public class GatePolygon extends Gate
 		poly=new QPolygonF();
 		for(int i=0;i<getNumPoints();i++)
 			poly.add(arrX.get(i), arrY.get(i));
-		lastModified=System.currentTimeMillis();
+		setUpdated();
 		}
 	
+
 	public boolean classify(double[] obs)
 		{
 		if(poly!=null)

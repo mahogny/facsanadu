@@ -70,7 +70,7 @@ public class ViewRenderer
 		//Draw boundary
 		String labelX=chans.get(viewsettings.indexX).formatName();
 		String labelY="Fraction";
-		drawLines(pm, trans, labelX, labelY);
+		drawHeaderLines(pm, trans, labelX, labelY);
 		}
 
 	/**
@@ -110,20 +110,10 @@ public class ViewRenderer
 				double chanX;
 				double chanY;
 
-				chanX=viewsettings.transformation.transform(ds, ind, viewsettings.indexX);
-				chanY=viewsettings.transformation.transform(ds, ind, viewsettings.indexY);
-				//viewsettings.indexX, ds.getAsFloat(ind,viewsettings.indexX))
-				/*
-				if(viewsettings.transformation.has())
-					{
-					}
-				else
-					{
-					chanX=ds.getAsFloat(ind,viewsettings.indexX);
-					chanY=ds.getAsFloat(ind,viewsettings.indexY);
-					}
-					*/
-				
+	//			chanX=viewsettings.transformation.transform(ds, ind, viewsettings.indexX);
+//				chanY=viewsettings.transformation.transform(ds, ind, viewsettings.indexY);
+				chanX=ds.getAsFloat(ind,viewsettings.indexX);
+				chanY=ds.getAsFloat(ind,viewsettings.indexY);
 				
 				int x=trans.mapFcsToScreenX(chanX);
 				int y=trans.mapFcsToScreenY(chanY);
@@ -143,7 +133,7 @@ public class ViewRenderer
 		//Draw boundary
 		String labelX=chans.get(viewsettings.indexX).formatName();
 		String labelY=chans.get(viewsettings.indexY).formatName();
-		drawLines(pm, trans, labelX, labelY);
+		drawHeaderLines(pm, trans, labelX, labelY);
 		
 		//Draw all gates
 		drawgatesRecursive(pm, trans, viewsettings.gate, viewsettings, handles);
@@ -154,7 +144,7 @@ public class ViewRenderer
 	/**
 	 * Draw things surrounding graph
 	 */
-	private static void drawLines(QPainter pm, ViewTransform trans, String labelX, String labelY)
+	private static void drawHeaderLines(QPainter pm, ViewTransform trans, String labelX, String labelY)
 		{
 		//Draw labels
 		QFontMetrics fm=pm.fontMetrics();

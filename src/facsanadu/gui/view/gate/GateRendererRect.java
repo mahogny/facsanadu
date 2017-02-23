@@ -62,17 +62,17 @@ public class GateRendererRect implements GateRenderer
 			//Upper left handle
 			handles.add(new GateHandle()
 				{
-				public void move(MainWindow w, double dx, double dy)
+				public void move2(MainWindow w, double dx, double dy)
 					{
 					if(viewsettings.indexX==cg.indexX)
-						cg.x1+=dx;
+						cg.x1=dx;
 					else if(viewsettings.indexY==cg.indexX)
-						cg.y1+=dx;
+						cg.y1=dx;
 					
 					if(viewsettings.indexX==cg.indexY)
-						cg.x1+=dy;
+						cg.x1=dy;
 					else if(viewsettings.indexY==cg.indexY)
-						cg.y1+=dy;
+						cg.y1=dy;
 					
 					gate.updateInternal();
 					w.handleEvent(new EventGatesMoved());
@@ -92,17 +92,17 @@ public class GateRendererRect implements GateRenderer
 			//Lower right
 			handles.add(new GateHandle()
 				{
-				public void move(MainWindow w, double dx, double dy)
+				public void move2(MainWindow w, double dx, double dy)
 					{
 					if(viewsettings.indexX==cg.indexX)
-						cg.x2+=dx;
+						cg.x2=dx;
 					else if(viewsettings.indexY==cg.indexX)
-						cg.y2+=dx;
+						cg.y2=dx;
 					
 					if(viewsettings.indexX==cg.indexY)
-						cg.x2+=dy;
+						cg.x2=dy;
 					else if(viewsettings.indexY==cg.indexY)
-						cg.y2+=dy;
+						cg.y2=dy;
 					
 					gate.updateInternal();
 					w.handleEvent(new EventGatesMoved());
@@ -111,13 +111,11 @@ public class GateRendererRect implements GateRenderer
 				public double getX()
 					{
 					return p2.x();
-					//return x[1];
 					}
 
 				public double getY()
 					{
 					return p2.y();
-					//return y[1];
 					}
 				});
 

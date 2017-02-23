@@ -245,12 +245,16 @@ public class ViewWidget extends QWidget
 		super.mouseMoveEvent(event);
 		if(curhandle!=null)
 			{
-			double dx=event.posF().x() - pointLast.x();
-			double dy=event.posF().y() - pointLast.y();
+//			double dx=event.posF().x() - pointLast.x();
+	//		double dy=event.posF().y() - pointLast.y();
 
-			dx=trans.scaleScreenToFCSx(dx);
-			dy=trans.scaleScreenToFCSy(dy);
-			curhandle.move(mw, dx, -dy);
+			//dx=trans.scaleScreenToFCSx(dx);
+			//dy=trans.scaleScreenToFCSy(dy);
+			
+			//666
+			//dx=dy=0;
+			QPointF p=trans.mapScreenToFcs(event.posF());
+			curhandle.move2(mw, p.x(), p.y());
 			}
 		else
 			tool.mouseMoveEvent(event);

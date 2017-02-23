@@ -16,6 +16,7 @@ public class GateRoot extends Gate
 	
 	public void updateInternal()
 		{
+		setUpdated();
 		}
 
 

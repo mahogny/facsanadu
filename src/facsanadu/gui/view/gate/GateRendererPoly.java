@@ -52,19 +52,38 @@ public class GateRendererPoly implements GateRenderer
 				final int ii=i;
 				poly.add(x, y);
 
+				if(!viewsettings.transformation.isEmpty())
+					{
+					//If rendering in log space then break down the line into segments
+					int nseg=15;
+					for(int j=1;j<nseg;j++)
+						{
+						double pa=j/(double)nseg;
+						double pb=1-pa;
+						
+						int i2=(i+1)%cg.getNumPoints();
+						
+						double vx=pb*thex[i] + pa*thex[i2];
+						double vy=pb*they[i] + pa*they[i2];
+										
+						int x2=w.mapFcsToScreenX(vx);
+						int y2=w.mapFcsToScreenY(vy);
+						poly.add(x2, y2);
+						}
+					}
 				GateHandle handle=new GateHandle()
 					{
-					public void move(MainWindow w, double dx, double dy)
+					public void move2(MainWindow w, double dx, double dy)
 						{
 						if(viewsettings.indexX==cg.indexX)
-							cg.arrX.set(ii, cg.arrX.get(ii)+dx);
+							cg.arrX.set(ii, dx);
 						else if(viewsettings.indexY==cg.indexX)
-							cg.arrY.set(ii, cg.arrY.get(ii)+dx);
+							cg.arrY.set(ii, dx);
 						
 						if(viewsettings.indexX==cg.indexY)
-							cg.arrX.set(ii, cg.arrX.get(ii)+dy);
+							cg.arrX.set(ii, dy);
 						else if(viewsettings.indexY==cg.indexY)
-							cg.arrY.set(ii, cg.arrY.get(ii)+dy);
+							cg.arrY.set(ii, dy);
 						
 						gate.updateInternal();
 						w.handleEvent(new EventGatesMoved());

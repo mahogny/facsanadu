@@ -5,6 +5,7 @@ import java.util.Collection;
 import com.trolltech.qt.core.QPointF;
 import com.trolltech.qt.core.QRectF;
 import com.trolltech.qt.gui.QPainter;
+import com.trolltech.qt.gui.QPolygonF;
 
 import facsanadu.gates.Gate;
 import facsanadu.gates.GateEllipse;
@@ -57,25 +58,42 @@ public class GateRendererEllipse implements GateRenderer
 			final QPointF pHx=w.mapFcsToScreen(new QPointF(x[0]+x[1],y[0]));
 			final QPointF pHy=w.mapFcsToScreen(new QPointF(x[0],     y[0]+y[1]));
 
+			
 			final QPointF p1=w.mapFcsToScreen(new QPointF(x[0]-x[1],y[0]-y[1]));
 			final QPointF p2=w.mapFcsToScreen(new QPointF(x[0]+x[1],y[0]+y[1]));
-			p.drawEllipse(new QRectF(p1,p2));
+			if(!viewsettings.transformation.isEmpty())
+				{
+				QPolygonF poly=new QPolygonF();
+				int ns=64;
+				for(int i=0;i<ns;i++)
+					{
+					double alpha=2*Math.PI*i/ns;
+					QPointF pv=w.mapFcsToScreen(new QPointF(x[0]+Math.cos(alpha)*x[1],y[0]+Math.sin(alpha)*y[1]));
+					poly.add(pv);
+					}
+				
+				p.drawPolygon(poly);
+				}
+			else
+				{
+				p.drawEllipse(new QRectF(p1,p2));
+				}
 			p.drawText(p1, gate.name);
 
 			//Mid handle
 			handles.add(new GateHandle()
 				{
-				public void move(MainWindow w, double dx, double dy)
+				public void move2(MainWindow w, double dx, double dy)
 					{
 					if(viewsettings.indexX==cg.indexX)
-						cg.x+=dx;
+						cg.x=dx;
 					else if(viewsettings.indexY==cg.indexX)
-						cg.y+=dx;
+						cg.y=dx;
 					
 					if(viewsettings.indexX==cg.indexY)
-						cg.x+=dy;
+						cg.x=dy;
 					else if(viewsettings.indexY==cg.indexY)
-						cg.y+=dy;
+						cg.y=dy;
 					
 					gate.updateInternal();
 					w.handleEvent(new EventGatesMoved());
@@ -95,12 +113,12 @@ public class GateRendererEllipse implements GateRenderer
 			//Right
 			handles.add(new GateHandle()
 				{
-				public void move(MainWindow w, double dx, double dy)
+				public void move2(MainWindow w, double dx, double dy)
 					{
 					if(viewsettings.indexX==cg.indexX)
-						cg.rx+=dx;
+						cg.rx=Math.abs(dx-cg.x);
 					else if(viewsettings.indexY==cg.indexX)
-						cg.ry+=dx;
+						cg.ry=Math.abs(dx-cg.x);
 					gate.updateInternal();
 					w.handleEvent(new EventGatesMoved());
 					}
@@ -119,12 +137,12 @@ public class GateRendererEllipse implements GateRenderer
 			//Bottom
 			handles.add(new GateHandle()
 				{
-				public void move(MainWindow w, double dx, double dy)
+				public void move2(MainWindow w, double dx, double dy)
 					{
 					if(viewsettings.indexX==cg.indexY)
-						cg.rx+=dy;
+						cg.rx=Math.abs(dy-cg.x);
 					else if(viewsettings.indexY==cg.indexY)
-						cg.ry+=dy;
+						cg.ry=Math.abs(dy-cg.y);
 					
 					gate.updateInternal();
 					w.handleEvent(new EventGatesMoved());

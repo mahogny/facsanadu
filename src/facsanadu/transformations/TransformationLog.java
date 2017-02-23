@@ -35,5 +35,13 @@ public class TransformationLog extends Transformation
 		else
 			return x;
 		}
+	@Override
+	public double invert(double x, int index)
+		{
+		if(index==channel)
+			return Math.exp(x);
+		else
+			return x;
+		}
 
 	}

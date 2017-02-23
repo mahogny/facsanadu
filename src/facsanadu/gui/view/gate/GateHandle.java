@@ -12,5 +12,5 @@ public interface GateHandle
 	{
 	public double getX();
 	public double getY();
-	public void move(MainWindow w, double dx, double dy);
+	public void move2(MainWindow w, double nx, double ny);
 	}

@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 
 import com.trolltech.qt.core.QCoreApplication;
@@ -56,7 +55,7 @@ import facsanadu.io.FacsanaduXML;
 public class MainWindow extends QMainWindow
 	{
 	public FacsanaduProject project=new FacsanaduProject();
-	
+
 	private Collection<Dataset> selDatasetsCache=new LinkedList<Dataset>();
 	public GateCalcThread calcthread=new GateCalcThread(){
 		public FacsanaduProject getProject()
