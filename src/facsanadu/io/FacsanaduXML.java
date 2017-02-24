@@ -24,6 +24,10 @@ import facsanadu.gates.GateRange;
 import facsanadu.gates.GateRect;
 import facsanadu.gui.FacsanaduProject;
 import facsanadu.gui.view.ViewSettings;
+import facsanadu.transformations.Transformation;
+import facsanadu.transformations.TransformationLog;
+import facsanadu.transformations.TransformationStack;
+import facsanadu.transformations.TransformationType;
 
 
 /**
@@ -101,6 +105,9 @@ public class FacsanaduXML
 
 			eview.setAttribute("hbins",""+vs.numHistBins);
 
+			Element eTrans=storeTransform(vs.transformation);
+			eview.addContent(eTrans);
+
 			etot.addContent(eview);
 			}
 		
@@ -110,6 +117,39 @@ public class FacsanaduXML
 		
 		return etot;
 		}
+
+	
+	private static Element storeTransform(TransformationStack trans)
+		{
+		Element etrans=new Element("transformation");
+		for(Transformation t:trans.list)
+			{
+			Element e=new Element("t");
+			e.setAttribute("type",""+TransformationType.of(t));
+			e.setAttribute("channel",""+t.channel);
+			etrans.addContent(e);
+			}
+		return etrans;
+		}
+	
+	
+	private static TransformationStack loadTransform(Element etot)
+		{
+		TransformationStack trans=new TransformationStack();
+				
+		for(Element one:etot.getChildren())
+			{
+			if(one.getName().equals("t"))
+				{
+				String type=one.getAttributeValue("type");
+				Transformation t=TransformationType.create(TransformationType.valueOf(type));
+				t.channel=Integer.parseInt(one.getAttributeValue("channel"));
+				trans.list.add(t);
+				}
+			}
+		return trans;
+		}
+	
 	
 
 	private static Element storeCompensation(FacsanaduProject proj)
@@ -345,6 +385,10 @@ public class FacsanaduXML
 
 					if(one.getAttribute("hbins")!=null)
 						vs.numHistBins=one.getAttribute("hbins").getIntValue();
+
+					Element eTrans=one.getChild("transformation");
+					if(eTrans!=null)
+						vs.transformation=loadTransform(eTrans);
 
 					proj.views.add(vs);
 					}

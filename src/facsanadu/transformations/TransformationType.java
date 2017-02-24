@@ -8,7 +8,23 @@ package facsanadu.transformations;
  */
 public enum TransformationType
 	{
-	LINEAR, EXPONENTIAL, LOG;
+	LINEAR, LOG;
+
+	public static TransformationType of(Transformation t)
+		{
+		if(t instanceof TransformationLog)
+			return LOG;
+		else
+			throw new RuntimeException("Unknow type "+t.getClass());
+		}
+
+	public static Transformation create(TransformationType type)
+		{
+		if(type==LOG)
+			return new TransformationLog();
+		else
+			throw new RuntimeException("No such transform");
+		}
 	
 	/**
 	 * Create a transformation given type
