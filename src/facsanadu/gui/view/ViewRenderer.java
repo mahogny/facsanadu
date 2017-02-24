@@ -120,8 +120,8 @@ public class ViewRenderer
 
 	//			chanX=viewsettings.transformation.transform(ds, ind, viewsettings.indexX);
 //				chanY=viewsettings.transformation.transform(ds, ind, viewsettings.indexY);
-				chanX=ds.getAsFloat(ind,viewsettings.indexX);
-				chanY=ds.getAsFloat(ind,viewsettings.indexY);
+				chanX=ds.getAsFloatCompensated(ind,viewsettings.indexX);
+				chanY=ds.getAsFloatCompensated(ind,viewsettings.indexY);
 				
 				int x=trans.mapFcsToScreenX(chanX);
 				int y=trans.mapFcsToScreenY(chanY);

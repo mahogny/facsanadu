@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import facsanadu.data.ChannelInfo;
+import facsanadu.data.Compensation;
 import facsanadu.data.Dataset;
 import facsanadu.data.ProfChannel;
 import facsanadu.gates.GateSet;
@@ -30,6 +31,8 @@ public class FacsanaduProject
 	public LinkedList<ProfChannel> profchan=new LinkedList<ProfChannel>();
 
 	public HashMap<Dataset, GatingResult> gatingResult=new HashMap<Dataset, GatingResult>();
+
+	public Compensation compensation=new Compensation();
 	
 	/**
 	 * Get gating result for dataset
@@ -91,13 +94,21 @@ public class FacsanaduProject
 			}
 		else
 			throw new IOException("Cannot recognize file");
-		recalcProfChan();
 		}
 
+	public void updateCompensation()
+		{
+		compensation.updateMatrix(this);
+		compensation.apply(this);
+		}
+	
+	
 	public void addDataset(Dataset ds)
 		{
 		ds.computeProfChannel(this, null);
 		datasets.add(ds);
+		//recalcProfChan();
+		updateCompensation();
 		//What about gating?
 		}
 

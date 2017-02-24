@@ -18,8 +18,10 @@ import facsanadu.gui.FacsanaduProject;
 public class Dataset
 	{
 	public ArrayList<double[]> eventsFloat=new ArrayList<double[]>();
+	public ArrayList<double[]> eventsFloatCompensated=new ArrayList<double[]>();
 	private int numChannel=0;
 	private int numPc=0;
+	public int numCompensated=0;
 	
 	public ArrayList<ChannelInfo> channelInfo=new ArrayList<ChannelInfo>();
 	public File source;
@@ -42,12 +44,8 @@ public class Dataset
 
 	public int getNumChannels()
 		{
-		return numChannel+numPc;
-		/*
-		if(getNumObservations()>0)
-			return eventsFloat.get(0).length+numPc;
-		else
-			return 0+numPc;*/
+		return numCompensated;
+//		return numChannel+numPc;
 		}
 
 
@@ -63,15 +61,17 @@ public class Dataset
 		}
 
 
-	public double getAsFloat(int obs, int indexChan)
+	public double getAsFloatCompensated(int obs, int indexChan)
 		{
-		return eventsFloat.get(obs)[indexChan];
+		return eventsFloatCompensated.get(obs)[indexChan];
+		//return eventsFloat.get(obs)[indexChan];
 		}
 
 
-	public double[] getAsFloat(int obs)
+	public double[] getAsFloatCompensated(int obs)
 		{
-		return eventsFloat.get(obs);
+		return eventsFloatCompensated.get(obs);
+//		return eventsFloat.get(obs);
 		}
 	
 	/**

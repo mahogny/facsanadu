@@ -121,7 +121,6 @@ public abstract class GateCalcThread
 						try
 							{
 							lockGetGate.wait();
-							System.out.println("Thread sleeping");
 							}
 						catch (InterruptedException e)
 							{

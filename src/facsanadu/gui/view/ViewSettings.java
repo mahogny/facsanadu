@@ -59,7 +59,7 @@ public class ViewSettings
 			val[i]=-Double.MAX_VALUE;
 		for(int i=0;i<dataset.getNumObservations();i++)
 			for(int j=0;j<val.length;j++)
-					val[j]=Math.max(val[j],dataset.getAsFloat(i,j));
+					val[j]=Math.max(val[j],dataset.getAsFloatCompensated(i,j));
 		val=transformation.perform(val);
 		return val;
 		}
@@ -74,7 +74,7 @@ public class ViewSettings
 			val[i]=Double.MAX_VALUE;
 		for(int i=0;i<dataset.getNumObservations();i++)
 			for(int j=0;j<val.length;j++)
-					val[j]=Math.min(val[j],dataset.getAsFloat(i,j));
+					val[j]=Math.min(val[j],dataset.getAsFloatCompensated(i,j));
 		val=transformation.perform(val); //this is kind of cheating
 		return val;
 		}
@@ -168,7 +168,7 @@ public class ViewSettings
 			for(int i=0;i<accepted.size();i++)
 				{
 				int ind=accepted.get(i);
-				double x=transformation.perform(data.getAsFloat(ind, indexX), indexX);
+				double x=transformation.perform(data.getAsFloatCompensated(ind, indexX), indexX);
 				h.countEvent(x);
 				}
 		return h;

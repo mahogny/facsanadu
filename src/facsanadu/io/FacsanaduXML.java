@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.StringTokenizer;
 
 import org.jdom2.DataConversionException;
 import org.jdom2.Document;
@@ -12,6 +13,7 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
+import facsanadu.data.Compensation;
 import facsanadu.data.Dataset;
 import facsanadu.data.LengthProfileData;
 import facsanadu.data.ProfChannel;
@@ -69,6 +71,7 @@ public class FacsanaduXML
 			etot.addContent(eSeq);
 			}
 		
+		
 		//Store gates
 		Element egate=new Element("gateset");
 		storeGate(proj.gateset.getRootGate(), egate);
@@ -101,11 +104,65 @@ public class FacsanaduXML
 			etot.addContent(eview);
 			}
 		
+		//Store compensation. Should do after all the datasets are stored
+		etot.addContent(storeCompensation(proj));
 		
 		
 		return etot;
 		}
 	
+
+	private static Element storeCompensation(FacsanaduProject proj)
+		{
+		Element ecompensation=new Element("compensation");
+		Compensation comp=proj.compensation;
+
+		for(String s:comp.cnames)
+			{
+			Element e=new Element("cname");
+			e.setAttribute("n",s);
+			ecompensation.addContent(e);
+			}
+		
+		StringBuilder sb=new StringBuilder();
+		double[][] m=comp.getMatrix();
+		for(int i=0;i<m.length;i++)
+			{
+			double[] arr=m[i];
+			for(double v:arr)
+				sb.append(""+v+" ");
+			}
+		Element v=new Element("matrix");
+		v.setText(sb.toString());
+		ecompensation.addContent(v);
+		
+		return ecompensation;
+		}
+
+
+	private static Compensation loadCompensation(Element etot)
+		{
+		Compensation comp=new Compensation();
+
+		for(Element one:etot.getChildren())
+			{
+			if(one.getName().equals("cname"))
+				comp.cnames.add(one.getAttributeValue("n"));
+			else
+				if(one.getName().equals("matrix"))
+					{
+					int n=comp.cnames.size();
+					StringTokenizer stok=new StringTokenizer(one.getText(), " ");
+					double[][] m=new double[n][n];
+					for(int i=0;i<n;i++)
+						for(int j=0;j<n;j++)
+							m[i][j]=Double.parseDouble(stok.nextToken());
+					comp.setMatrix(m);
+					}
+			}
+		return comp;
+		}
+
 
 	/**
 	 * Store gates recursively
@@ -300,6 +357,10 @@ public class FacsanaduXML
 					pc.forNormalized=one.getAttribute("normalize").getBooleanValue();
 					proj.profchan.add(pc);
 					}
+				else if(one.getName().equals("compensation"))
+					{
+					proj.compensation=loadCompensation(one);
+					}
 				else if(one.getName().equals("dataset"))
 					{
 					String n=one.getAttributeValue("path");
@@ -318,9 +379,14 @@ public class FacsanaduXML
 			throw new IOException("read error");
 			}
 		
-		
-		//TODO compute virtual channels
+		//Make certain compensation is up to date
+		proj.updateCompensation();
 		}
+
+	
+	
+	
+	
 	
 
 	/**

@@ -23,7 +23,7 @@ public class GateMeasureMean extends GateMeasureUnivariate
 		for(int i=0;i<arr.size();i++)
 			{
 			int ind=arr.get(i);
-			sum+=ds.getAsFloat(ind)[channelIndex];
+			sum+=ds.getAsFloatCompensated(ind)[channelIndex];
 			}
 		return sum/arr.size();
 		}

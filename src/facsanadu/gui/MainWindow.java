@@ -31,12 +31,14 @@ import facsanadu.data.ExportFcsToCSV;
 import facsanadu.data.ProfChannel;
 import facsanadu.gates.Gate;
 import facsanadu.gates.measure.GateMeasure;
+import facsanadu.gui.events.EventCompensationChanged;
 import facsanadu.gui.events.EventDatasetsChanged;
 import facsanadu.gui.events.EventGatesChanged;
 import facsanadu.gui.events.EventGatesMoved;
 import facsanadu.gui.events.EventViewsChanged;
 import facsanadu.gui.events.FacsanaduEvent;
 import facsanadu.gui.lengthprofile.ProfilePane;
+import facsanadu.gui.panes.CompensationPane;
 import facsanadu.gui.panes.GateStatsPane;
 import facsanadu.gui.panes.ViewsPane;
 import facsanadu.gui.qt.QTutil;
@@ -93,6 +95,7 @@ public class MainWindow extends QMainWindow
 	private ProfileChannelWidget pc=new ProfileChannelWidget(this);
 	private ViewsListWidget viewsw=new ViewsListWidget(this);
 	private DatasetListWidget datasetsw=new DatasetListWidget(this);
+	private CompensationPane paneCompensation=new CompensationPane(this);
 	
 	private ViewsPane paneViews;
 	private GateStatsPane paneStats;
@@ -172,6 +175,7 @@ public class MainWindow extends QMainWindow
 		tabwidget.addTab(paneViews, tr("Graphs"));
 		tabwidget.addTab(paneStats, tr("Statistics"));
 		tabwidget.addTab(paneProfile, tr("Length profiles"));
+		tabwidget.addTab(paneCompensation, tr("Compensation"));
 
 		QHBoxLayout lay=new QHBoxLayout();
 		lay.addLayout(layLeft);
@@ -208,6 +212,7 @@ public class MainWindow extends QMainWindow
 		gatesw.updateGatesList();
 		datasetsw.updateDatasetList();
 		pc.updateChannelList();
+		paneCompensation.updateForm();
 		isUpdating=wasUpdating;
 		dothelayout();
 		}
@@ -484,6 +489,11 @@ public class MainWindow extends QMainWindow
 		else if(event instanceof EventViewsChanged)
 			{
 			viewsw.updateViewsList(); //just added. problem?
+			dothelayout();
+			}
+		else if(event instanceof EventCompensationChanged)
+			{
+			project.updateCompensation();
 			dothelayout();
 			}
 		else if(event instanceof EventGatesMoved)

@@ -103,9 +103,9 @@ public class GatingResult
 			dogateRec(child, ds);
 		}
 	
-	private void classifyobs(Gate g, Dataset segment, IntArray res, int id)
+	private void classifyobs(Gate g, Dataset ds, IntArray res, int id)
 		{
-		if(g.classify(segment.eventsFloat.get(id)))
+		if(g.classify(ds.getAsFloatCompensated(id)))
 			{
 			res.addUnchecked(id);
 			gateForObs.setUnchecked(id,g.getIntID());
