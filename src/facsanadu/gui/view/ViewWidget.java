@@ -42,7 +42,7 @@ import facsanadu.gui.view.tool.ViewTool;
 public class ViewWidget extends QWidget
 	{
 	private Dataset dataset;
-	public MainWindow mw;
+	public MainWindow mainWindow;
 
 	private LinkedList<Callback> setchans=new LinkedList<Callback>();
 	private ViewTool tool;
@@ -62,7 +62,7 @@ public class ViewWidget extends QWidget
 
 	public ViewWidget(MainWindow mw)
 		{
-		this.mw=mw;
+		this.mainWindow=mw;
 		setMouseTracking(true);
 		setSizePolicy(Policy.Expanding, Policy.Expanding);
 		setTool(ViewToolChoice.SELECT);
@@ -84,7 +84,7 @@ public class ViewWidget extends QWidget
 		{
 		System.out.println("!start repaint");
 		super.paintEvent(pe);
-		FacsanaduProject project=mw.project;
+		FacsanaduProject project=mainWindow.project;
 		GatingResult gr=project.gatingResult.get(dataset);
 		
 		trans.setTotalHeight(contentsRect().height());
@@ -152,7 +152,7 @@ public class ViewWidget extends QWidget
 			else if(mousePosInBoundary(event.pos()))
 				{
 				setchans.clear();
-				FacsanaduProject proj=mw.project;
+				FacsanaduProject proj=mainWindow.project;
 				int invy=height()-event.pos().y();
 				QMenu menu=new QMenu();
 				
@@ -248,7 +248,7 @@ public class ViewWidget extends QWidget
 		{
 		super.mouseReleaseEvent(ev);
 		tool.mouseReleaseEvent(ev);
-		mw.handleEvent(new EventGatesMoved());
+		mainWindow.handleEvent(new EventGatesMoved());
 		curhandle=null;
 		}
 
@@ -260,7 +260,7 @@ public class ViewWidget extends QWidget
 		if(curhandle!=null)
 			{
 			QPointF p=trans.mapScreenToFcs(event.posF());
-			curhandle.move2(mw, p.x(), p.y());
+			curhandle.move2(mainWindow, p.x(), p.y());
 			}
 		else
 			tool.mouseMoveEvent(event);
@@ -307,7 +307,7 @@ public class ViewWidget extends QWidget
 				viewsettings.indexX=chanid;
 			else
 				viewsettings.indexY=chanid;
-			mw.handleEvent(new EventViewsChanged());
+			mainWindow.handleEvent(new EventViewsChanged());
 			}
 		}
 
@@ -320,7 +320,7 @@ public class ViewWidget extends QWidget
 		public void actionSet()
 			{
 			viewsettings.setHistogram(chanid);
-			mw.handleEvent(new EventViewsChanged());
+			mainWindow.handleEvent(new EventViewsChanged());
 			}
 		}
 
@@ -334,7 +334,7 @@ public class ViewWidget extends QWidget
 		public void actionSet()
 			{
 			viewsettings.gate=g;
-			mw.handleEvent(new EventViewsChanged());
+			mainWindow.handleEvent(new EventViewsChanged());
 			}
 		}
 
@@ -366,7 +366,7 @@ public class ViewWidget extends QWidget
 				viewsettings.transformation.set(index, trans);
 			else if(t==TransformationType.LOG)
 				viewsettings.transformation.set(index, trans);
-			mw.handleEvent(new EventViewsChanged());
+			mainWindow.handleEvent(new EventViewsChanged());
 			}
 		}
 
@@ -381,7 +381,7 @@ public class ViewWidget extends QWidget
 				viewsettings.zoomX=scale;
 			else
 				viewsettings.zoomY=scale;
-			mw.handleEvent(new EventViewsChanged());
+			mainWindow.handleEvent(new EventViewsChanged());
 			}
 		}
 
@@ -392,7 +392,7 @@ public class ViewWidget extends QWidget
 		public void actionSet()
 			{
 			viewsettings.numHistBins=bins;
-			mw.handleEvent(new EventViewsChanged());
+			mainWindow.handleEvent(new EventViewsChanged());
 			}
 		}
 	
@@ -407,7 +407,7 @@ public class ViewWidget extends QWidget
 
 	public void sendEvent(FacsanaduEvent event)
 		{
-		mw.handleEvent(event);
+		mainWindow.handleEvent(event);
 		}
 
 
@@ -415,7 +415,7 @@ public class ViewWidget extends QWidget
 	public void actionSwapAxis()
 		{
 		viewsettings.swapAxis();
-		mw.handleEvent(new EventViewsChanged());
+		mainWindow.handleEvent(new EventViewsChanged());
 		}
 
 	public void setTool(ViewToolChoice t)
@@ -426,7 +426,7 @@ public class ViewWidget extends QWidget
 
 	public void addGate(Gate g)
 		{
-		mw.addGate(viewsettings.gate, g);
+		mainWindow.addGate(viewsettings.gate, g);
 		}
 
 	}

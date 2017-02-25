@@ -213,6 +213,7 @@ public class MainWindow extends QMainWindow
 		datasetsw.updateDatasetList();
 		pc.updateChannelList();
 		paneCompensation.updateForm();
+		dogating();
 		isUpdating=wasUpdating;
 		dothelayout();
 		}
@@ -455,7 +456,6 @@ public class MainWindow extends QMainWindow
 		{
 		//For speed, only do selected ones
 		//project.performGating(getSelectedDatasets());
-		
 		calcthread.wakeup();
 		}
 	
@@ -484,16 +484,19 @@ public class MainWindow extends QMainWindow
 		if(event instanceof EventGatesChanged)
 			{
 			gatesw.updateGatesList();
+			dogating();
 			dothelayout();
 			}
 		else if(event instanceof EventViewsChanged)
 			{
 			viewsw.updateViewsList(); //just added. problem?
+			dogating();
 			dothelayout();
 			}
 		else if(event instanceof EventCompensationChanged)
 			{
 			project.updateCompensation();
+			dogating();
 			dothelayout();
 			}
 		else if(event instanceof EventGatesMoved)
@@ -503,6 +506,7 @@ public class MainWindow extends QMainWindow
 		else if(event instanceof EventDatasetsChanged)
 			{
 			datasetsw.updateDatasetList();
+			dogating();
 			}
 		else if(event instanceof EventSetViewTool)
 			{
@@ -526,7 +530,6 @@ public class MainWindow extends QMainWindow
 		{
 		if(!isUpdating)
 			{
-			dogating();
 			paneViews.updateViews();
 			paneStats.updateStats();
 			paneProfile.updateViews();

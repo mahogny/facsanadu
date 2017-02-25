@@ -8,6 +8,7 @@ import facsanadu.gates.Gate;
 import facsanadu.gates.GateRect;
 import facsanadu.gui.events.EventGatesChanged;
 import facsanadu.gui.events.EventGatesMoved;
+import facsanadu.gui.events.FacsanaduEvent;
 import facsanadu.gui.view.ViewWidget;
 
 /**
@@ -33,10 +34,15 @@ public class ViewToolDrawRect implements ViewTool
 	public void mouseReleaseEvent(QMouseEvent ev)
 		{
 		isDrawing=null;
-		w.mw.handleEvent(new EventGatesMoved());
 		w.sendEvent(new EventSetViewTool(ViewToolChoice.SELECT));
+		emitEvent(new EventGatesChanged());
 		}
 
+	public void emitEvent(FacsanaduEvent e)
+		{
+		w.mainWindow.handleEvent(e);
+		}
+	
 	/**
 	 * Mouse moved
 	 */
@@ -51,7 +57,7 @@ public class ViewToolDrawRect implements ViewTool
 			grect.x2=p.x();
 			grect.y2=p.y();
 			grect.updateInternal();
-			w.sendEvent(new EventGatesMoved());
+			emitEvent(new EventGatesMoved());
 			}
 		}
 
@@ -74,7 +80,7 @@ public class ViewToolDrawRect implements ViewTool
 			isDrawing=grect;
 
 			w.addGate(grect);
-			w.sendEvent(new EventGatesChanged());
+			w.sendEvent(new EventGatesMoved());
 			}
 		
 		}

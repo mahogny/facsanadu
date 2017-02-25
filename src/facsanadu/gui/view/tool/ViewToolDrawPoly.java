@@ -7,6 +7,7 @@ import com.trolltech.qt.gui.QMouseEvent;
 import facsanadu.gates.GatePolygon;
 import facsanadu.gui.events.EventGatesChanged;
 import facsanadu.gui.events.EventGatesMoved;
+import facsanadu.gui.events.FacsanaduEvent;
 import facsanadu.gui.view.ViewWidget;
 
 /**
@@ -54,9 +55,9 @@ public class ViewToolDrawPoly implements ViewTool
 				g.addPoint(p.x(), p.y());
 			g.updateInternal();
 			
-			if(justcreated)
-				w.sendEvent(new EventGatesChanged());				
-			else
+//			if(justcreated)
+	//			w.sendEvent(new EventGatesChanged());				
+		//	else
 				w.sendEvent(new EventGatesMoved());
 			}
 		
@@ -67,6 +68,12 @@ public class ViewToolDrawPoly implements ViewTool
 	 */
 	public void mouseReleaseEvent(QMouseEvent ev)
 		{
+		emitEvent(new EventGatesChanged());
+		}
+
+	public void emitEvent(FacsanaduEvent e)
+		{
+		w.mainWindow.handleEvent(e);
 		}
 
 	/**
@@ -82,7 +89,7 @@ public class ViewToolDrawPoly implements ViewTool
 
 			g.setPoint(g.getNumPoints()-1, p.x(), p.y());
 			g.updateInternal();
-			w.sendEvent(new EventGatesMoved());
+			emitEvent(new EventGatesMoved());
 			}
 		}
 
@@ -97,6 +104,7 @@ public class ViewToolDrawPoly implements ViewTool
 			isDrawing.removeRedundantPoints();
 			isDrawing=null;
 			w.sendEvent(new EventSetViewTool(ViewToolChoice.SELECT));
+			emitEvent(new EventGatesChanged());
 			}
 		}
 
