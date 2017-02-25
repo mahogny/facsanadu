@@ -78,10 +78,8 @@ public class DatasetListWidget extends QVBoxLayout
 	public void dothelayout()
 		{
 		selectionChanged.emit();
-		mw.dothelayout();
 		}
-	
-	
+		
 	/**
 	 * Update list with datasets
 	 */

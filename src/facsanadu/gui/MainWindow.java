@@ -438,6 +438,9 @@ public class MainWindow extends QMainWindow
 			selDatasetsCache.clear();
 			selDatasetsCache.addAll(datasetsw.getSelectedDatasets());
 			}
+		paneViews.invalidateCache();
+		dogating();
+		dothelayout();
 		}
 	
 	/**
@@ -484,12 +487,14 @@ public class MainWindow extends QMainWindow
 		if(event instanceof EventGatesChanged)
 			{
 			gatesw.updateGatesList();
+			paneViews.invalidateCache();
 			dogating();
 			dothelayout();
 			}
 		else if(event instanceof EventViewsChanged)
 			{
 			viewsw.updateViewsList(); //just added. problem?
+			paneViews.invalidateCache();
 			dogating();
 			dothelayout();
 			}
@@ -506,6 +511,7 @@ public class MainWindow extends QMainWindow
 		else if(event instanceof EventDatasetsChanged)
 			{
 			datasetsw.updateDatasetList();
+			paneViews.invalidateCache();
 			dogating();
 			}
 		else if(event instanceof EventSetViewTool)

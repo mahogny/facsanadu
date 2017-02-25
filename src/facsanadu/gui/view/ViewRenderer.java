@@ -34,20 +34,28 @@ public class ViewRenderer
 	/**
 	 * Render view to device
 	 */
-	public static void render(ViewSettings viewsettings, Dataset segment, GatingResult gr, ViewTransform trans, QPainter pm, LinkedList<GateHandle> handles, int rendermax)
+	public static void renderData(ViewSettings viewsettings, Dataset segment, GatingResult gr, ViewTransform trans, QPainter pm, int rendermax)
 		{
 		if(viewsettings.isHistogram())
-			renderHistogram(viewsettings, segment, gr, trans, pm, handles);
+			renderHistogram(viewsettings, segment, gr, trans, pm);
 		else
-			renderXY(viewsettings, segment, gr, trans, pm, handles, rendermax);
+			renderXY(viewsettings, segment, gr, trans, pm, rendermax);
 		}
+	
+	
+	public static void renderGates(ViewSettings viewsettings, Dataset segment, GatingResult gr, ViewTransform trans, QPainter pm, LinkedList<GateHandle> handles, int rendermax)
+		{
+		//Draw all gates
+		drawgatesRecursive(pm, trans, viewsettings.gate, viewsettings, handles);
+		}
+	
 	
 	
 	/**
 	 * Render histogram
 	 * @param handles 
 	 */
-	private static void renderHistogram(ViewSettings viewsettings, Dataset segment, GatingResult gr, ViewTransform trans, QPainter pm, LinkedList<GateHandle> handles)
+	private static void renderHistogram(ViewSettings viewsettings, Dataset segment, GatingResult gr, ViewTransform trans, QPainter pm)
 		{
 		ArrayList<ChannelInfo> chans=segment.getChannelInfo();
 		//Headache - for scaling, here it would make more sense to scale by the output histograms rather than just datasize
@@ -78,13 +86,13 @@ public class ViewRenderer
 		
 		
 		//Draw all gates
-		drawgatesRecursive(pm, trans, viewsettings.gate, viewsettings, handles);
+//		drawgatesRecursive(pm, trans, viewsettings.gate, viewsettings, handles);
 		}
 
 	/**
 	 * Draw scatter plot
 	 */
-	private static void renderXY(ViewSettings viewsettings, Dataset ds, GatingResult gr, ViewTransform trans, QPainter pm, LinkedList<GateHandle> handles,
+	private static void renderXY(ViewSettings viewsettings, Dataset ds, GatingResult gr, ViewTransform trans, QPainter pm,
 			int rendermax)
 		{
 		ArrayList<ChannelInfo> chans=ds.getChannelInfo();
@@ -144,7 +152,7 @@ public class ViewRenderer
 		drawHeaderLines(pm, trans, labelX, labelY);
 		
 		//Draw all gates
-		drawgatesRecursive(pm, trans, viewsettings.gate, viewsettings, handles);
+	//	drawgatesRecursive(pm, trans, viewsettings.gate, viewsettings, handles);
 		}
 
 	

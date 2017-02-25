@@ -20,6 +20,8 @@ public class GatingResult
 	
 	private HashMap<Gate, Long> lastUpdateGate=new HashMap<Gate, Long>();
 	
+	private long lastTotalGateTime=0;
+	
 	GateSet gating=new GateSet();
 	public GatingResult(GateSet gating)
 		{
@@ -70,6 +72,8 @@ public class GatingResult
 			classifyobs(g, ds, res, i);
 		setAcceptedFromGate(g, res, gLastModified);
 		lastUpdateGate.put(g, gLastModified);
+		lastTotalGateTime=System.currentTimeMillis();
+
 		
 		System.out.println("Calculated gate "+g+" for ds "+ds);
 		
@@ -154,6 +158,31 @@ public class GatingResult
 	public IntArray getAcceptedFromGate(Gate g)
 		{
 		return acceptedFromGate.get(g);
+		}
+
+	/*
+	private Long getLatestGatingR(Gate g)
+		{
+		Long t=lastUpdateGate.get(g);
+		for(Gate child:g.children)
+			{
+			Long t2=getLatestGatingR(child);
+			if(t2!=null && t2>t)
+				t=t2;
+			}
+		return t;
+		}
+*/
+	
+	public long getLastGatingCalculationTime(Dataset dataset)
+		{
+		return lastTotalGateTime;
+		/*
+		Long t=getLatestGatingR(getRootGate());
+		if(t==null)
+			t=0L;
+		return t;
+		*/
 		}
 
 	}

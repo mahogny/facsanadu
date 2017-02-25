@@ -106,7 +106,8 @@ public class GraphExporter
 				
 				Dataset ds=listds.get(i);
 				ViewSettings vs=listviews.get(j);
-				ViewRenderer.render(vs, ds, proj.getGatingResult(ds), trans, pm, new LinkedList<GateHandle>(), Integer.MAX_VALUE);
+				ViewRenderer.renderData(vs, ds, proj.getGatingResult(ds), trans, pm, Integer.MAX_VALUE);
+				ViewRenderer.renderGates(vs, ds, proj.getGatingResult(ds), trans, pm, new LinkedList<GateHandle>(), Integer.MAX_VALUE);
 				pm.restore();
 				}
 		

@@ -25,7 +25,6 @@ import facsanadu.gates.GateRect;
 import facsanadu.gui.FacsanaduProject;
 import facsanadu.gui.view.ViewSettings;
 import facsanadu.transformations.Transformation;
-import facsanadu.transformations.TransformationLog;
 import facsanadu.transformations.TransformationStack;
 import facsanadu.transformations.TransformationType;
 

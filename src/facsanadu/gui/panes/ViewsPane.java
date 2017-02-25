@@ -119,4 +119,10 @@ public class ViewsPane extends QWidget
 			bGateRect.setChecked(true);
 		matrix.setTool(t);
 		}
+
+	
+	public void invalidateCache()
+		{
+		matrix.invalidateCache();
+		}
 	}

@@ -232,4 +232,14 @@ public class ViewsMatrix extends QWidget
 			for(ViewWidget w:row)
 				w.setTool(currentTool);
 		}
+
+
+
+
+	public void invalidateCache()
+		{
+		for(ArrayList<ViewWidget> list:prevChanWidget)
+			for(ViewWidget w:list)
+				w.invalidateCache();
+		}
 	}

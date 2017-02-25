@@ -19,7 +19,6 @@ import facsanadu.gates.Gate;
 import facsanadu.gates.measure.GateMeasure;
 import facsanadu.gui.colors.QColorCombo;
 import facsanadu.gui.events.EventGatesChanged;
-import facsanadu.gui.events.EventGatesMoved;
 import facsanadu.gui.events.EventViewsChanged;
 import facsanadu.gui.events.FacsanaduEvent;
 import facsanadu.gui.qt.QTutil;
@@ -163,7 +162,7 @@ public class GatesListWidget extends QVBoxLayout
 			public void set()
 				{
 				g.color=combocolor.getCurrentColor();
-				emitEvent(new EventGatesMoved()); //Smaller change?
+				emitEvent(new EventGatesChanged()); //Smaller change?
 				}
 		};
 		this.callbacks.add(cb);

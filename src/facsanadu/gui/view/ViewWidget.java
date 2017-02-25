@@ -9,11 +9,13 @@ import com.trolltech.qt.core.QRectF;
 import com.trolltech.qt.core.Qt.MouseButton;
 import com.trolltech.qt.gui.QBrush;
 import com.trolltech.qt.gui.QColor;
+import com.trolltech.qt.gui.QImage;
 import com.trolltech.qt.gui.QMenu;
 import com.trolltech.qt.gui.QMouseEvent;
 import com.trolltech.qt.gui.QPaintEvent;
 import com.trolltech.qt.gui.QPainter;
 import com.trolltech.qt.gui.QWidget;
+import com.trolltech.qt.gui.QImage.Format;
 import com.trolltech.qt.gui.QSizePolicy.Policy;
 
 import facsanadu.data.ChannelInfo;
@@ -22,6 +24,7 @@ import facsanadu.gates.Gate;
 import facsanadu.gates.GatingResult;
 import facsanadu.gui.MainWindow;
 import facsanadu.gui.FacsanaduProject;
+import facsanadu.gui.events.EventGatesChanged;
 import facsanadu.gui.events.EventGatesMoved;
 import facsanadu.gui.events.EventViewsChanged;
 import facsanadu.gui.events.FacsanaduEvent;
@@ -79,10 +82,33 @@ public class ViewWidget extends QWidget
 		update();
 		}
 	
+	
+	private long lastGatingTime=0;
+	private QImage img=null;
+	private void updatePointImage()
+		{
+		FacsanaduProject project=mainWindow.project;
+		GatingResult gr=project.gatingResult.get(dataset);
+		long newGatingTime=gr.getLastGatingCalculationTime(dataset);
+		System.out.println("last view "+lastGatingTime+"   last g "+newGatingTime+ "    "+(lastGatingTime<newGatingTime));
+		if(img==null || lastGatingTime<newGatingTime || img.width()!=width() || img.height()!=height())
+			{
+			System.out.println("update cache");
+			img=new QImage(width(),height(), Format.Format_RGB32);
+			QPainter pm2=new QPainter(img);
+			pm2.setBrush(new QBrush(QColor.white));
+			pm2.drawRect(-5,-5,10000,10000);
+			ViewRenderer.renderData(viewsettings, dataset, gr, trans, pm2, maxevents); 
+			pm2.end();
+			lastGatingTime=newGatingTime;
+			}
+		
+		}
+	
+	
 	@Override
 	protected void paintEvent(QPaintEvent pe)
 		{
-		System.out.println("!start repaint");
 		super.paintEvent(pe);
 		FacsanaduProject project=mainWindow.project;
 		GatingResult gr=project.gatingResult.get(dataset);
@@ -93,9 +119,12 @@ public class ViewWidget extends QWidget
 		
 		handles=new LinkedList<GateHandle>();
 		QPainter pm=new QPainter(this);
-		pm.setBrush(new QBrush(QColor.white));
-		pm.drawRect(-5,-5,10000,10000);
-		ViewRenderer.render(viewsettings, dataset, gr, trans, pm, handles, maxevents); 
+
+		updatePointImage();
+		pm.drawImage(new QPoint(0,0), img);
+		
+		
+		ViewRenderer.renderGates(viewsettings, dataset, gr, trans, pm, handles, maxevents); 
 				
 		//Now render handles?
 		for(GateHandle h:handles)
@@ -247,9 +276,9 @@ public class ViewWidget extends QWidget
 	protected void mouseReleaseEvent(QMouseEvent ev)
 		{
 		super.mouseReleaseEvent(ev);
-		tool.mouseReleaseEvent(ev);
-		mainWindow.handleEvent(new EventGatesMoved());
 		curhandle=null;
+		tool.mouseReleaseEvent(ev);
+		mainWindow.handleEvent(new EventGatesChanged());
 		}
 
 	
@@ -367,6 +396,7 @@ public class ViewWidget extends QWidget
 			else if(t==TransformationType.LOG)
 				viewsettings.transformation.set(index, trans);
 			mainWindow.handleEvent(new EventViewsChanged());
+			
 			}
 		}
 
@@ -427,6 +457,12 @@ public class ViewWidget extends QWidget
 	public void addGate(Gate g)
 		{
 		mainWindow.addGate(viewsettings.gate, g);
+		}
+
+
+	public void invalidateCache()
+		{
+		img=null;
 		}
 
 	}
