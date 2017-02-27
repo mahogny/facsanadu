@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import com.trolltech.qt.core.Qt;
+import com.trolltech.qt.gui.QIcon;
 import com.trolltech.qt.gui.QInputDialog;
 import com.trolltech.qt.gui.QPushButton;
 import com.trolltech.qt.gui.QTreeWidget;
@@ -22,6 +23,7 @@ import facsanadu.gui.events.EventGatesChanged;
 import facsanadu.gui.events.EventViewsChanged;
 import facsanadu.gui.events.FacsanaduEvent;
 import facsanadu.gui.qt.QTutil;
+import facsanadu.gui.resource.ImgResource;
 import facsanadu.gui.view.ViewSettings;
 
 
@@ -60,7 +62,7 @@ public class GatesListWidget extends QVBoxLayout
 
 		QPushButton bSelectAllGates=new QPushButton(tr("Select all"));
 		QPushButton bRenameGate=new QPushButton(tr("Rename gate"));
-		QPushButton bRemoveGate=new QPushButton(tr("Remove"));
+		QPushButton bRemoveGate=new QPushButton(new QIcon(ImgResource.delete),"");
 		QPushButton bMeasure=new QPushButton(tr("Measure"));
 
 		bMeasure.clicked.connect(this,"actionAddMeasure()");

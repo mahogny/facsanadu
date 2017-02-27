@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import com.trolltech.qt.core.QModelIndex;
 import com.trolltech.qt.core.Qt;
 import com.trolltech.qt.gui.QItemSelectionModel.SelectionFlag;
+import com.trolltech.qt.gui.QIcon;
 import com.trolltech.qt.gui.QPushButton;
 import com.trolltech.qt.gui.QTableWidget;
 import com.trolltech.qt.gui.QTableWidgetItem;
@@ -16,6 +17,7 @@ import com.trolltech.qt.gui.QSizePolicy.Policy;
 
 import facsanadu.data.Dataset;
 import facsanadu.gui.qt.QTutil;
+import facsanadu.gui.resource.ImgResource;
 import facsanadu.gui.view.ViewSettings;
 
 /**
@@ -46,7 +48,7 @@ public class ViewsListWidget extends QVBoxLayout
 	
 		QPushButton bSelectAllViews=new QPushButton(tr("Select all"));
 		QPushButton bNewView=new QPushButton(tr("New view"));
-		QPushButton bRemoveView=new QPushButton(tr("Remove view"));
+		QPushButton bRemoveView=new QPushButton(new QIcon(ImgResource.delete),"");
 
 
 		bNewView.clicked.connect(this,"actionNewView()");

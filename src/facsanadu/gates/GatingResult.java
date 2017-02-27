@@ -18,10 +18,15 @@ public class GatingResult
 	private HashMap<GateMeasure, Double> gatecalc=new HashMap<GateMeasure, Double>();
 	private IntArray gateForObs=new IntArray();
 	
-	private HashMap<Gate, Long> lastUpdateGate=new HashMap<Gate, Long>();
-	
-	private long lastTotalGateTime=0;
-	
+	public long lastUpdateGate=0;
+
+	long lastGatingCalculationTime=0;
+	public void setUpdated(Gate g)
+		{
+		lastUpdateGate=g.lastModified;
+		//IF: not setting the output result before completely done then this state is not needed
+		}
+
 	GateSet gating=new GateSet();
 	public GatingResult(GateSet gating)
 		{
@@ -71,9 +76,7 @@ public class GatingResult
 		for(int i=0;i<n;i+=inc)
 			classifyobs(g, ds, res, i);
 		setAcceptedFromGate(g, res, gLastModified);
-		lastUpdateGate.put(g, gLastModified);
-		lastTotalGateTime=System.currentTimeMillis();
-
+		lastUpdateGate=gLastModified;
 		
 		System.out.println("Calculated gate "+g+" for ds "+ds);
 		
@@ -93,7 +96,7 @@ public class GatingResult
 		synchronized (acceptedFromGate)
 			{
 			acceptedFromGate.put(g, res);
-			lastUpdateGate.put(g, lastMod); 
+			lastUpdateGate=lastMod;
 			}
 		}
 	
@@ -147,12 +150,10 @@ public class GatingResult
 	 * Check if this gate needs any updating.
 	 * Done by having a time last computed vs a time for when last modified
 	 */
-	public boolean gateNeedsUpdate(Gate g)
+	public boolean gateNeedsUpdate()
 		{
-		Long lastupd=lastUpdateGate.get(g);
-		if(lastupd==null)
-			lastupd=0L;
-		return g.lastModified>lastupd;
+		Gate g=getRootGate();
+		return g.lastModified>lastUpdateGate; //Should be on a dataset level
 		}
 
 	public IntArray getAcceptedFromGate(Gate g)
@@ -160,29 +161,19 @@ public class GatingResult
 		return acceptedFromGate.get(g);
 		}
 
-	/*
-	private Long getLatestGatingR(Gate g)
-		{
-		Long t=lastUpdateGate.get(g);
-		for(Gate child:g.children)
-			{
-			Long t2=getLatestGatingR(child);
-			if(t2!=null && t2>t)
-				t=t2;
-			}
-		return t;
-		}
-*/
 	
-	public long getLastGatingCalculationTime(Dataset dataset)
+
+
+
+	public long lastGatingCalculationTime()
 		{
-		return lastTotalGateTime;
-		/*
-		Long t=getLatestGatingR(getRootGate());
-		if(t==null)
-			t=0L;
-		return t;
-		*/
+		return lastGatingCalculationTime;
+		}
+
+
+	public void setLastUpdateTime()
+		{
+		lastGatingCalculationTime=System.currentTimeMillis();
 		}
 
 	}

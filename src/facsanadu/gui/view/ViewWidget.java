@@ -89,7 +89,7 @@ public class ViewWidget extends QWidget
 		{
 		FacsanaduProject project=mainWindow.project;
 		GatingResult gr=project.gatingResult.get(dataset);
-		long newGatingTime=gr.getLastGatingCalculationTime(dataset);
+		long newGatingTime=gr.lastGatingCalculationTime();
 		System.out.println("last view "+lastGatingTime+"   last g "+newGatingTime+ "    "+(lastGatingTime<newGatingTime));
 		if(img==null || lastGatingTime<newGatingTime || img.width()!=width() || img.height()!=height())
 			{

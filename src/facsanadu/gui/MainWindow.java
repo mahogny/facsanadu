@@ -65,7 +65,7 @@ public class MainWindow extends QMainWindow
 			{
 			return project;
 			}
-		public void callbackDoneCalc(Dataset dataset, Gate g)
+		public void callbackDoneCalc(Dataset dataset)
 			{
 			 QApplication.invokeLater(new Runnable()
          {

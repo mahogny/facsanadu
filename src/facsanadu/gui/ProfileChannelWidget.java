@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.trolltech.qt.core.QModelIndex;
 import com.trolltech.qt.core.Qt;
+import com.trolltech.qt.gui.QIcon;
 import com.trolltech.qt.gui.QPushButton;
 import com.trolltech.qt.gui.QTableWidget;
 import com.trolltech.qt.gui.QTableWidgetItem;
@@ -17,6 +18,7 @@ import com.trolltech.qt.gui.QSizePolicy.Policy;
 import facsanadu.data.ProfChannel;
 import facsanadu.gui.lengthprofile.ProfilePane;
 import facsanadu.gui.qt.QTutil;
+import facsanadu.gui.resource.ImgResource;
 
 /**
  * 
@@ -46,7 +48,7 @@ public class ProfileChannelWidget extends QVBoxLayout
 		tableDatasets.selectionModel().selectionChanged.connect(this,"dothelayout()");
 
 		QPushButton bAddChannel=new QPushButton(tr("Create prof.channel"));
-		QPushButton bRemoveDataset=new QPushButton(tr("Remove channel"));
+		QPushButton bRemoveDataset=new QPushButton(new QIcon(ImgResource.delete),"");
 		
 		bAddChannel.clicked.connect(this,"actionAddChannel()");
 		bRemoveDataset.clicked.connect(this,"actionRemoveChannel()");

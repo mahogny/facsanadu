@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import facsanadu.data.Dataset;
 import facsanadu.gates.Gate;
 import facsanadu.gates.GatingResult;
-import facsanadu.gates.measure.GateMeasure;
 
 /**
  * 
@@ -43,7 +42,7 @@ public abstract class GateCalcThread
 	/**
 	 * Function to call once work done
 	 */
-	public abstract void callbackDoneCalc(Dataset dataset, Gate g);
+	public abstract void callbackDoneCalc(Dataset dataset);
 	
 	/**
 	 * Function to check which datasets are selected. Only need to work on these
@@ -101,18 +100,17 @@ public abstract class GateCalcThread
 			while(id<=numcores)
 				{
 				//and other criteria
-				FacsanaduProject proj=getProject();
+				//FacsanaduProject proj=getProject();
 
 				//Get a task that needs doing
 				Task task=null;
 				synchronized (lockGetGate)
 					{
 					for(Dataset ds:getCurrentDatasets())
-					//for(Dataset ds:proj.datasets)
 						{
 						//Need to lock datasets too! synchronized class?
 						//GatingResult gr=proj.gatingResult.get(ds);
-						task=getTaskToWorkOn(ds, proj.gateset.getRootGate());
+						task=getTaskToWorkOn(ds);
 						if(task!=null)
 							break;
 						}
@@ -150,20 +148,20 @@ public abstract class GateCalcThread
 	/**
 	 * Get a task that needs working on in the given dataset
 	 */
-	public Task getTaskToWorkOn(Dataset ds, Gate g)
+	public Task getTaskToWorkOn(Dataset ds)
 		{
 		FacsanaduProject proj=getProject();
+		Gate g=proj.gateset.getRootGate();
 	
-		//TODO only update currently visible dataset!!!!
-		//
-		
-		
 		//First checking if there is any work in terms of gating
 		GatingResult gr=proj.getCreateGatingResult(ds);
-		if(gr.gateNeedsUpdate(g))
+//		System.out.println("--------- need update? "+gr.gateNeedsUpdate(g)+"   "+g.lastModified+"  "+gr.lastUpdateGate.get(g));
+		if(gr.gateNeedsUpdate())
 			{
-			TaskGate task=new TaskGate();
-			task.g=g;
+			gr.setUpdated(g); //Ensures only one thread gets this dataset
+			//return g.lastModified>lastupd;
+
+			TaskDS task=new TaskDS();
 			task.ds=ds;
 			//Check if already processed. If so, also cannot process children here yet,
 			//nor measures, so just give up on this node
@@ -171,32 +169,10 @@ public abstract class GateCalcThread
 				return null;
 			else
 				{
-				/*
-				System.out.println("c tasks "+currentTasks);
-				System.out.println("scheduling "+task.g+ "   "+task.ds);
-				System.out.println();
-				*/
 				return task;
 				}
-			}
-	
-		//After gates, check if there are any measures to be done
-		for(GateMeasure calc:g.getMeasures())
-			{
-			TaskMeasure task=new TaskMeasure();
-			task.calc=calc;
-			task.ds=ds;
-			if(!currentTasks.contains(task))
-				return task;
-			}
-		
-		
-		for(Gate child:g.children)
-			{
-			Task ret=getTaskToWorkOn(ds, child);
-			if(ret!=null)
-				return ret;
-			}
+			}		
+
 		return null;		
 		}
 	
@@ -215,69 +191,51 @@ public abstract class GateCalcThread
 	/**
 	 * Task for computing one gate
 	 */
-	private class TaskGate implements Task
+	private class TaskDS implements Task
 		{
-		Gate g;
 		Dataset ds;
 		public boolean equals(Object obj)
 			{
-			if(obj instanceof TaskGate)
+			if(obj instanceof TaskDS)
 				{
-				TaskGate t=(TaskGate)obj;
-				return g==t.g && ds==t.ds;
+				TaskDS t=(TaskDS)obj;
+				return ds==t.ds;
 				}
 			else
 				return false;
 			}
 		public int hashCode()
 			{
-			return g.hashCode()+ds.hashCode();
+			return ds.hashCode();
 			}
 		
 		public void exec()
 			{
 			GatingResult gr=getProject().getCreateGatingResult(ds);
-			gr.doOneGate(g, ds, true); //TODO approximate?
-			callbackDoneCalc(ds, g);
+			synchronized (gr)
+				{
+				System.out.println("calc ds "+gr.getRootGate());
+				exec(gr, gr.getRootGate());
+				gr.setLastUpdateTime();
+				System.out.println("end "+gr.getRootGate());
+				callbackDoneCalc(ds);
+				}
+			}
+
+		public void exec(GatingResult gr, Gate g)
+			{
+			gr.doOneGate(g, ds, false);
+			for(Gate child:g.children)
+				exec(gr, child);
 			}
 		
 		@Override
 		public String toString()
 			{
-			return "(calcgate "+g+"  "+ds+")";
+			return "(calcgate "+ds+")";
 			}
 		}
 		
-
-	/**
-	 * Task for computing one measure
-	 */
-	private class TaskMeasure implements Task
-		{
-		GateMeasure calc;
-		Dataset ds;
-
-		public boolean equals(Object obj)
-			{
-			if(obj instanceof TaskMeasure)
-				{
-				TaskMeasure t=(TaskMeasure)obj;
-				return calc==t.calc && ds==t.ds;
-				}
-			else
-				return false;
-			}
-		public int hashCode()
-			{
-			return calc.hashCode()+ds.hashCode();
-			}
-		
-		public void exec()
-			{
-			// TODO Auto-generated method stub
-			}
-
-		}
 	
 	
 	/**
