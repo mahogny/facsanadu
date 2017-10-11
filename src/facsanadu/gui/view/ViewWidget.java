@@ -25,7 +25,6 @@ import facsanadu.gates.GatingResult;
 import facsanadu.gui.MainWindow;
 import facsanadu.gui.FacsanaduProject;
 import facsanadu.gui.events.EventGatesChanged;
-import facsanadu.gui.events.EventGatesMoved;
 import facsanadu.gui.events.EventViewsChanged;
 import facsanadu.gui.events.FacsanaduEvent;
 import facsanadu.gui.view.gate.GateHandle;
