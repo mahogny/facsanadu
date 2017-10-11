@@ -158,7 +158,7 @@ public class GatesListWidget extends QVBoxLayout
 		item.setText(0, g.name+"     "); //spacing, can we do better?
 		final QColorCombo combocolor=new QColorCombo();
 		treeGates.setItemWidget(item, 1, combocolor);
-		combocolor.setColor(g.color);
+		combocolor.setCurrentColor(g.color);
 		CallbackColor cb=new CallbackColor()
 			{
 			public void set()
@@ -256,6 +256,9 @@ public class GatesListWidget extends QVBoxLayout
 		gates.remove(project.gateset.getRootGate());
 		//Should include gates recursively!
 
+		//Needed for now - but should maybe not have updated times on individual gates
+		project.gateset.getRootGate().setUpdated();
+		
 		for(Gate g:gates)
 			g.detachParent();
 		for(GateMeasure calc:calcs)

@@ -16,6 +16,7 @@ import com.trolltech.qt.gui.QHeaderView.ResizeMode;
 import com.trolltech.qt.gui.QSizePolicy.Policy;
 
 import facsanadu.data.Dataset;
+import facsanadu.gui.events.EventViewsChanged;
 import facsanadu.gui.qt.QTutil;
 import facsanadu.gui.resource.ImgResource;
 import facsanadu.gui.view.ViewSettings;
@@ -64,8 +65,7 @@ public class ViewsListWidget extends QVBoxLayout
 	
 	public void dothelayout()
 		{
-		mw.dothelayout();
-		
+		mw.handleEvent(new EventViewsChanged()); //possible overkill?
 		}
 	
 	public void actionSelectAllViews()

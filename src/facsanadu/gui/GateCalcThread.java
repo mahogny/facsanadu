@@ -159,7 +159,6 @@ public abstract class GateCalcThread
 		if(gr.gateNeedsUpdate())
 			{
 			gr.setUpdated(g); //Ensures only one thread gets this dataset
-			//return g.lastModified>lastupd;
 
 			TaskDS task=new TaskDS();
 			task.ds=ds;

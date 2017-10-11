@@ -198,7 +198,6 @@ public class ViewRenderer
 			rend.render(g, pm, trans, viewsettings, handles);
 			drawgatesRecursive(pm, trans, g, viewsettings, handles);
 			}
-		
 		}
 	
 	

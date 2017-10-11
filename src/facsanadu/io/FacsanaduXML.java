@@ -63,7 +63,7 @@ public class FacsanaduXML
 			eSeq.setAttribute("path",relpath);
 
 			//Attach information about profiles being flipped, if profile data is included
-			if(ds.getNumObservations()>0 && ds.lengthprofsData.get(0).getLength()>0)
+			if(ds.getNumObservations()>0 && ds.lengthprofsData.size()>0 && ds.lengthprofsData.get(0).getLength()>0)
 				{
 				StringBuilder sb=new StringBuilder();
 				for(LengthProfileData d:ds.lengthprofsData)

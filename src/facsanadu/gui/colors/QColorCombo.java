@@ -1,11 +1,11 @@
 package facsanadu.gui.colors;
 
-import com.trolltech.qt.core.QSize;
+import com.trolltech.qt.QSignalEmitter;
 import com.trolltech.qt.gui.QColor;
-import com.trolltech.qt.gui.QComboBox;
 import com.trolltech.qt.gui.QIcon;
 import com.trolltech.qt.gui.QPainter;
 import com.trolltech.qt.gui.QPixmap;
+import com.trolltech.qt.gui.QPushButton;
 import com.trolltech.qt.gui.QSizePolicy.Policy;
 
 import facsanadu.gates.GateColor;
@@ -17,27 +17,33 @@ import facsanadu.gates.GateColor;
  * @author Johan Henriksson
  *
  */
-public class QColorCombo extends QComboBox
+public class QColorCombo extends QPushButton
 	{
 	private ColorSet colorset=ColorSet.colorset;
-
+	GateColor currentColor=colorset.get(0);
+	
 	int size=12;
+	
+	public QSignalEmitter.Signal0 currentIndexChanged=new QSignalEmitter.Signal0();
+	
+	
 
 	public QColorCombo()
 		{
 		setSizePolicy(Policy.Minimum, Policy.Minimum);
-		fillColorCombo();
+		updateColorIcon();
+		//fillColorCombo();
+		
+		clicked.connect(this,"actionClick()");
 		}
 	
+	private void updateColorIcon()
+		{
+		setIcon(new QIcon(makeColPM(currentColor, size)));
+		}
 	
-  public void fillColorCombo()
-    {
-		for(GateColor col:colorset.colors)
-			addColor(col);
-		setIconSize(new QSize(size,size));
-    }
 
-  private void addColor(GateColor col)
+  public static QPixmap makeColPM(GateColor col, int size)
 	  {
 	  QPixmap pm=new QPixmap(size, size);
 	  pm.fill(new QColor(0,0,0,0));   
@@ -45,34 +51,25 @@ public class QColorCombo extends QComboBox
 	  p.setBrush(new QColor(col.r,col.g,col.b));
 	  p.drawEllipse(1,1,size-2,size-2);
 	  p.end();
-	  addItem(new QIcon(pm), null, col);
+	  return pm;
 	  }
   
-
+  
+  public void setCurrentColor(GateColor c)
+  	{
+  	currentColor=c;
+  	updateColorIcon();
+  	currentIndexChanged.emit();
+  	}
+  
   public GateColor getCurrentColor()
   	{
-  	return colorAt(currentIndex());
+  	return currentColor;
   	}
 
-  private GateColor colorAt(int index)
-  	{
-		GateColor o=(GateColor)itemData(index);
-		return o;
-  	}
 
-	public void setColor(GateColor color)
+	public void actionClick()
 		{
-		for(int i=0;i<count();i++)
-			{
-			GateColor o=(GateColor)itemData(i);
-			if(o.equals(color))
-				{
-				setCurrentIndex(i);
-				break;
-				}
-			}
-		addColor(color);
-		setCurrentIndex(count()-1);
+		new QColorComboPopup(this, colorset);
 		}
-	
 	}

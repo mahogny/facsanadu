@@ -16,7 +16,7 @@ public class GatingResult
 	{
 	private HashMap<Gate, IntArray> acceptedFromGate=new HashMap<Gate, IntArray>();
 	private HashMap<GateMeasure, Double> gatecalc=new HashMap<GateMeasure, Double>();
-	private IntArray gateForObs=new IntArray();
+	private IntArray globalGateRes=new IntArray();
 	
 	public long lastUpdateGate=0;
 
@@ -36,7 +36,7 @@ public class GatingResult
 
 	public int getGateIntIDForObs(int obs)
 		{
-		return gateForObs.get(obs);
+		return globalGateRes.get(obs);
 		}
 	
 	/**
@@ -55,12 +55,17 @@ public class GatingResult
 	public void doOneGate(Gate g, Dataset ds, boolean approximate)
 		{
 		long gLastModified=g.lastModified; //g.lastModified
-		approximate=false;  //TODO disabling approximation. this is hard to implement!
 		int n;
+		IntArray res;
 		if(g.parent==null) //This is the root
 			{
 			n=ds.getNumObservations();
-			gateForObs=new IntArray(n); //Should never need to be resized
+			globalGateRes=new IntArray(n); //Should never need to be resized
+			res=new IntArray(n);
+
+			//Do all observations
+			for(int i=0;i<n;i++)
+				classifyobs(g, ds, res, i);
 			}
 		else
 			{
@@ -68,13 +73,13 @@ public class GatingResult
 			if(arr==null)
 				throw new RuntimeException("Parent gate not calculated "+g);
 			n=arr.size();
+			res=new IntArray(n);
+			
+			//Do observations from parent
+			for(int i=0;i<n;i++)
+				classifyobs(g, ds, res, arr.get(i));
 			}
-		int inc=1;
-		if(approximate && n>10000)
-			inc=n/10000;
-		IntArray res=new IntArray(n);
-		for(int i=0;i<n;i+=inc)
-			classifyobs(g, ds, res, i);
+		
 		setAcceptedFromGate(g, res, gLastModified);
 		lastUpdateGate=gLastModified;
 		
@@ -110,12 +115,12 @@ public class GatingResult
 			dogateRec(child, ds);
 		}
 	
-	private void classifyobs(Gate g, Dataset ds, IntArray res, int id)
+	private void classifyobs(Gate g, Dataset ds, IntArray passedGateRes, int id)
 		{
 		if(g.classify(ds.getAsFloatCompensated(id)))
 			{
-			res.addUnchecked(id);
-			gateForObs.setUnchecked(id,g.getIntID());
+			passedGateRes.addUnchecked(id);
+			globalGateRes.setUnchecked(id,g.getIntID());
 			}
 		}
 	
@@ -153,7 +158,7 @@ public class GatingResult
 	public boolean gateNeedsUpdate()
 		{
 		Gate g=getRootGate();
-		return g.lastModified>lastUpdateGate; //Should be on a dataset level
+		return g.lastModified > lastUpdateGate; //Should be on a dataset level
 		}
 
 	public IntArray getAcceptedFromGate(Gate g)

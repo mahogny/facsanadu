@@ -82,12 +82,12 @@ public abstract class Gate
 		Gate pc=this;
 		while(pc.parent!=null)
 			pc=pc.parent;
-		pc.setUpdatedr(t);
+		pc.setUpdatedRecursive(t);
 		}
-	private void setUpdatedr(long t)
+	private void setUpdatedRecursive(long t)
 		{
 		lastModified=t;
 		for(Gate g:children)
-			g.setUpdatedr(t);
+			g.setUpdatedRecursive(t);
 		}
 	}
