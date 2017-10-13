@@ -80,6 +80,7 @@ public class ViewToolDrawRect implements ViewTool
 			isDrawing=grect;
 
 			w.addGate(grect);
+			grect.setUniqueColor();
 			w.sendEvent(new EventGatesMoved());
 			}
 		

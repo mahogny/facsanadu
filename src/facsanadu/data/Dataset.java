@@ -3,6 +3,7 @@ package facsanadu.data;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.TreeMap;
 
 import facsanadu.gui.FacsanaduProject;
 
@@ -28,6 +29,7 @@ public class Dataset
 	
 	public ArrayList<LengthProfile> lengthprofsInfo=new ArrayList<LengthProfile>();
 	public ArrayList<LengthProfileData> lengthprofsData=new ArrayList<LengthProfileData>();
+	public TreeMap<String, String> metaKeyName=new TreeMap<String, String>();
 
 	
 	public ArrayList<ChannelInfo> getChannelInfo()

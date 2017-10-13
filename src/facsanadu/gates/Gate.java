@@ -1,9 +1,11 @@
 package facsanadu.gates;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 import facsanadu.gates.measure.GateMeasure;
+import facsanadu.gui.colors.ColorSet;
 import facsanadu.transformations.TransformationStack;
 
 /**
@@ -90,4 +92,29 @@ public abstract class Gate
 		for(Gate g:children)
 			g.setUpdatedRecursive(t);
 		}
+	
+	
+	public void setUniqueColor()
+		{
+		color=new GateColor(255, 255, -255); //Never used
+		HashSet<GateColor> colset=new HashSet<GateColor>();
+		getRootGate().getColorsRecursive(colset);
+		color=new ColorSet().getUnusedColor(colset);
+		}
+	private void getColorsRecursive(HashSet<GateColor> colset)
+		{
+		colset.add(color);
+		for(Gate g:children)
+			g.getColorsRecursive(colset);
+		}
+	
+	
+	public Gate getRootGate()
+		{
+		Gate g=this;
+		while(!(g instanceof GateRoot))
+			g=g.parent;
+		return g;
+		}
+
 	}

@@ -8,6 +8,13 @@ import com.trolltech.qt.gui.QWidget;
 
 import facsanadu.gates.GateColor;
 
+/**
+ * 
+ * Color-swatch popup
+ * 
+ * @author Johan Henriksson
+ *
+ */
 public class QColorComboPopup extends QWidget
 	{
 	private QColorCombo popupParent;
@@ -24,7 +31,7 @@ public class QColorComboPopup extends QWidget
     int currow=0;
     for(int i=0;i<colorset.size();i++)
     	{
-    	if(curcol==10)
+    	if(curcol==7)
     		{
     		currow++;
     		curcol=0;

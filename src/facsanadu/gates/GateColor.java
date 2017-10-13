@@ -1,5 +1,7 @@
 package facsanadu.gates;
 
+import java.util.HashSet;
+
 /**
  * 
  * Color used for sequences
@@ -74,6 +76,13 @@ public class GateColor
 			}
 		else
 			return false;
+		}
+
+
+	@Override
+	public int hashCode()
+		{
+		return r+g+b;
 		}
 
 

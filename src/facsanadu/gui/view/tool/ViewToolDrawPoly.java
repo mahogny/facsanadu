@@ -49,6 +49,7 @@ public class ViewToolDrawPoly implements ViewTool
 				g.indexY=w.getIndexY();
 				isDrawing=g;
 				w.addGate(g);
+				g.setUniqueColor();
 				}
 			g.addPoint(p.x(), p.y());
 			if(justcreated)

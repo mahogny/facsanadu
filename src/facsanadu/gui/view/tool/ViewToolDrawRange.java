@@ -78,6 +78,7 @@ public class ViewToolDrawRange implements ViewTool
 			isDrawing=grect;
 
 			w.addGate(grect);
+			grect.setUniqueColor();
 			emitEvent(new EventGatesMoved());
 			}
 		

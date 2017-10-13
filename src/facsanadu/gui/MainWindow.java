@@ -39,6 +39,7 @@ import facsanadu.gui.events.EventViewsChanged;
 import facsanadu.gui.events.FacsanaduEvent;
 import facsanadu.gui.lengthprofile.ProfilePane;
 import facsanadu.gui.panes.CompensationPane;
+import facsanadu.gui.panes.DatasetInfoPane;
 import facsanadu.gui.panes.GateStatsPane;
 import facsanadu.gui.panes.ViewsPane;
 import facsanadu.gui.qt.QTutil;
@@ -96,6 +97,7 @@ public class MainWindow extends QMainWindow
 	private ViewsListWidget viewsw=new ViewsListWidget(this);
 	private DatasetListWidget datasetsw=new DatasetListWidget(this);
 	private CompensationPane paneCompensation=new CompensationPane(this);
+	private DatasetInfoPane paneMetadata=new DatasetInfoPane(this);
 	
 	private ViewsPane paneViews;
 	private GateStatsPane paneStats;
@@ -176,6 +178,7 @@ public class MainWindow extends QMainWindow
 		tabwidget.addTab(paneStats, tr("Statistics"));
 		tabwidget.addTab(paneProfile, tr("Length profiles"));
 		tabwidget.addTab(paneCompensation, tr("Compensation"));
+		tabwidget.addTab(paneMetadata, tr("Dataset info"));
 
 		QHBoxLayout lay=new QHBoxLayout();
 		lay.addLayout(layLeft);
@@ -188,6 +191,8 @@ public class MainWindow extends QMainWindow
 		
 		updateall();
 		setAcceptDrops(true);
+		adjustSize();
+		resize(1000, size().height());
 		show();
 		}
 	
@@ -433,14 +438,17 @@ public class MainWindow extends QMainWindow
 		}
 	public void actionDsChanged()
 		{
+		//Update list of selected datasets, in a thread neutral list
 		synchronized (selDatasetsCache)
 			{
 			selDatasetsCache.clear();
 			selDatasetsCache.addAll(datasetsw.getSelectedDatasets());
 			}
+		//Better to send a signal here instead?
 		paneViews.invalidateCache();
 		dogating();
 		dothelayout();
+		paneMetadata.updateForm();
 		}
 	
 	/**
@@ -513,6 +521,7 @@ public class MainWindow extends QMainWindow
 			datasetsw.updateDatasetList();
 			paneViews.invalidateCache();
 			dogating();
+			paneMetadata.updateForm();
 			}
 		else if(event instanceof EventSetViewTool)
 			{

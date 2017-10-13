@@ -27,4 +27,6 @@ public class GateEllipse extends Gate
 		return dx*dx+dy*dy<=1;
 		}
 
+
+
 	}

@@ -21,13 +21,13 @@ This is a simple piece of software for FCS, written in Java + QT
 
 * Rendering
    * XY scatter plots
-   * Hisograms (TODO)
-   * Length profiles
+   * Histograms
+   * COPAS Length profiles
 
 * Summaries
    * Percent gated, total and of parent
-   * Export tables to CSV (TODO)
-   * Export graphs to PNG (TODO)
+   * Export tables to CSV
+   * Export graphs to PNG
 
 
 ## License

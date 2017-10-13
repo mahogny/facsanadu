@@ -34,7 +34,7 @@ public class CompensationPane extends QWidget
 		
 		QVBoxLayout lay=new QVBoxLayout();
 		lay.addWidget(tableMatrix);
-		lay.addStretch();
+		//lay.addStretch();
 		lay.setMargin(0);
 		setLayout(lay);
 		updateForm();

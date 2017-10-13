@@ -3,6 +3,7 @@ package facsanadu.gui.colors;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 import facsanadu.gates.GateColor;
@@ -71,6 +72,20 @@ public class ColorSet
 	public GateColor getRandomColor()
 		{
 		return new GateColor(colors.get((int)(Math.random()*colors.size())));
+		}
+
+
+
+	public GateColor getUnusedColor(HashSet<GateColor> colset)
+		{
+		for(GateColor c:colors)
+			if(!colset.contains(c))
+				return c;
+		//Fallback - any random color
+		return new GateColor(
+				(int)(Math.random()*255), 
+				(int)(Math.random()*255), 
+				(int)(Math.random()*255));
 		}
 	
 	}

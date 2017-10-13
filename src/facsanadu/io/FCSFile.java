@@ -183,6 +183,10 @@ public class FCSFile
 		public HashMap<Integer, String> shortNameForPar=new HashMap<Integer, String>();
 		public HashMap<Integer, String> nameForPar=new HashMap<Integer, String>();
 		public HashMap<Integer, String> rangeForPar=new HashMap<Integer, String>();
+		
+		//TODO Should maybe extract per-channel metadata and transfer to channels
+		
+		/*
 		public HashMap<Integer, String> detectorVoltage=new HashMap<Integer, String>();
 		public HashMap<Integer, String> amplifierGain=new HashMap<Integer, String>();
 		
@@ -205,6 +209,7 @@ public class FCSFile
 		public String endTime;
 		public String timestep;
 		public String originalFile;
+		*/
 		public File source;
 		
 		/**
@@ -369,6 +374,7 @@ public class FCSFile
 				//////////////////////////////////////////////
 				////////////////// optional //////////////////
 				//////////////////////////////////////////////
+				/*
 				else if(FCSFile.isPnX(tok,"S")) //$PnS Name used for parameter n.
 					{
 					int num=Integer.parseInt(tok.substring(2,tok.length()-1));
@@ -460,6 +466,7 @@ public class FCSFile
 					{
 					originalFile=tokText.nextToken();
 					}
+					*/
 				else
 					{
 					System.out.println("Unknown entry: "+tok);
@@ -668,6 +675,7 @@ public class FCSFile
 			//dataset.eventsInt=eventsInt;
 			dataset.source=source;
 			dataset.channelInfo.addAll(getChannelInfo());
+			dataset.metaKeyName.putAll(otherKeywords);
 			
 			//Convert int events to float
 			if(eventsInt!=null)

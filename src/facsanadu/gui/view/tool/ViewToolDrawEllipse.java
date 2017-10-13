@@ -80,6 +80,7 @@ public class ViewToolDrawEllipse implements ViewTool
 			isDrawing=grect;
 
 			w.addGate(grect);
+			grect.setUniqueColor();
 			emitEvent(new EventGatesMoved());
 			}
 		
