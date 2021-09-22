@@ -105,6 +105,7 @@ public class Dataset
 			//Add new channels
 			numPc=proj.profchan.size();
 			resizeEvents(numChannel+numPc);
+			System.out.println("number of PC: "+numPc+" --------------------------------");
 			for(int i=0;i<numPc;i++)
 				{
 				int toi=numChannel+i;
@@ -129,7 +130,7 @@ public class Dataset
 			}
 		else
 			{
-			System.out.println("hmmm. prof chan nothing to do");
+			System.out.println("hmmm. prof chan nothing to do; "+proj.profchan);
 			}
 		}
 

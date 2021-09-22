@@ -35,6 +35,7 @@ import facsanadu.gui.events.EventCompensationChanged;
 import facsanadu.gui.events.EventDatasetsChanged;
 import facsanadu.gui.events.EventGatesChanged;
 import facsanadu.gui.events.EventGatesMoved;
+import facsanadu.gui.events.EventProfchanMoved;
 import facsanadu.gui.events.EventViewsChanged;
 import facsanadu.gui.events.FacsanaduEvent;
 import facsanadu.gui.lengthprofile.ProfilePane;
@@ -512,6 +513,11 @@ public class MainWindow extends QMainWindow
 			dogating();
 			dothelayout();
 			}
+		else if(event instanceof EventProfchanMoved)
+			{
+			//Need to redo compensation using new values
+			handleEvent(new EventCompensationChanged());
+			}
 		else if(event instanceof EventGatesMoved)
 			{
 			dothelayout();
@@ -628,7 +634,6 @@ public class MainWindow extends QMainWindow
 
 	public void recalcProfChan(ProfChannel chChanged)
 		{
-		// TODO Auto-generated method stub
 		project.recalcProfChan(chChanged);
 		dothelayout();
 		//handleEvent(new EventViewsChanged()); //maybe too light

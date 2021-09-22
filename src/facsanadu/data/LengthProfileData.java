@@ -10,9 +10,20 @@ package facsanadu.data;
 public class LengthProfileData
 	{
 	public double[][] data; //[channel][levels]
-	public double[][] cumsum;
+	
+	/**
+	 * Cumulative sum: Always kept up to date, correct after loading
+	 * [channel][levels]
+	 */
+	public double[][] cumsum; 
 
+	
+	/**
+	 * Has this profile been flipped?
+	 * This feature is used to normalize worms if they come with their tail first
+	 */
 	public boolean isFlipped=false;
+	
 	
 	public int getLength()
 		{
@@ -22,6 +33,9 @@ public class LengthProfileData
 			return 0;
 		}
 
+	/**
+	 * Calculate the cumulative sum
+	 */
 	public void calcCumsum()
 		{
 		int len=getLength();

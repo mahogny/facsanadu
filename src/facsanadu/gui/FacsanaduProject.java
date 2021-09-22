@@ -28,6 +28,10 @@ public class FacsanaduProject
 	public GateSet gateset=new GateSet();
 	public LinkedList<Dataset> datasets=new LinkedList<Dataset>();
 	public LinkedList<ViewSettings> views=new LinkedList<ViewSettings>();
+	
+	/**
+	 * List of ways the profile channels are turned into scalar values
+	 */
 	public LinkedList<ProfChannel> profchan=new LinkedList<ProfChannel>();
 
 	public HashMap<Dataset, GatingResult> gatingResult=new HashMap<Dataset, GatingResult>();
@@ -141,6 +145,7 @@ public class FacsanaduProject
 		{
 		for(Dataset ds:datasets)
 			ds.computeProfChannel(this, chChanged);
+		updateCompensation();
 		}
 
 

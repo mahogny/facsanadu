@@ -70,21 +70,25 @@ public class Compensation
 	
 	public void apply(Dataset ds)
 		{
-		//If different datasets have different channels, could deal with it here
+		//If different datasets have different channels, could deal with it here   /////////// TODOprof -- need to go in here
 		int n=matrix.length; 
 
 		//Multiply each event with the unmixing matrix
 		ArrayList<double[]> out=new ArrayList<double[]>(ds.eventsFloat.size());
 		for(int oi=0;oi<ds.eventsFloat.size();oi++)
 			{
-			double[] from=ds.eventsFloat.get(oi);
-			double[] to=multiply(matrix, from);//
+			double[] from=ds.eventsFloat.get(oi);  /////////// TODOprof -- need to go in here
+			double[] to=multiply(matrix, from);
 			out.add(to);
 			}
 		ds.eventsFloatCompensated=out;
 		ds.numCompensated=n;
 		}
 	
+	
+	/**
+	 * Multiply a matrix. Not the fastest
+	 */
 	private static double[] multiply(double[][] m, double[] v)
 		{
 		double[] to=new double[v.length];

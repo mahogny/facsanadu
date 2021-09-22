@@ -20,6 +20,7 @@ import facsanadu.data.Dataset;
 import facsanadu.data.LengthProfileData;
 import facsanadu.data.ProfChannel;
 import facsanadu.gui.MainWindow;
+import facsanadu.gui.events.EventProfchanMoved;
 
 /**
  * 
@@ -205,7 +206,7 @@ public class ProfileView extends QWidget
 			mw.recalcProfChan(curchannel);
 			}
 		moveBoundary=-1;
-		//mw.handleEvent(new EventGatesMoved());   //TODO something like this!
+		mw.handleEvent(new EventProfchanMoved()); 
 		}
 
 	private int clamp(int x, int from, int to)

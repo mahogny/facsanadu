@@ -88,7 +88,7 @@ public class ViewSettings
 			return new double[0];
 		else
 			{
-			int numchan=dataset.iterator().next().getNumChannels();
+			int numchan=dataset.iterator().next().getNumChannels();    /////////// TODOprof -- these are "compensated" channels. profiles can be abstracted before
 			
 			double val[]=new double[numchan];
 			for(int i=0;i<val.length;i++)
