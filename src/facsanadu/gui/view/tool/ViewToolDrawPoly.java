@@ -110,7 +110,6 @@ public class ViewToolDrawPoly implements ViewTool
 		}
 
 
-	@Override
 	public boolean allowHandle()
 		{
 		return isDrawing==null;

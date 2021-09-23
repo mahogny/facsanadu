@@ -49,7 +49,6 @@ public class ViewToolDrawSelect implements ViewTool
 		}
 	
 	
-	@Override
 	public boolean allowHandle()
 		{
 		return true;

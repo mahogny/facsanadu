@@ -92,7 +92,6 @@ public class ViewToolDrawRange implements ViewTool
 		}
 	
 	
-	@Override
 	public boolean allowHandle()
 		{
 		return isDrawing==null;

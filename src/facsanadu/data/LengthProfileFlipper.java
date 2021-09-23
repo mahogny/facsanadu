@@ -15,7 +15,6 @@ public class LengthProfileFlipper
 		ArrayList<LengthProfileData> prof=new ArrayList<LengthProfileData>(ds.lengthprofsData);
 		Collections.sort(prof,new Comparator<LengthProfileData>()
 			{
-			@Override
 			public int compare(LengthProfileData arg0, LengthProfileData arg1)
 				{
 				if(arg0.getLength()<arg1.getLength())

@@ -94,7 +94,6 @@ public class ViewToolDrawEllipse implements ViewTool
 		}
 	
 	
-	@Override
 	public boolean allowHandle()
 		{
 		return isDrawing==null;
