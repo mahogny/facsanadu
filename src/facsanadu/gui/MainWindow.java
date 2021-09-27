@@ -353,6 +353,8 @@ public class MainWindow extends QMainWindow
 				}
 			else if(dsList.size()==1)
 				{
+				//Export a single dataset
+				
 				QFileDialog dia=new QFileDialog();
 				dia.setFileMode(FileMode.AnyFile);
 				dia.setNameFilter(tr("CSV files (*.csv)"));
@@ -363,7 +365,11 @@ public class MainWindow extends QMainWindow
 					{
 					try
 						{
-						ExportFcsToCSV.save(dsList.get(0), new File(dia.selectedFiles().get(0)));
+						
+						
+						
+						
+						ExportFcsToCSV.save(dsList.get(0), project, new File(dia.selectedFiles().get(0)));
 						/*
 						PrintWriter fw=new PrintWriter();
 						fw.println(tableStats.allToCSV());
@@ -379,6 +385,8 @@ public class MainWindow extends QMainWindow
 				}
 			else
 				{
+				// Export a list of datasets
+				
 				QFileDialog dia=new QFileDialog();
 				dia.setFileMode(FileMode.DirectoryOnly);
 				//dia.setNameFilter(tr("CSV files (*.csv)"));
@@ -392,7 +400,7 @@ public class MainWindow extends QMainWindow
 						for(Dataset oneDataset:dsList)
 							{
 							File parent=new File(dia.selectedFiles().get(0));
-							ExportFcsToCSV.save(oneDataset, new File(parent, oneDataset.getName()+".csv"));
+							ExportFcsToCSV.save(oneDataset, project, new File(parent, oneDataset.getName()+".csv"));
 							}
 						}
 					catch (IOException e)
