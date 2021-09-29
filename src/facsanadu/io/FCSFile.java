@@ -636,11 +636,7 @@ public class FCSFile
 								fiData.read()<<16 ^
 								fiData.read()<<24;
 						event[j]=Float.intBitsToFloat(valueByte);
-						
-						
 						//event[j]=rData.readFloat(); //untested
-						
-						System.out.println(event[j]);
 						}
 					}
 				rData.close();
