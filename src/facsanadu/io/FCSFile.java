@@ -620,6 +620,7 @@ public class FCSFile
 				}
 			else if(dataType.equals("F"))
 				{
+				
 				System.out.println(System.currentTimeMillis());
 				DataInputStream rData=new DataInputStream(fiData);
 				eventsFloat=new ArrayList<double[]>(numEvents);
@@ -628,7 +629,19 @@ public class FCSFile
 					double[] event=new double[numParam];
 					eventsFloat.add(event);
 					for(int j=0;j<numParam;j++)
-						event[j]=rData.readFloat(); //untested
+						{
+						//Validated to work with BD FACSverse
+						int valueByte=fiData.read() ^
+								fiData.read()<<8 ^
+								fiData.read()<<16 ^
+								fiData.read()<<24;
+						event[j]=Float.intBitsToFloat(valueByte);
+						
+						
+						//event[j]=rData.readFloat(); //untested
+						
+						System.out.println(event[j]);
+						}
 					}
 				rData.close();
 				System.out.println(System.currentTimeMillis());
