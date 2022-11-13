@@ -1,3 +1,6 @@
+qtjambi = ""
+classpath = "*;$(qtjambi);../lib/*/*;../src/*;../src/*/*;../src/*/*/*;../src/*/*/*/*"
+
 all:
 
 loc:
@@ -6,11 +9,16 @@ loc:
 	*/*/*/*java \
 	*/*/*/*/*java
 
-jars: 
+class:
+	javac -cp $(classpath) ../src/*/*/*.java 
+	javac -cp $(classpath) ../src/*/*/*/*.java 
+	javac -cp $(classpath) ../src/*/*/*/*/*.java
+
+jars: class
 	cd ../bin; jar cfvm ../facsanadu.jar ../src/MANIFEST.STARTQTCLIENT \
-	../src/*/*/*.java \
-	../src/*/*/*/*.java \
-	../src/*/*/*/*/*.java \
+	../src/*/*/*.class \
+	../src/*/*/*/*.class \
+	../src/*/*/*/*/*.class \
 	../src/*/*/*/*.txt \
 	../src/*/*/*/*.png
 
