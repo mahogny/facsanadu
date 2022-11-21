@@ -1,4 +1,11 @@
 all:
+	javac -d ../bin \
+	-cp ../lib/jdom-2.0.4.jar:../lib/linux64/qtjambi-4.7.0.jar:../lib/linux64/qtjambi-linux64-gcc-4.7.0.jar:../lib/linux64/qtjambi-util-4.7.0.jar:../lib/vecmath.jar \
+	*/*/*java \
+        */*/*/*java \
+        */*/*/*/*java
+	cp facsanadu/gui/colors/commoncolors.txt ../bin/facsanadu/gui/colors/
+	cp facsanadu/gui/resource/* ../bin/facsanadu/gui/resource/
 
 loc:
 	wc -l \
