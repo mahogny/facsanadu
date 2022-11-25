@@ -1,7 +1,11 @@
-qtjambi = ""
-classpath = "*;$(qtjambi);../lib/*/*;../src/*;../src/*/*;../src/*/*/*;../src/*/*/*/*"
-
 all:
+	javac -d ../bin \
+	-cp ../lib/jdom-2.0.4.jar:../lib/linux64/qtjambi-4.7.0.jar:../lib/linux64/qtjambi-linux64-gcc-4.7.0.jar:../lib/linux64/qtjambi-util-4.7.0.jar:../lib/vecmath.jar \
+	*/*/*java \
+        */*/*/*java \
+        */*/*/*/*java
+	cp facsanadu/gui/colors/commoncolors.txt ../bin/facsanadu/gui/colors/
+	cp facsanadu/gui/resource/* ../bin/facsanadu/gui/resource/
 
 loc:
 	wc -l \
@@ -9,18 +13,13 @@ loc:
 	*/*/*/*java \
 	*/*/*/*/*java
 
-class:
-	javac -cp $(classpath) ../src/*/*/*.java 
-	javac -cp $(classpath) ../src/*/*/*/*.java 
-	javac -cp $(classpath) ../src/*/*/*/*/*.java
-
-jars: class
+jars: 
 	cd ../bin; jar cfvm ../facsanadu.jar ../src/MANIFEST.STARTQTCLIENT \
-	../src/*/*/*.class \
-	../src/*/*/*/*.class \
-	../src/*/*/*/*/*.class \
-	../src/*/*/*/*.txt \
-	../src/*/*/*/*.png
+	*/*/*.class \
+	*/*/*/*.class \
+	*/*/*/*/*.class \
+	*/*/*/*.txt \
+	*/*/*/*.png
 
 ############################################################################################
 ############################ osx ###########################################################
