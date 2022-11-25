@@ -1,4 +1,4 @@
-all:
+linux64:
 	javac -d ../bin \
 	-cp ../lib/jdom-2.0.4.jar:../lib/linux64/qtjambi-4.7.0.jar:../lib/linux64/qtjambi-linux64-gcc-4.7.0.jar:../lib/linux64/qtjambi-util-4.7.0.jar:../lib/vecmath.jar \
 	*/*/*java \
@@ -49,7 +49,7 @@ linuxport32: jars
 	cd ..; cp -r facsanadu.jar lib/*jar lib/linux32/*jar release/linux32/facsanadu/
 	#cp translations/* ../release/linux32/facsanadu/translations/
 
-linuxport64: jars
+linuxport64: linux64 jars
 	mkdir -p ../release/linux64
 	rm -Rf ../release/linux64/facsanadu
 	cd ..; cp -r ports/linux release/linux64/facsanadu
