@@ -1,12 +1,12 @@
 package facsanadu.gui.qt;
 
-import com.trolltech.qt.core.QPoint;
-import com.trolltech.qt.gui.QColor;
-import com.trolltech.qt.gui.QFont;
-import com.trolltech.qt.gui.QFontMetrics;
-import com.trolltech.qt.gui.QPaintEvent;
-import com.trolltech.qt.gui.QPainter;
-import com.trolltech.qt.gui.QWidget;
+import io.qt.core.QPoint;
+import io.qt.gui.QColor;
+import io.qt.gui.QFont;
+import io.qt.gui.QFontMetrics;
+import io.qt.gui.QPaintEvent;
+import io.qt.gui.QPainter;
+import io.qt.widgets.QWidget;
 
 /**
  * 

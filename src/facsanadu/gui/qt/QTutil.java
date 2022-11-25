@@ -11,35 +11,35 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.trolltech.qt.core.QByteArray;
-import com.trolltech.qt.core.QCoreApplication;
-import com.trolltech.qt.core.QDate;
-import com.trolltech.qt.core.QObject;
-import com.trolltech.qt.core.QRegExp;
-import com.trolltech.qt.core.QTime;
-import com.trolltech.qt.core.Qt.ItemFlag;
-import com.trolltech.qt.core.Qt.ItemFlags;
-import com.trolltech.qt.core.Qt.KeyboardModifier;
-import com.trolltech.qt.gui.QApplication;
-import com.trolltech.qt.gui.QFileDialog;
-import com.trolltech.qt.gui.QFileDialog.AcceptMode;
-import com.trolltech.qt.gui.QFileDialog.DialogLabel;
-import com.trolltech.qt.gui.QFileDialog.Filter;
-import com.trolltech.qt.gui.QGroupBox;
-import com.trolltech.qt.gui.QHBoxLayout;
-import com.trolltech.qt.gui.QImageReader;
-import com.trolltech.qt.gui.QLabel;
-import com.trolltech.qt.gui.QLayout;
-import com.trolltech.qt.gui.QMessageBox;
-import com.trolltech.qt.gui.QTableWidgetItem;
-import com.trolltech.qt.gui.QMessageBox.StandardButton;
-import com.trolltech.qt.gui.QMouseEvent;
-import com.trolltech.qt.gui.QRegExpValidator;
-import com.trolltech.qt.gui.QTableView;
-import com.trolltech.qt.gui.QVBoxLayout;
-import com.trolltech.qt.gui.QValidator;
-import com.trolltech.qt.gui.QWidget;
-import com.trolltech.qt.gui.QSizePolicy.Policy;
+import io.qt.core.QByteArray;
+import io.qt.core.QCoreApplication;
+import io.qt.core.QDate;
+import io.qt.core.QObject;
+import io.qt.core.QRegularExpression;
+import io.qt.core.QTime;
+import io.qt.core.Qt.ItemFlag;
+import io.qt.core.Qt.ItemFlags;
+import io.qt.core.Qt.KeyboardModifier;
+import io.qt.widgets.QApplication;
+import io.qt.widgets.QFileDialog;
+import io.qt.widgets.QFileDialog.AcceptMode;
+import io.qt.widgets.QFileDialog.DialogLabel;
+import io.qt.widgets.QFileDialog.FileMode;
+import io.qt.widgets.QGroupBox;
+import io.qt.widgets.QHBoxLayout;
+import io.qt.gui.QImageReader;
+import io.qt.widgets.QLabel;
+import io.qt.widgets.QLayout;
+import io.qt.widgets.QMessageBox;
+import io.qt.widgets.QTableWidgetItem;
+import io.qt.widgets.QMessageBox.StandardButton;
+import io.qt.gui.QMouseEvent;
+import io.qt.gui.QRegularExpressionValidator;
+import io.qt.widgets.QTableView;
+import io.qt.widgets.QVBoxLayout;
+import io.qt.gui.QValidator;
+import io.qt.widgets.QWidget;
+import io.qt.widgets.QSizePolicy.Policy;
 
 import facsanadu.gui.QtProgramInfo;
 
@@ -404,8 +404,8 @@ public class QTutil
 	public static QValidator getLabstoryIdvalidator(QObject parent)
 		{
 		//Do NOT use the constructor(regexp), windows qt bug!
-		QRegExpValidator validator=new QRegExpValidator(parent);
-		validator.setRegExp(new QRegExp("[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]*"));
+		QRegularExpressionValidator validator=new QRegularExpressionValidator(parent);
+		validator.setRegularExpexpression(new QRegularExpression("[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]*"));
 		return validator;
 		}
 	

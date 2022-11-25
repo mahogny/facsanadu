@@ -5,15 +5,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import com.trolltech.qt.core.QModelIndex;
-import com.trolltech.qt.core.Qt;
-import com.trolltech.qt.gui.QCheckBox;
-import com.trolltech.qt.gui.QDialog;
-import com.trolltech.qt.gui.QPushButton;
-import com.trolltech.qt.gui.QTableWidget;
-import com.trolltech.qt.gui.QTableWidgetItem;
-import com.trolltech.qt.gui.QAbstractItemView.SelectionBehavior;
-import com.trolltech.qt.gui.QHeaderView.ResizeMode;
+import io.qt.core.QModelIndex;
+import io.qt.core.Qt;
+import io.qt.widgets.QCheckBox;
+import io.qt.widgets.QDialog;
+import io.qt.widgets.QPushButton;
+import io.qt.widgets.QTableWidget;
+import io.qt.widgets.QTableWidgetItem;
+import io.qt.widgets.QAbstractItemView.SelectionBehavior;
+import io.qt.widgets.QHeaderView.ResizeMode;
 
 import facsanadu.data.ChannelInfo;
 import facsanadu.gates.measure.GateMeasure;

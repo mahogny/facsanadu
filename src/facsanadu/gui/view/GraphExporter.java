@@ -5,15 +5,15 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.trolltech.qt.core.QPointF;
-import com.trolltech.qt.gui.QBrush;
-import com.trolltech.qt.gui.QColor;
-import com.trolltech.qt.gui.QFont;
-import com.trolltech.qt.gui.QFontMetrics;
-import com.trolltech.qt.gui.QImage;
-import com.trolltech.qt.gui.QImageWriter;
-import com.trolltech.qt.gui.QPainter;
-import com.trolltech.qt.gui.QImage.Format;
+import io.qt.core.QPointF;
+import io.qt.gui.QBrush;
+import io.qt.gui.QColor;
+import io.qt.gui.QFont;
+import io.qt.gui.QFontMetrics;
+import io.qt.gui.QImage;
+import io.qt.gui.QImageWriter;
+import io.qt.gui.QPainter;
+import io.qt.gui.QImage.Format;
 
 import facsanadu.data.Dataset;
 import facsanadu.gui.FacsanaduProject;

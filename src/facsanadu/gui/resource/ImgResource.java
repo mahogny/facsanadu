@@ -3,10 +3,10 @@ package facsanadu.gui.resource;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.trolltech.qt.gui.QIcon;
-import com.trolltech.qt.gui.QLabel;
-import com.trolltech.qt.gui.QPixmap;
-import com.trolltech.qt.gui.QWidget;
+import io.qt.gui.QIcon;
+import io.qt.widgets.QLabel;
+import io.qt.gui.QPixmap;
+import io.qt.widgets.QWidget;
 
 /**
  * Common icons. By loading them once, memory is conserved

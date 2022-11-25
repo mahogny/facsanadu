@@ -1,8 +1,8 @@
 package facsanadu.gui.view.tool;
 
-import com.trolltech.qt.core.QPointF;
-import com.trolltech.qt.core.Qt.MouseButton;
-import com.trolltech.qt.gui.QMouseEvent;
+import io.qt.core.QPointF;
+import io.qt.core.Qt.MouseButton;
+import io.qt.gui.QMouseEvent;
 
 import facsanadu.gates.Gate;
 import facsanadu.gates.GateEllipse;

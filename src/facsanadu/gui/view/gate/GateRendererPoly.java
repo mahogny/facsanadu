@@ -2,8 +2,8 @@ package facsanadu.gui.view.gate;
 
 import java.util.Collection;
 
-import com.trolltech.qt.gui.QPainter;
-import com.trolltech.qt.gui.QPolygonF;
+import io.qt.gui.QPainter;
+import io.qt.gui.QPolygonF;
 
 import facsanadu.gates.Gate;
 import facsanadu.gates.GatePolygon;

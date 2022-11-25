@@ -3,12 +3,12 @@ package facsanadu.gui.view;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import com.trolltech.qt.core.QRect;
-import com.trolltech.qt.gui.QBrush;
-import com.trolltech.qt.gui.QColor;
-import com.trolltech.qt.gui.QFontMetrics;
-import com.trolltech.qt.gui.QPainter;
-import com.trolltech.qt.gui.QPen;
+import io.qt.core.QRect;
+import io.qt.gui.QBrush;
+import io.qt.gui.QColor;
+import io.qt.gui.QFontMetrics;
+import io.qt.gui.QPainter;
+import io.qt.gui.QPen;
 
 import facsanadu.data.ChannelInfo;
 import facsanadu.data.Dataset;

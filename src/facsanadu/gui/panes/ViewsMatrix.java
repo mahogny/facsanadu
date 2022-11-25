@@ -3,12 +3,12 @@ package facsanadu.gui.panes;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import com.trolltech.qt.core.Qt.AlignmentFlag;
-import com.trolltech.qt.gui.QFont;
-import com.trolltech.qt.gui.QGridLayout;
-import com.trolltech.qt.gui.QLabel;
-import com.trolltech.qt.gui.QWidget;
-import com.trolltech.qt.gui.QSizePolicy.Policy;
+import io.qt.core.Qt.AlignmentFlag;
+import io.qt.gui.QFont;
+import io.qt.widgets.QGridLayout;
+import io.qt.widgets.QLabel;
+import io.qt.widgets.QWidget;
+import io.qt.widgets.QSizePolicy.Policy;
 
 import facsanadu.data.Dataset;
 import facsanadu.gates.Gate;

@@ -2,10 +2,10 @@ package facsanadu.gui.view.gate;
 
 import java.util.Collection;
 
-import com.trolltech.qt.core.QPointF;
-import com.trolltech.qt.core.QRectF;
-import com.trolltech.qt.gui.QPainter;
-import com.trolltech.qt.gui.QPolygonF;
+import io.qt.core.QPointF;
+import io.qt.core.QRectF;
+import io.qt.gui.QPainter;
+import io.qt.gui.QPolygonF;
 
 import facsanadu.gates.Gate;
 import facsanadu.gates.GateEllipse;

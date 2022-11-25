@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.TreeMap;
 
-import com.trolltech.qt.core.Qt.ItemFlag;
-import com.trolltech.qt.core.Qt.ItemFlags;
-import com.trolltech.qt.gui.QTableWidgetItem;
-import com.trolltech.qt.gui.QVBoxLayout;
-import com.trolltech.qt.gui.QWidget;
-import com.trolltech.qt.gui.QHeaderView.ResizeMode;
-import com.trolltech.qt.gui.QTableWidget;
+import io.qt.core.Qt.ItemFlag;
+import io.qt.core.Qt.ItemFlags;
+import io.qt.widgets.QTableWidgetItem;
+import io.qt.widgets.QVBoxLayout;
+import io.qt.widgets.QWidget;
+import io.qt.widgets.QHeaderView.ResizeMode;
+import io.qt.widgets.QTableWidget;
 
 import facsanadu.data.Dataset;
 import facsanadu.gui.MainWindow;

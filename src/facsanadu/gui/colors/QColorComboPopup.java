@@ -1,10 +1,10 @@
 package facsanadu.gui.colors;
 
-import com.trolltech.qt.core.Qt.WindowType;
-import com.trolltech.qt.gui.QGridLayout;
-import com.trolltech.qt.gui.QIcon;
-import com.trolltech.qt.gui.QPushButton;
-import com.trolltech.qt.gui.QWidget;
+import io.qt.core.Qt.WindowType;
+import io.qt.widgets.QGridLayout;
+import io.qt.gui.QIcon;
+import io.qt.widgets.QPushButton;
+import io.qt.widgets.QWidget;
 
 import facsanadu.gates.GateColor;
 

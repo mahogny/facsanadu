@@ -2,9 +2,9 @@ package facsanadu.gates;
 
 import java.util.ArrayList;
 
-import com.trolltech.qt.core.QPointF;
-import com.trolltech.qt.core.Qt.FillRule;
-import com.trolltech.qt.gui.QPolygonF;
+import io.qt.core.QPointF;
+import io.qt.core.Qt.FillRule;
+import io.qt.gui.QPolygonF;
 
 /**
  * 

@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.trolltech.qt.core.QPointF;
-import com.trolltech.qt.core.QRect;
-import com.trolltech.qt.core.Qt.MouseButton;
-import com.trolltech.qt.gui.QBrush;
-import com.trolltech.qt.gui.QColor;
-import com.trolltech.qt.gui.QMouseEvent;
-import com.trolltech.qt.gui.QPaintEvent;
-import com.trolltech.qt.gui.QPainter;
-import com.trolltech.qt.gui.QPainterPath;
-import com.trolltech.qt.gui.QPen;
-import com.trolltech.qt.gui.QWidget;
+import io.qt.core.QPointF;
+import io.qt.core.QRect;
+import io.qt.core.Qt.MouseButton;
+import io.qt.gui.QBrush;
+import io.qt.gui.QColor;
+import io.qt.gui.QMouseEvent;
+import io.qt.gui.QPaintEvent;
+import io.qt.gui.QPainter;
+import io.qt.gui.QPainterPath;
+import io.qt.gui.QPen;
+import io.qt.widgets.QWidget;
 
 import facsanadu.data.Dataset;
 import facsanadu.data.LengthProfileData;
