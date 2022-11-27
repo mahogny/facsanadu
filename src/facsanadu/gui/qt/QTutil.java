@@ -20,11 +20,14 @@ import io.qt.core.QTime;
 import io.qt.core.Qt.ItemFlag;
 import io.qt.core.Qt.ItemFlags;
 import io.qt.core.Qt.KeyboardModifier;
+import io.qt.core.QDir;
+import io.qt.core.QDir.Filter;
+import io.qt.core.QDir.Filters;
 import io.qt.widgets.QApplication;
 import io.qt.widgets.QFileDialog;
 import io.qt.widgets.QFileDialog.AcceptMode;
 import io.qt.widgets.QFileDialog.DialogLabel;
-import io.qt.widgets.QFileDialog.FileMode;
+import io.qt.widgets.QFileDialog.Filter;
 import io.qt.widgets.QGroupBox;
 import io.qt.widgets.QHBoxLayout;
 import io.qt.gui.QImageReader;
@@ -63,7 +66,7 @@ public class QTutil
 		layout.addWidget(l);
 		layout.addWidget(w);
 		layout.setSpacing(0);
-		layout.setMargin(0);
+		layout.setContentsMargins(0,0,0,0);
 
 		return layout;
 		}
@@ -99,7 +102,7 @@ public class QTutil
 		{
 		QVBoxLayout layout=new QVBoxLayout();
 		layout.addWidget(w);
-		layout.setMargin(0);
+		layout.setContentsMargins(0,0,0,0);
 		return QTutil.withinTitledFrame(title,layout);
 		}
 
@@ -149,6 +152,7 @@ public class QTutil
 				formats+=" ";
 			formats+="*."+arr;
 			}
+// TODO: QFileDialog.Filter missing. FileMode?
 		return new QFileDialog.Filter(fileType+" ("+formats+")");
 		}
 

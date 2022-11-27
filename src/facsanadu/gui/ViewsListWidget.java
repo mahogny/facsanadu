@@ -38,12 +38,12 @@ public class ViewsListWidget extends QVBoxLayout
 	public ViewsListWidget(MainWindow mw)
 		{
 		this.mw=mw;
-		setMargin(0);
+		setContentsMargins(0,0,0,0);
 		
 		
 		tableViews.verticalHeader().hide();
 		tableViews.setSelectionBehavior(SelectionBehavior.SelectRows);
-		tableViews.horizontalHeader().setResizeMode(ResizeMode.ResizeToContents);
+		tableViews.horizontalHeader().setSectionResizeMode(ResizeMode.ResizeToContents);
 		tableViews.horizontalHeader().setStretchLastSection(true);		
 		tableViews.selectionModel().selectionChanged.connect(this,"dothelayout()");
 	

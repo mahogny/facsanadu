@@ -52,7 +52,7 @@ public class ViewToolDrawRect implements ViewTool
 			{
 			GateRect grect=(GateRect)isDrawing;
 			
-			QPointF p = w.trans.mapScreenToFcs(event.posF()); 
+			QPointF p = w.trans.mapScreenToFcs(event.position());
 			
 			grect.x2=p.x();
 			grect.y2=p.y();
@@ -69,7 +69,7 @@ public class ViewToolDrawRect implements ViewTool
 		{
 		if(event.button()==MouseButton.LeftButton && !w.viewsettings.isHistogram())
 			{
-			QPointF p = w.trans.mapScreenToFcs(event.posF()); 
+			QPointF p = w.trans.mapScreenToFcs(event.position());
 			
 			GateRect grect=new GateRect();
 			grect.indexX=w.getIndexX();

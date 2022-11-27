@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import io.qt.core.QSignalMapper;
 import io.qt.core.QModelIndex;
 import io.qt.core.Qt;
+import io.qt.core.QItemSelection;
 import io.qt.widgets.QFileDialog;
 import io.qt.widgets.QPushButton;
 import io.qt.widgets.QTableWidget;
@@ -46,13 +47,13 @@ public class DatasetListWidget extends QVBoxLayout
 	public DatasetListWidget(MainWindow mw)
 		{
 		this.mw=mw;
-		setMargin(0);
+		setContentsMargins(0,0,0,0);
 		
 		tableDatasets.setColumnCount(1);
 		tableDatasets.verticalHeader().hide();
 		tableDatasets.setHorizontalHeaderLabels(Arrays.asList(tr("Dataset")));
 		tableDatasets.setSelectionBehavior(SelectionBehavior.SelectRows);
-		tableDatasets.horizontalHeader().setResizeMode(ResizeMode.ResizeToContents);
+		tableDatasets.horizontalHeader().setSectionResizeMode(ResizeMode.ResizeToContents);
 		tableDatasets.horizontalHeader().setStretchLastSection(true);		
 		tableDatasets.selectionModel().selectionChanged.connect(this,"dothelayout()");
 

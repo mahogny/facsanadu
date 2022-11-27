@@ -46,7 +46,7 @@ public class AddMeasureDialog extends QDialog
 		tableChannels.verticalHeader().hide();
 		tableChannels.setHorizontalHeaderLabels(Arrays.asList(tr("Channel")));
 		tableChannels.setSelectionBehavior(SelectionBehavior.SelectRows);
-		tableChannels.horizontalHeader().setResizeMode(ResizeMode.ResizeToContents);
+		tableChannels.horizontalHeader().setSectionResizeMode(ResizeMode.ResizeToContents);
 		tableChannels.horizontalHeader().setStretchLastSection(true);		
 
 		bOk.clicked.connect(this,"actionOK()");

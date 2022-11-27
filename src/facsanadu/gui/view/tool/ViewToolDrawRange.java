@@ -53,7 +53,7 @@ public class ViewToolDrawRange implements ViewTool
 			{
 			GateRange grect=(GateRange)isDrawing;
 			
-			QPointF p = w.trans.mapScreenToFcs(event.posF()); 
+			QPointF p = w.trans.mapScreenToFcs(event.position());
 			
 			grect.x2=p.x();
 			grect.updateInternal();
@@ -69,7 +69,7 @@ public class ViewToolDrawRange implements ViewTool
 		{
 		if(event.button()==MouseButton.LeftButton)
 			{
-			QPointF p = w.trans.mapScreenToFcs(event.posF()); 
+			QPointF p = w.trans.mapScreenToFcs(event.position());
 			
 			GateRange grect=new GateRange();
 			grect.index=w.getIndexX();

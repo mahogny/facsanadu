@@ -52,7 +52,7 @@ public class ViewToolDrawEllipse implements ViewTool
 			{
 			GateEllipse grect=(GateEllipse)isDrawing;
 			
-			QPointF p = w.trans.mapScreenToFcs(event.posF()); 
+			QPointF p = w.trans.mapScreenToFcs(event.position());
 			
 			grect.rx=p.x()-grect.x;
 			grect.ry=p.y()-grect.y;
@@ -69,7 +69,7 @@ public class ViewToolDrawEllipse implements ViewTool
 		{
 		if(event.button()==MouseButton.LeftButton && !w.viewsettings.isHistogram())
 			{
-			QPointF p = w.trans.mapScreenToFcs(event.posF()); 
+			QPointF p = w.trans.mapScreenToFcs(event.position());
 			
 			GateEllipse grect=new GateEllipse();
 			grect.indexX=w.getIndexX();

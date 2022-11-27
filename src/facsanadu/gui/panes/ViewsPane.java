@@ -61,7 +61,7 @@ public class ViewsPane extends QWidget
 		laytop.addStretch();
 		laytop.addWidget(cbMaxEvents);
 		laytop.addWidget(spMaxEvents);
-		laytop.setMargin(2);
+		laytop.setContentsMargins(2,0,0,0);
 		laytop.setSpacing(2);		
 		
 		QScrollArea scrollArea=new QScrollArea();
@@ -73,7 +73,7 @@ public class ViewsPane extends QWidget
 		QVBoxLayout lay=new QVBoxLayout();
 		lay.addLayout(laytop);
 		lay.addWidget(scrollArea);
-		lay.setMargin(0);
+		lay.setContentsMargins(0,0,0,0);
 		lay.setSpacing(2);
 		setLayout(lay);
 		

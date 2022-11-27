@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 import io.qt.core.Qt;
 import io.qt.gui.QIcon;
+import io.qt.gui.QColor;
 import io.qt.widgets.QInputDialog;
 import io.qt.widgets.QPushButton;
 import io.qt.widgets.QTreeWidget;
@@ -52,7 +53,7 @@ public class GatesListWidget extends QVBoxLayout
 	public GatesListWidget(MainWindow mw)
 		{
 		this.mw=mw;
-		setMargin(0);
+		setContentsMargins(0,0,0,0);
 		
 		treeGates.setHeaderLabels(Arrays.asList(tr("Gate"),tr("Color")));
 		treeGates.setSelectionBehavior(SelectionBehavior.SelectRows);

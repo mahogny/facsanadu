@@ -38,7 +38,7 @@ public class DatasetInfoPane extends QWidget
 		QVBoxLayout lay=new QVBoxLayout();
 		lay.addWidget(tableMatrix);
 	//	lay.addStretch();
-		lay.setMargin(0);
+		lay.setContentsMargins(0,0,0,0);
 		setLayout(lay);
 		updateForm();
 		}
@@ -84,7 +84,7 @@ public class DatasetInfoPane extends QWidget
 			tableMatrix.setRowCount(0);
 			}
 		
-		tableMatrix.horizontalHeader().setResizeMode(ResizeMode.ResizeToContents);
+		tableMatrix.horizontalHeader().setSectionResizeMode(ResizeMode.ResizeToContents);
 		tableMatrix.horizontalHeader().setStretchLastSection(true);		
 		tableMatrix.resizeColumnsToContents();
     

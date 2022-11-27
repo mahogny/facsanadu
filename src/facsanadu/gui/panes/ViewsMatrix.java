@@ -42,7 +42,7 @@ public class ViewsMatrix extends QWidget
 		{
 		this.mw=mw;
 
-		layViews.setMargin(2);
+		layViews.setContentsMargins(2,2,2,2);
 		layViews.setSpacing(2);
 		setLayout(layViews);
 		setStyleSheet("QWidget {background: white;}");

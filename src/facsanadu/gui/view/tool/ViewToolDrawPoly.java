@@ -35,7 +35,7 @@ public class ViewToolDrawPoly implements ViewTool
 		{
 		if(event.button()==MouseButton.LeftButton && !w.viewsettings.isHistogram())
 			{
-			QPointF p = w.trans.mapScreenToFcs(event.posF()); 
+			QPointF p = w.trans.mapScreenToFcs(event.position());
 			
 			boolean justcreated=false;
 			GatePolygon g;
@@ -86,7 +86,7 @@ public class ViewToolDrawPoly implements ViewTool
 			{
 			GatePolygon g=isDrawing;
 			
-			QPointF p = w.trans.mapScreenToFcs(event.posF()); 
+			QPointF p = w.trans.mapScreenToFcs(event.position());
 
 			g.setPoint(g.getNumPoints()-1, p.x(), p.y());
 			g.updateInternal();

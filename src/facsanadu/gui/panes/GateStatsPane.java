@@ -57,7 +57,7 @@ public class GateStatsPane extends QWidget
 		QVBoxLayout lay=new QVBoxLayout();
 		lay.addWidget(tableStats);
 		lay.addLayout(QTutil.layoutHorizontal(cbShowParent, cbShowTotal, bCopyCSV));
-		lay.setMargin(0);
+		lay.setContentsMargins(0,0,0,0);
 		setLayout(lay);
 		}
 	
@@ -68,7 +68,7 @@ public class GateStatsPane extends QWidget
 		
 		
 		tableStats.verticalHeader().hide();
-		tableStats.horizontalHeader().setResizeMode(ResizeMode.ResizeToContents);
+		tableStats.horizontalHeader().setSectionResizeMode(ResizeMode.ResizeToContents);
 		tableStats.horizontalHeader().setStretchLastSection(true);		
 
 

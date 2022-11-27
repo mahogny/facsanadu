@@ -37,13 +37,13 @@ public class ProfileChannelWidget extends QVBoxLayout
 	public ProfileChannelWidget(MainWindow mw)
 		{
 		this.mw=mw;
-		setMargin(0);
+		setContentsMargins(0,0,0,0);
 		
 		tableDatasets.setColumnCount(1);
 		tableDatasets.verticalHeader().hide();
 		tableDatasets.setHorizontalHeaderLabels(Arrays.asList(tr("Prof.Channel")));
 		tableDatasets.setSelectionBehavior(SelectionBehavior.SelectRows);
-		tableDatasets.horizontalHeader().setResizeMode(ResizeMode.ResizeToContents);
+		tableDatasets.horizontalHeader().setSectionResizeMode(ResizeMode.ResizeToContents);
 		tableDatasets.horizontalHeader().setStretchLastSection(true);		
 		tableDatasets.selectionModel().selectionChanged.connect(this,"dothelayout()");
 

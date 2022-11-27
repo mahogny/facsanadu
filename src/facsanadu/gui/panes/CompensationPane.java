@@ -35,7 +35,7 @@ public class CompensationPane extends QWidget
 		QVBoxLayout lay=new QVBoxLayout();
 		lay.addWidget(tableMatrix);
 		//lay.addStretch();
-		lay.setMargin(0);
+		lay.setContentsMargins(0,0,0,0);
 		setLayout(lay);
 		updateForm();
 		}
@@ -46,7 +46,7 @@ public class CompensationPane extends QWidget
 		updating=true;
 		tableMatrix.clear();
 		
-		tableMatrix.horizontalHeader().setResizeMode(ResizeMode.ResizeToContents);
+		tableMatrix.horizontalHeader().setSectionResizeMode(ResizeMode.ResizeToContents);
 		tableMatrix.horizontalHeader().setStretchLastSection(true);		
 
 		Compensation comp=mw.project.compensation;

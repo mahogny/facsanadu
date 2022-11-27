@@ -9,6 +9,8 @@ import java.util.LinkedList;
 
 import io.qt.core.QCoreApplication;
 import io.qt.core.QUrl;
+import io.qt.core.QItemSelectionModel;
+import io.qt.core.QThread;
 import io.qt.widgets.QApplication;
 import io.qt.gui.QCloseEvent;
 import io.qt.widgets.QFileDialog;
@@ -69,7 +71,8 @@ public class MainWindow extends QMainWindow
 			}
 		public void callbackDoneCalc(Dataset dataset)
 			{
-			 QApplication.invokeLater(new Runnable()
+// TODO: QApplication.invokeLater Does not exist any more - creating something similar with  or QThread?
+			QApplication.invokeLater(new Runnable()
          {
          public void run()
            {
@@ -388,7 +391,7 @@ public class MainWindow extends QMainWindow
 				// Export a list of datasets
 				
 				QFileDialog dia=new QFileDialog();
-				dia.setFileMode(FileMode.DirectoryOnly);
+				dia.setFileMode(FileMode.DirectoryEntered);
 				//dia.setNameFilter(tr("CSV files (*.csv)"));
 				dia.setAcceptMode(AcceptMode.AcceptSave);
 				//dia.setDefaultSuffix("csv");
