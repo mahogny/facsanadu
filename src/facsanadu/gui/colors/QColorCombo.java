@@ -1,6 +1,5 @@
 package facsanadu.gui.colors;
 
-import io.qt.core.QSignalMapper;
 import io.qt.gui.QColor;
 import io.qt.gui.QIcon;
 import io.qt.gui.QPainter;
@@ -24,8 +23,7 @@ public class QColorCombo extends QPushButton
 	
 	int size=12;
 
-// TODO: figure out how to re-write with SignalMapper
-//	public QSignalEmitter.Signal0 currentIndexChanged=new QSignalEmitter.Signal0();
+public QSignalEmitter.Signal0 currentIndexChanged=new QSignalEmitter.Signal0();
 	
 	
 

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import io.qt.core.QSignalMapper;
 import io.qt.core.QModelIndex;
 import io.qt.core.Qt;
 import io.qt.core.QItemSelection;
@@ -41,8 +40,7 @@ public class DatasetListWidget extends QVBoxLayout
 
 	private QTableWidget tableDatasets=new QTableWidget();
 
-// This need to be rewritten for SignalMapper
-//	public QSignalEmitter.Signal0 selectionChanged=new QSignalEmitter.Signal0();
+public QSignalEmitter.Signal0 selectionChanged=new QSignalEmitter.Signal0();
 	
 	public DatasetListWidget(MainWindow mw)
 		{
