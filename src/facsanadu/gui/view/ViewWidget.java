@@ -95,7 +95,7 @@ public class ViewWidget extends QWidget
 			System.out.println("update cache");
 			img=new QImage(width(),height(), Format.Format_RGB32);
 			QPainter pm2=new QPainter(img);
-			pm2.setBrush(new QBrush(QColor.white));
+			pm2.setBrush(new QBrush((QColor.fromRgb(255,255,255)))); //solid white
 			pm2.drawRect(-5,-5,10000,10000);
 			ViewRenderer.renderData(viewsettings, dataset, gr, trans, pm2, maxevents); 
 			pm2.end();
@@ -128,8 +128,8 @@ public class ViewWidget extends QWidget
 		//Now render handles?
 		for(GateHandle h:handles)
 			{
-			pm.setBrush(new QBrush(QColor.transparent));
-			pm.setPen(QColor.red);
+			pm.setBrush(new QBrush(QColor.fromRgb(0,0,0,0))); //transparent
+			pm.setPen(QColor.fromRgb(255,0,0)); //solid red
 
 			int size=2;
 			pm.drawRect(new QRectF(h.getX()-size, h.getY()-size,2*size,2*size));

@@ -63,7 +63,7 @@ public class ViewRenderer
 		Histogram h=viewsettings.computeHistogram(segment, gr); //better if this was only once!
 		
 		pm.setPen(new QPen(QColor.fromRgb(0,0,0)));
-		pm.setBrush(new QBrush(QColor.gray));
+		pm.setBrush(new QBrush(QColor.fromRgb(169,169,169))); //solid grey
 
 		double magicConstant=0.2*Math.sqrt(h.getNumBins())*viewsettings.zoomY;
 
@@ -193,7 +193,7 @@ public class ViewRenderer
 		for(Gate g:parent.children)
 			{
 			pm.setPen(QColor.fromRgb(255,0,0));
-			pm.setBrush(new QBrush(QColor.transparent));
+			pm.setBrush(new QBrush(QColor.fromRgb(0,0,0,0))); //transparent
 			GateRenderer rend=GateRendererManager.getGateRenderer(g);
 			rend.render(g, pm, trans, viewsettings, handles);
 			drawgatesRecursive(pm, trans, g, viewsettings, handles);
