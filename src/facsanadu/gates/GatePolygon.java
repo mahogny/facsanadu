@@ -15,7 +15,7 @@ import io.qt.gui.QPolygonF;
  */
 public class GatePolygon extends Gate
 	{
-	public double indexX, indexY;
+	public int indexX, indexY;
 
 	public ArrayList<Double> arrX=new ArrayList<Double>();
 	public ArrayList<Double> arrY=new ArrayList<Double>();
@@ -25,8 +25,7 @@ public class GatePolygon extends Gate
 	public void updateInternal()
 		{
 		poly=new QPolygonF();
-		double i;
-		for(i=0;i<getNumPoints();i++)
+		for(int i=0;i<getNumPoints();i++)
 			poly.add(arrX.get(i), arrY.get(i));
 		setUpdated();
 		}
