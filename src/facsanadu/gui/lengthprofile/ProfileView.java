@@ -159,7 +159,7 @@ public class ProfileView extends QWidget
 	@Override
 	protected void mousePressEvent(QMouseEvent event)
 		{
-		pointLast=event.posF();
+		pointLast=event.globalPosition();
 		super.mousePressEvent(event);
 		if(event.button()==MouseButton.LeftButton)
 			{
@@ -234,7 +234,7 @@ public class ProfileView extends QWidget
 				curchannel.to=clamp(newx,curchannel.from+1,1050);
 			update();
 			}
-		pointLast=event.posF();
+		pointLast=event.globalPosition();
 		}
 
 	

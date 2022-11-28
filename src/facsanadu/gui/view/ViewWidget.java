@@ -166,12 +166,12 @@ public class ViewWidget extends QWidget
 	@Override
 	protected void mousePressEvent(QMouseEvent event)
 		{
-		pointLast=event.posF();
+		pointLast=event.globalPosition();
 		super.mousePressEvent(event);
 		if(event.button()==MouseButton.LeftButton)
 			{
 			curhandle=null;
-			GateHandle handle=getClosestHandle(event.posF(), 10);
+			GateHandle handle=getClosestHandle(event.globalPosition(), 10);
 			if(handle!=null)
 				{
 				//Move a handle
@@ -287,12 +287,12 @@ public class ViewWidget extends QWidget
 		super.mouseMoveEvent(event);
 		if(curhandle!=null)
 			{
-			QPointF p=trans.mapScreenToFcs(event.posF());
+			QPointF p=trans.mapScreenToFcs(event.globalPosition());
 			curhandle.move2(mainWindow, p.x(), p.y());
 			}
 		else
 			tool.mouseMoveEvent(event);
-		pointLast=event.posF();
+		pointLast=event.globalPosition();
 		}
 
 
