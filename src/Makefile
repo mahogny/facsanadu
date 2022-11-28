@@ -1,5 +1,5 @@
 all:
-	javac -d ../bin \
+	javac -Xlint:deprecation -Xdiags:verbose -d ../bin \
 	-cp ../lib/jdom-2.0.6.1.jar:../lib/qtjambi-6.4.1.jar:../lib/linux64/qtjambi-native-linux64-6.4.1.jar:../lib/vecmath.jar \
 	*/*/*java \
         */*/*/*java \

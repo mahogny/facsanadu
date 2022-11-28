@@ -391,7 +391,7 @@ public class MainWindow extends QMainWindow
 				// Export a list of datasets
 				
 				QFileDialog dia=new QFileDialog();
-				dia.setFileMode(FileMode.DirectoryEntered);
+				dia.setFileMode(FileMode.Directory);
 				//dia.setNameFilter(tr("CSV files (*.csv)"));
 				dia.setAcceptMode(AcceptMode.AcceptSave);
 				//dia.setDefaultSuffix("csv");
