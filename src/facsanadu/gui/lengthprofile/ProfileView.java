@@ -213,7 +213,7 @@ public class ProfileView extends QWidget
 		if(moveBoundary!=-1 && curchannel!=null)
 			{
 
-			int newx=fromViewX(event.globalPosition().x());
+			int newx=fromViewX((int) event.globalPosition().x());
 			if(moveBoundary==0)
 				curchannel.from=clamp(newx,0,curchannel.to-1);
 			else if(moveBoundary==1)

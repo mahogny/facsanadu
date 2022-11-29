@@ -26,7 +26,7 @@ public class GatePolygon extends Gate
 		{
 		poly=new QPolygonF();
 		for(int i=0;i<getNumPoints();i++)
-			poly.add(arrX.get(i), arrY.get(i));
+			poly.append(arrX.get(i), arrY.get(i));
 		setUpdated();
 		}
 	

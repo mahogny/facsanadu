@@ -144,7 +144,7 @@ public class QTutil
 	
 
 
-	public static QFileDialog.FileMode buildFileDialogSupportedFormatsFilter(String fileType,	Collection<String> formatsList)
+	public static QFileDialog.Filter buildFileDialogSupportedFormatsFilter(String fileType,	Collection<String> formatsList)
 		{
 		String formats="";
 		for(String arr:formatsList)
@@ -154,7 +154,7 @@ public class QTutil
 			formats+="*."+arr;
 			}
 // TODO: QFileDialog.Filter missing. FileMode?
-		return new QFileDialog.FileMode(fileType+" ("+formats+")");
+		return new QFileDialog.Filter(fileType+" ("+formats+")");
 		}
 
 
@@ -166,7 +166,7 @@ public class QTutil
 	 * @param filter  Filter for the files
 	 * @return        The file, or null if none opened
 	 */
-	public static File openFileDialog(QWidget parent, String title,	QFileDialog.Options filter)
+	public static File openFileDialog(QWidget parent, String title,	Filter filter)
 		{
     String fileName = QFileDialog.getOpenFileName(parent, title, lastQtDir, filter);
     if(!fileName.equals(""))
@@ -209,7 +209,7 @@ public class QTutil
 	 * @param filter       Filter for the files
 	 * @return             The file, or null if none opened
 	 */
-	public static File saveFileDialog(QWidget parent, String title,	String suggestName, String defaultSuffix, QFileDialog.FileMode filter)
+	public static File saveFileDialog(QWidget parent, String title,	String suggestName, String defaultSuffix, QFileDialog.Filter filter)
 		{
 		QFileDialog dia=new QFileDialog(parent, title, lastQtDir);
 		dia.setFilter(filter.filter);
@@ -234,7 +234,7 @@ public class QTutil
     	return null;
 		}
 
-	public static File saveFileDialog(QWidget parent, String title,	QFileDialog.FileMode filter)
+	public static File saveFileDialog(QWidget parent, String title,	Filter filter)
 		{
 		return saveFileDialog(parent, title, null, null, filter);
 		}
@@ -270,7 +270,7 @@ public class QTutil
 
 	public static Filter getAllFilesFilter()
 		{
-		return new QFileDialog.FileMode(QCoreApplication.translate("labstory","Files")+" (*.*)");
+		return new QFileDialog.Filter(QCoreApplication.translate("labstory","Files")+" (*.*)");
 		}
 
 
