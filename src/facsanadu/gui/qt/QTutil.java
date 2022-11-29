@@ -166,7 +166,7 @@ public class QTutil
 	 * @param filter  Filter for the files
 	 * @return        The file, or null if none opened
 	 */
-	public static File openFileDialog(QWidget parent, String title,	QFileDialog filter)
+	public static File openFileDialog(QWidget parent, String title,	QFileDialog.Options filter)
 		{
     String fileName = QFileDialog.getOpenFileName(parent, title, lastQtDir, filter);
     if(!fileName.equals(""))
@@ -410,7 +410,7 @@ public class QTutil
 		{
 		//Do NOT use the constructor(regexp), windows qt bug!
 		QRegularExpressionValidator validator=new QRegularExpressionValidator(parent);
-		validator.setRegularExpexpression(new QRegularExpression("[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]*"));
+		validator.setRegularExpression(new QRegularExpression("[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]*"));
 		return validator;
 		}
 	

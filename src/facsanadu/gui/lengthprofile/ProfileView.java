@@ -138,20 +138,6 @@ public class ProfileView extends QWidget
 		eventid.addAll(ids);
 		update();
 		}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	QPointF pointLast=new QPointF();
 	int moveBoundary=-1;
@@ -170,10 +156,10 @@ public class ProfileView extends QWidget
 						toViewX(curchannel.from),
 						toViewX(curchannel.to)};
 				int si=-1;
-				int smallest=100000;
+				double smallest=100000;
 				for(int i=0;i<x.length;i++)
 					{
-					int dx=Math.abs(event.x()-x[i]);
+					double dx=Math.abs(event.globalPosition().x()-x[i]);
 					if(si==-1 || dx<smallest)
 						{
 						smallest=dx;
@@ -227,7 +213,7 @@ public class ProfileView extends QWidget
 		if(moveBoundary!=-1 && curchannel!=null)
 			{
 
-			int newx=fromViewX(event.pos().x());
+			int newx=fromViewX(event.globalPosition().x());
 			if(moveBoundary==0)
 				curchannel.from=clamp(newx,0,curchannel.to-1);
 			else if(moveBoundary==1)

@@ -9,6 +9,7 @@ import io.qt.core.QRectF;
 import io.qt.core.Qt.MouseButton;
 import io.qt.gui.QBrush;
 import io.qt.gui.QColor;
+import io.qt.gui.QCursor;
 import io.qt.gui.QImage;
 import io.qt.widgets.QMenu;
 import io.qt.gui.QMouseEvent;
@@ -254,7 +255,7 @@ public class ViewWidget extends QWidget
 				menu.addMenu(menuHist);
 				menu.addMenu(mHistBins);
 				
-				menu.exec(event.globalPos());
+				menu.exec(QCursor.pos());
 				}
 			else
 				{

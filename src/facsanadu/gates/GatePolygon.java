@@ -21,7 +21,7 @@ public class GatePolygon extends Gate
 	public ArrayList<Double> arrY=new ArrayList<Double>();
 
 	private QPolygonF poly;
-	
+
 	public void updateInternal()
 		{
 		poly=new QPolygonF();
