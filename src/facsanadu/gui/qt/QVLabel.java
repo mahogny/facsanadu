@@ -44,7 +44,7 @@ public class QVLabel extends QWidget
 		painter.setFont(font);
     painter.setPen(QColor.fromRgb(0,0,0)); //solid black
     painter.rotate(-90);
-    painter.drawText(new QPoint(-(height()-fm.width(text))/2,11), text);
+    painter.drawText(new QPoint(-(height()-fm.horizontalAdvance(text))/2,11), text);
 		}
 
 	
