@@ -6,6 +6,7 @@ import io.qt.gui.QPainter;
 import io.qt.gui.QPixmap;
 import io.qt.widgets.QPushButton;
 import io.qt.widgets.QSizePolicy.Policy;
+import io.qt.widgets.QComboBox;
 
 import facsanadu.gates.GateColor;
 
@@ -23,7 +24,7 @@ public class QColorCombo extends QPushButton
 	
 	int size=12;
 
-public QSignalEmitter.Signal0 currentIndexChanged=new QSignalEmitter.Signal0();
+	public final Signal0 selectionChanged=new Signal0();
 	
 	
 
@@ -58,7 +59,7 @@ public QSignalEmitter.Signal0 currentIndexChanged=new QSignalEmitter.Signal0();
   	{
   	currentColor=c;
   	updateColorIcon();
-  	currentIndexChanged.emit();
+  	currentIndexChanged();
   	}
   
   public GateColor getCurrentColor()

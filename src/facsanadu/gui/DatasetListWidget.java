@@ -40,7 +40,7 @@ public class DatasetListWidget extends QVBoxLayout
 
 	private QTableWidget tableDatasets=new QTableWidget();
 
-public QSignalEmitter.Signal0 selectionChanged=new QSignalEmitter.Signal0();
+	public final Signal0 selectionChanged=new Signal0();
 	
 	public DatasetListWidget(MainWindow mw)
 		{

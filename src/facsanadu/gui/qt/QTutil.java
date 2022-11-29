@@ -23,6 +23,7 @@ import io.qt.core.Qt.KeyboardModifier;
 import io.qt.core.QDir;
 import io.qt.core.QDir.Filter;
 import io.qt.core.QDir.Filters;
+import io.qt.core.QMetaObject;
 import io.qt.widgets.QApplication;
 import io.qt.widgets.QFileDialog;
 import io.qt.widgets.QFileDialog.AcceptMode;
@@ -349,13 +350,7 @@ public class QTutil
 	
 	public static void printError(final QWidget parent, final String text)
 		{
-		QApplication.invokeAndWait(new Runnable()
-			{
-			public void run()
-				{
-				QMessageBox.critical(parent, QtProgramInfo.programName, text);
-				}
-			});
+		QMetaObject.invokeMethod(()->QMessageBox.critical(parent, QtProgramInfo.programName, text));
 		}
 	
 	/*

@@ -11,6 +11,8 @@ import io.qt.core.QCoreApplication;
 import io.qt.core.QUrl;
 import io.qt.core.QItemSelectionModel;
 import io.qt.core.QThread;
+import io.qt.core.QMetaObject;
+import io.qt.core.Qt.ConnectionType;
 import io.qt.widgets.QApplication;
 import io.qt.gui.QCloseEvent;
 import io.qt.widgets.QFileDialog;
@@ -71,15 +73,7 @@ public class MainWindow extends QMainWindow
 			}
 		public void callbackDoneCalc(Dataset dataset)
 			{
-// TODO: QApplication.invokeLater Does not exist any more - creating something similar with  or QThread?
-			QApplication.invokeLater(new Runnable()
-         {
-         public void run()
-           {
-           updateall();
-           //System.out.println("Thread called");
-           }
-         });
+			QMetaObject.invokeMethod(this::updateall, Qt.ConnectionType.QueuedConnection);
 			}
 		public Collection<Dataset> getCurrentDatasets()
 			{
