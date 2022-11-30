@@ -144,7 +144,7 @@ public class QTutil
 	
 	
 
-
+/*
 	public static QFileDialog.Filter buildFileDialogSupportedFormatsFilter(String fileType,	Collection<String> formatsList)
 		{
 		String formats="";
@@ -156,7 +156,7 @@ public class QTutil
 			}
 // TODO: QFileDialog.Filter missing. FileMode?
 		return new QFileDialog.Filter(fileType+" ("+formats+")");
-		}
+		}*/
 
 
 	/**
@@ -167,9 +167,10 @@ public class QTutil
 	 * @param filter  Filter for the files
 	 * @return        The file, or null if none opened
 	 */
-	public static File openFileDialog(QWidget parent, String title,	Filter filter)
+	/*
+	public static File openFileDialog(QWidget parent, String title,	String filter)
 		{
-    String fileName = QFileDialog.getOpenFileName(parent, title, lastQtDir, filter);
+    String fileName = QFileDialog.getOpenFileName(parent, title, lastQtDir, filter).result;
     if(!fileName.equals(""))
     	{
     	File f=new File(fileName);
@@ -178,14 +179,15 @@ public class QTutil
     	}
     else
     	return null;
-		}
+		}*/
 
 	/**
 	 * Open multiple files dialog. Never returns null
 	 */
-	public static Collection<File> openFilesDialog(QWidget parent, String title,	Filter filter)
+	/*
+	public static Collection<File> openFilesDialog(QWidget parent, String title,	String filter)
 		{
-    List<String> fileName = QFileDialog.getOpenFileNames(parent, title, lastQtDir, filter);
+    List<String> fileName = QFileDialog.getOpenFileNames(parent, title, lastQtDir, filter).result;
     if(!fileName.isEmpty())
     	{
     	List<File> fs=new LinkedList<File>();
@@ -200,6 +202,7 @@ public class QTutil
     else
     	return new LinkedList<File>();
 		}
+		*/
 
 	/**
 	 * Request a save-file dialog
@@ -210,10 +213,11 @@ public class QTutil
 	 * @param filter       Filter for the files
 	 * @return             The file, or null if none opened
 	 */
-	public static File saveFileDialog(QWidget parent, String title,	String suggestName, String defaultSuffix, QFileDialog.Filter filter)
+	/*
+	public static File saveFileDialog(QWidget parent, String title,	String suggestName, String defaultSuffix, QDir.Filter filter)
 		{
 		QFileDialog dia=new QFileDialog(parent, title, lastQtDir);
-		dia.setFilter(filter.filter);
+		dia.setFilter(filter);
 		if(defaultSuffix!=null)
 			dia.setDefaultSuffix(defaultSuffix);  
 		if(suggestName!=null)
@@ -239,6 +243,8 @@ public class QTutil
 		{
 		return saveFileDialog(parent, title, null, null, filter);
 		}
+		*/
+		
 	/**
 	 * Last directory where a file was opened from
 	 */
@@ -268,11 +274,11 @@ public class QTutil
     	return null;
 		}
 
-
+/* no longer used
 	public static Filter getAllFilesFilter()
 		{
 		return new QFileDialog.Filter(QCoreApplication.translate("labstory","Files")+" (*.*)");
-		}
+		}*/
 
 
 	public static List<String> getSupportedImageFormats()
