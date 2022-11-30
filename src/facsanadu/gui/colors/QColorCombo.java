@@ -59,7 +59,7 @@ public class QColorCombo extends QPushButton
   	{
   	currentColor=c;
   	updateColorIcon();
-  	currentIndexChanged();
+  	currentIndexChanged(c);
   	}
   
   public GateColor getCurrentColor()

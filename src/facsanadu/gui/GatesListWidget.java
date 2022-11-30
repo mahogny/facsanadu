@@ -16,6 +16,7 @@ import io.qt.widgets.QAbstractItemView.SelectionBehavior;
 import io.qt.widgets.QAbstractItemView.SelectionMode;
 import io.qt.widgets.QLineEdit.EchoMode;
 import io.qt.widgets.QSizePolicy.Policy;
+import io.qt.widgets.QComboBox;
 
 import facsanadu.gates.Gate;
 import facsanadu.gates.measure.GateMeasure;

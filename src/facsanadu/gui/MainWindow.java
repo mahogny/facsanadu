@@ -12,6 +12,7 @@ import io.qt.core.QUrl;
 import io.qt.core.QItemSelectionModel;
 import io.qt.core.QThread;
 import io.qt.core.QMetaObject;
+import io.qt.core.Qt;
 import io.qt.core.Qt.ConnectionType;
 import io.qt.widgets.QApplication;
 import io.qt.gui.QCloseEvent;
@@ -73,7 +74,7 @@ public class MainWindow extends QMainWindow
 			}
 		public void callbackDoneCalc(Dataset dataset)
 			{
-			QMetaObject.invokeMethod(this::updateall, Qt.ConnectionType.QueuedConnection);
+			QMetaObject.invokeMethod(MainWindow.this::updateall, Qt.ConnectionType.QueuedConnection);
 			}
 		public Collection<Dataset> getCurrentDatasets()
 			{
