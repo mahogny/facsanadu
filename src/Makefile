@@ -1,6 +1,6 @@
 all:
 	javac -Xlint:deprecation -Xdiags:verbose -d ../bin \
-	-cp ../lib/jdom-2.0.6.1.jar:../lib/qtjambi-6.4.1.jar:../lib/linux64/qtjambi-native-linux64-6.4.1.jar:../lib/vecmath.jar \
+	-cp ../lib/jdom2-2.0.6.1.jar:../lib/qtjambi-6.4.1.jar:../lib/linux64/qtjambi-native-linux64-6.4.1.jar:../lib/vecmath-1.5.2.jar \
 	*/*/*java \
         */*/*/*java \
         */*/*/*/*java
@@ -22,11 +22,10 @@ jars:
 	*/*/*/*.png
 
 clean:
-	cd ../bin
-	rm */*/*.class
-	rm */*/*/*.class
-	rm */*/*/*/*.class
-
+	rm -rf ../bin/facsanadu
+	rm -rf ../bin/port
+	rm ../facsanadu.jar
+	rm -rf ../release
 
 ############################################################################################
 ############################ osx ###########################################################
