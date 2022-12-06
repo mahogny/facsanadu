@@ -1,6 +1,8 @@
-Main-Class: facsanadu.gui.MainWindow
 Manifest-Version: 1.0
-Class-Path: jdom2-2.0.6.jar qtjambi-6.4.1.jar qtjambi-native-linux-x64-6.4.1.jar qtjambi-native-macos-6.4.1.jar qtjambi-native-windows-x64-6.4.1.jar vecmath-1.5.2.jar
+Main-Class: facsanadu.gui.MainWindow
+Class-Path: jdom2-2.0.6.jar qtjambi-6.4.1.jar qtjambi-native-linux-x64-6
+ .4.1.jar qtjambi-native-macos-6.4.1.jar qtjambi-native-windows-x64-6.4.
+ 1.jar vecmath-1.5.2.jar
 
 
 
