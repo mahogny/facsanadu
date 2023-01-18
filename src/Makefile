@@ -1,6 +1,6 @@
 all:
 	javac -Xlint:deprecation -Xdiags:verbose -d ../bin \
-	-cp ../lib/jdom2-2.0.6.1.jar:../lib/qtjambi-6.4.1.jar:../lib/linux64/qtjambi-native-linux64-6.4.1.jar:../lib/vecmath-1.5.2.jar \
+	-cp ../lib/jdom2-2.0.6.1.jar:../lib/qtjambi-6.4.2.jar:../lib/linux64/qtjambi-native-linux64-6.4.2.jar:../lib/vecmath-1.5.2.jar \
 	*/*/*java \
         */*/*/*java \
         */*/*/*/*java
