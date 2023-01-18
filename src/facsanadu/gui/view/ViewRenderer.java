@@ -3,12 +3,12 @@ package facsanadu.gui.view;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import com.trolltech.qt.core.QRect;
-import com.trolltech.qt.gui.QBrush;
-import com.trolltech.qt.gui.QColor;
-import com.trolltech.qt.gui.QFontMetrics;
-import com.trolltech.qt.gui.QPainter;
-import com.trolltech.qt.gui.QPen;
+import io.qt.core.QRect;
+import io.qt.gui.QBrush;
+import io.qt.gui.QColor;
+import io.qt.gui.QFontMetrics;
+import io.qt.gui.QPainter;
+import io.qt.gui.QPen;
 
 import facsanadu.data.ChannelInfo;
 import facsanadu.data.Dataset;
@@ -63,7 +63,7 @@ public class ViewRenderer
 		Histogram h=viewsettings.computeHistogram(segment, gr); //better if this was only once!
 		
 		pm.setPen(new QPen(QColor.fromRgb(0,0,0)));
-		pm.setBrush(new QBrush(QColor.gray));
+		pm.setBrush(new QBrush(QColor.fromRgb(169,169,169))); //solid grey
 
 		double magicConstant=0.2*Math.sqrt(h.getNumBins())*viewsettings.zoomY;
 
@@ -193,7 +193,7 @@ public class ViewRenderer
 		for(Gate g:parent.children)
 			{
 			pm.setPen(QColor.fromRgb(255,0,0));
-			pm.setBrush(new QBrush(QColor.transparent));
+			pm.setBrush(new QBrush(QColor.fromRgb(0,0,0,0))); //transparent
 			GateRenderer rend=GateRendererManager.getGateRenderer(g);
 			rend.render(g, pm, trans, viewsettings, handles);
 			drawgatesRecursive(pm, trans, g, viewsettings, handles);

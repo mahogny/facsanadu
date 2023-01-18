@@ -1,11 +1,11 @@
 package facsanadu.gui;
 
 
-import com.trolltech.qt.gui.QDialog;
-import com.trolltech.qt.gui.QLabel;
-import com.trolltech.qt.gui.QPushButton;
-import com.trolltech.qt.gui.QTextEdit;
-import com.trolltech.qt.gui.QVBoxLayout;
+import io.qt.widgets.QDialog;
+import io.qt.widgets.QLabel;
+import io.qt.widgets.QPushButton;
+import io.qt.widgets.QTextEdit;
+import io.qt.widgets.QVBoxLayout;
 
 import facsanadu.gui.resource.ImgResource;
 

@@ -6,16 +6,16 @@ import java.io.PrintWriter;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 
-import com.trolltech.qt.core.Qt;
-import com.trolltech.qt.gui.QCheckBox;
-import com.trolltech.qt.gui.QFileDialog;
-import com.trolltech.qt.gui.QPushButton;
-import com.trolltech.qt.gui.QTableWidgetItem;
-import com.trolltech.qt.gui.QVBoxLayout;
-import com.trolltech.qt.gui.QWidget;
-import com.trolltech.qt.gui.QFileDialog.AcceptMode;
-import com.trolltech.qt.gui.QFileDialog.FileMode;
-import com.trolltech.qt.gui.QHeaderView.ResizeMode;
+import io.qt.core.Qt;
+import io.qt.widgets.QCheckBox;
+import io.qt.widgets.QFileDialog;
+import io.qt.widgets.QPushButton;
+import io.qt.widgets.QTableWidgetItem;
+import io.qt.widgets.QVBoxLayout;
+import io.qt.widgets.QWidget;
+import io.qt.widgets.QFileDialog.AcceptMode;
+import io.qt.widgets.QFileDialog.FileMode;
+import io.qt.widgets.QHeaderView.ResizeMode;
 
 import facsanadu.data.Dataset;
 import facsanadu.gates.Gate;
@@ -57,7 +57,7 @@ public class GateStatsPane extends QWidget
 		QVBoxLayout lay=new QVBoxLayout();
 		lay.addWidget(tableStats);
 		lay.addLayout(QTutil.layoutHorizontal(cbShowParent, cbShowTotal, bCopyCSV));
-		lay.setMargin(0);
+		lay.setContentsMargins(0,0,0,0);
 		setLayout(lay);
 		}
 	
@@ -68,7 +68,7 @@ public class GateStatsPane extends QWidget
 		
 		
 		tableStats.verticalHeader().hide();
-		tableStats.horizontalHeader().setResizeMode(ResizeMode.ResizeToContents);
+		tableStats.horizontalHeader().setSectionResizeMode(ResizeMode.ResizeToContents);
 		tableStats.horizontalHeader().setStretchLastSection(true);		
 
 

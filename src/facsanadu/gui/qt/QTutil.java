@@ -11,35 +11,40 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.trolltech.qt.core.QByteArray;
-import com.trolltech.qt.core.QCoreApplication;
-import com.trolltech.qt.core.QDate;
-import com.trolltech.qt.core.QObject;
-import com.trolltech.qt.core.QRegExp;
-import com.trolltech.qt.core.QTime;
-import com.trolltech.qt.core.Qt.ItemFlag;
-import com.trolltech.qt.core.Qt.ItemFlags;
-import com.trolltech.qt.core.Qt.KeyboardModifier;
-import com.trolltech.qt.gui.QApplication;
-import com.trolltech.qt.gui.QFileDialog;
-import com.trolltech.qt.gui.QFileDialog.AcceptMode;
-import com.trolltech.qt.gui.QFileDialog.DialogLabel;
-import com.trolltech.qt.gui.QFileDialog.Filter;
-import com.trolltech.qt.gui.QGroupBox;
-import com.trolltech.qt.gui.QHBoxLayout;
-import com.trolltech.qt.gui.QImageReader;
-import com.trolltech.qt.gui.QLabel;
-import com.trolltech.qt.gui.QLayout;
-import com.trolltech.qt.gui.QMessageBox;
-import com.trolltech.qt.gui.QTableWidgetItem;
-import com.trolltech.qt.gui.QMessageBox.StandardButton;
-import com.trolltech.qt.gui.QMouseEvent;
-import com.trolltech.qt.gui.QRegExpValidator;
-import com.trolltech.qt.gui.QTableView;
-import com.trolltech.qt.gui.QVBoxLayout;
-import com.trolltech.qt.gui.QValidator;
-import com.trolltech.qt.gui.QWidget;
-import com.trolltech.qt.gui.QSizePolicy.Policy;
+import io.qt.core.QByteArray;
+import io.qt.core.QCoreApplication;
+import io.qt.core.QDate;
+import io.qt.core.QObject;
+import io.qt.core.QRegularExpression;
+import io.qt.core.QTime;
+import io.qt.core.Qt.ItemFlag;
+import io.qt.core.Qt.ItemFlags;
+import io.qt.core.Qt.KeyboardModifier;
+import io.qt.core.QDir;
+import io.qt.core.QDir.Filter;
+import io.qt.core.QDir.Filters;
+import io.qt.core.QMetaObject;
+import io.qt.widgets.QApplication;
+import io.qt.widgets.QFileDialog;
+import io.qt.widgets.QFileDialog.AcceptMode;
+import io.qt.widgets.QFileDialog.DialogLabel;
+import io.qt.widgets.QFileDialog.FileMode;
+import io.qt.widgets.QFileDialog.Options;
+import io.qt.widgets.QGroupBox;
+import io.qt.widgets.QHBoxLayout;
+import io.qt.gui.QImageReader;
+import io.qt.widgets.QLabel;
+import io.qt.widgets.QLayout;
+import io.qt.widgets.QMessageBox;
+import io.qt.widgets.QTableWidgetItem;
+import io.qt.widgets.QMessageBox.StandardButton;
+import io.qt.gui.QMouseEvent;
+import io.qt.gui.QRegularExpressionValidator;
+import io.qt.widgets.QTableView;
+import io.qt.widgets.QVBoxLayout;
+import io.qt.gui.QValidator;
+import io.qt.widgets.QWidget;
+import io.qt.widgets.QSizePolicy.Policy;
 
 import facsanadu.gui.QtProgramInfo;
 
@@ -63,7 +68,7 @@ public class QTutil
 		layout.addWidget(l);
 		layout.addWidget(w);
 		layout.setSpacing(0);
-		layout.setMargin(0);
+		layout.setContentsMargins(0,0,0,0);
 
 		return layout;
 		}
@@ -99,7 +104,7 @@ public class QTutil
 		{
 		QVBoxLayout layout=new QVBoxLayout();
 		layout.addWidget(w);
-		layout.setMargin(0);
+		layout.setContentsMargins(0,0,0,0);
 		return QTutil.withinTitledFrame(title,layout);
 		}
 
@@ -139,7 +144,7 @@ public class QTutil
 	
 	
 
-
+/*
 	public static QFileDialog.Filter buildFileDialogSupportedFormatsFilter(String fileType,	Collection<String> formatsList)
 		{
 		String formats="";
@@ -149,8 +154,9 @@ public class QTutil
 				formats+=" ";
 			formats+="*."+arr;
 			}
+// TODO: QFileDialog.Filter missing. FileMode?
 		return new QFileDialog.Filter(fileType+" ("+formats+")");
-		}
+		}*/
 
 
 	/**
@@ -161,9 +167,10 @@ public class QTutil
 	 * @param filter  Filter for the files
 	 * @return        The file, or null if none opened
 	 */
-	public static File openFileDialog(QWidget parent, String title,	Filter filter)
+	/*
+	public static File openFileDialog(QWidget parent, String title,	String filter)
 		{
-    String fileName = QFileDialog.getOpenFileName(parent, title, lastQtDir, filter);
+    String fileName = QFileDialog.getOpenFileName(parent, title, lastQtDir, filter).result;
     if(!fileName.equals(""))
     	{
     	File f=new File(fileName);
@@ -172,14 +179,15 @@ public class QTutil
     	}
     else
     	return null;
-		}
+		}*/
 
 	/**
 	 * Open multiple files dialog. Never returns null
 	 */
-	public static Collection<File> openFilesDialog(QWidget parent, String title,	Filter filter)
+	/*
+	public static Collection<File> openFilesDialog(QWidget parent, String title,	String filter)
 		{
-    List<String> fileName = QFileDialog.getOpenFileNames(parent, title, lastQtDir, filter);
+    List<String> fileName = QFileDialog.getOpenFileNames(parent, title, lastQtDir, filter).result;
     if(!fileName.isEmpty())
     	{
     	List<File> fs=new LinkedList<File>();
@@ -194,6 +202,7 @@ public class QTutil
     else
     	return new LinkedList<File>();
 		}
+		*/
 
 	/**
 	 * Request a save-file dialog
@@ -204,10 +213,11 @@ public class QTutil
 	 * @param filter       Filter for the files
 	 * @return             The file, or null if none opened
 	 */
-	public static File saveFileDialog(QWidget parent, String title,	String suggestName, String defaultSuffix, QFileDialog.Filter filter)
+	/*
+	public static File saveFileDialog(QWidget parent, String title,	String suggestName, String defaultSuffix, QDir.Filter filter)
 		{
 		QFileDialog dia=new QFileDialog(parent, title, lastQtDir);
-		dia.setFilter(filter.filter);
+		dia.setFilter(filter);
 		if(defaultSuffix!=null)
 			dia.setDefaultSuffix(defaultSuffix);  
 		if(suggestName!=null)
@@ -233,6 +243,8 @@ public class QTutil
 		{
 		return saveFileDialog(parent, title, null, null, filter);
 		}
+		*/
+		
 	/**
 	 * Last directory where a file was opened from
 	 */
@@ -262,11 +274,11 @@ public class QTutil
     	return null;
 		}
 
-
+/* no longer used
 	public static Filter getAllFilesFilter()
 		{
 		return new QFileDialog.Filter(QCoreApplication.translate("labstory","Files")+" (*.*)");
-		}
+		}*/
 
 
 	public static List<String> getSupportedImageFormats()
@@ -344,13 +356,7 @@ public class QTutil
 	
 	public static void printError(final QWidget parent, final String text)
 		{
-		QApplication.invokeAndWait(new Runnable()
-			{
-			public void run()
-				{
-				QMessageBox.critical(parent, QtProgramInfo.programName, text);
-				}
-			});
+		QMetaObject.invokeMethod(()->QMessageBox.critical(parent, QtProgramInfo.programName, text));
 		}
 	
 	/*
@@ -404,8 +410,8 @@ public class QTutil
 	public static QValidator getLabstoryIdvalidator(QObject parent)
 		{
 		//Do NOT use the constructor(regexp), windows qt bug!
-		QRegExpValidator validator=new QRegExpValidator(parent);
-		validator.setRegExp(new QRegExp("[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]*"));
+		QRegularExpressionValidator validator=new QRegularExpressionValidator(parent);
+		validator.setRegularExpression(new QRegularExpression("[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]*"));
 		return validator;
 		}
 	

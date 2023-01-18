@@ -2,9 +2,9 @@ package facsanadu.gates;
 
 import java.util.ArrayList;
 
-import com.trolltech.qt.core.QPointF;
-import com.trolltech.qt.core.Qt.FillRule;
-import com.trolltech.qt.gui.QPolygonF;
+import io.qt.core.QPointF;
+import io.qt.core.Qt.FillRule;
+import io.qt.gui.QPolygonF;
 
 /**
  * 
@@ -21,12 +21,12 @@ public class GatePolygon extends Gate
 	public ArrayList<Double> arrY=new ArrayList<Double>();
 
 	private QPolygonF poly;
-	
+
 	public void updateInternal()
 		{
 		poly=new QPolygonF();
 		for(int i=0;i<getNumPoints();i++)
-			poly.add(arrX.get(i), arrY.get(i));
+			poly.append(arrX.get(i), arrY.get(i));
 		setUpdated();
 		}
 	

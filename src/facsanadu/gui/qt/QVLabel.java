@@ -1,12 +1,12 @@
 package facsanadu.gui.qt;
 
-import com.trolltech.qt.core.QPoint;
-import com.trolltech.qt.gui.QColor;
-import com.trolltech.qt.gui.QFont;
-import com.trolltech.qt.gui.QFontMetrics;
-import com.trolltech.qt.gui.QPaintEvent;
-import com.trolltech.qt.gui.QPainter;
-import com.trolltech.qt.gui.QWidget;
+import io.qt.core.QPoint;
+import io.qt.gui.QColor;
+import io.qt.gui.QFont;
+import io.qt.gui.QFontMetrics;
+import io.qt.gui.QPaintEvent;
+import io.qt.gui.QPainter;
+import io.qt.widgets.QWidget;
 
 /**
  * 
@@ -42,9 +42,9 @@ public class QVLabel extends QWidget
 		QFont font=painter.font();
 		font.setBold(true);
 		painter.setFont(font);
-    painter.setPen(QColor.black);
+    painter.setPen(QColor.fromRgb(0,0,0)); //solid black
     painter.rotate(-90);
-    painter.drawText(new QPoint(-(height()-fm.width(text))/2,11), text);
+    painter.drawText(new QPoint(-(height()-fm.horizontalAdvance(text))/2,11), text);
 		}
 
 	

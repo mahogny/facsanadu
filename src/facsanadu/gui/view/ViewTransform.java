@@ -1,6 +1,6 @@
 package facsanadu.gui.view;
 
-import com.trolltech.qt.core.QPointF;
+import io.qt.core.QPointF;
 
 /**
  * Transformation of coordinates view <-> world

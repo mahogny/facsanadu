@@ -2,8 +2,8 @@ package facsanadu.gui.view.gate;
 
 import java.util.Collection;
 
-import com.trolltech.qt.gui.QPainter;
-import com.trolltech.qt.gui.QPolygonF;
+import io.qt.gui.QPainter;
+import io.qt.gui.QPolygonF;
 
 import facsanadu.gates.Gate;
 import facsanadu.gates.GatePolygon;
@@ -50,7 +50,7 @@ public class GateRendererPoly implements GateRenderer
 				final int x=w.mapFcsToScreenX(thex[i]);
 				final int y=w.mapFcsToScreenY(they[i]);
 				final int ii=i;
-				poly.add(x, y);
+				poly.append(x, y);
 
 				if(!viewsettings.transformation.isEmpty())
 					{
@@ -68,7 +68,7 @@ public class GateRendererPoly implements GateRenderer
 										
 						int x2=w.mapFcsToScreenX(vx);
 						int y2=w.mapFcsToScreenY(vy);
-						poly.add(x2, y2);
+						poly.append(x2, y2);
 						}
 					}
 				GateHandle handle=new GateHandle()

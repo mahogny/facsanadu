@@ -3,17 +3,17 @@ package facsanadu.gui;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import com.trolltech.qt.core.QModelIndex;
-import com.trolltech.qt.core.Qt;
-import com.trolltech.qt.gui.QItemSelectionModel.SelectionFlag;
-import com.trolltech.qt.gui.QIcon;
-import com.trolltech.qt.gui.QPushButton;
-import com.trolltech.qt.gui.QTableWidget;
-import com.trolltech.qt.gui.QTableWidgetItem;
-import com.trolltech.qt.gui.QVBoxLayout;
-import com.trolltech.qt.gui.QAbstractItemView.SelectionBehavior;
-import com.trolltech.qt.gui.QHeaderView.ResizeMode;
-import com.trolltech.qt.gui.QSizePolicy.Policy;
+import io.qt.core.QModelIndex;
+import io.qt.core.Qt;
+import io.qt.core.QItemSelectionModel.SelectionFlag;
+import io.qt.gui.QIcon;
+import io.qt.widgets.QPushButton;
+import io.qt.widgets.QTableWidget;
+import io.qt.widgets.QTableWidgetItem;
+import io.qt.widgets.QVBoxLayout;
+import io.qt.widgets.QAbstractItemView.SelectionBehavior;
+import io.qt.widgets.QHeaderView.ResizeMode;
+import io.qt.widgets.QSizePolicy.Policy;
 
 import facsanadu.data.Dataset;
 import facsanadu.gui.events.EventViewsChanged;
@@ -38,12 +38,12 @@ public class ViewsListWidget extends QVBoxLayout
 	public ViewsListWidget(MainWindow mw)
 		{
 		this.mw=mw;
-		setMargin(0);
+		setContentsMargins(0,0,0,0);
 		
 		
 		tableViews.verticalHeader().hide();
 		tableViews.setSelectionBehavior(SelectionBehavior.SelectRows);
-		tableViews.horizontalHeader().setResizeMode(ResizeMode.ResizeToContents);
+		tableViews.horizontalHeader().setSectionResizeMode(ResizeMode.ResizeToContents);
 		tableViews.horizontalHeader().setStretchLastSection(true);		
 		tableViews.selectionModel().selectionChanged.connect(this,"dothelayout()");
 	

@@ -1,8 +1,8 @@
 package facsanadu.gui.view.tool;
 
-import com.trolltech.qt.core.QPointF;
-import com.trolltech.qt.core.Qt.MouseButton;
-import com.trolltech.qt.gui.QMouseEvent;
+import io.qt.core.QPointF;
+import io.qt.core.Qt.MouseButton;
+import io.qt.gui.QMouseEvent;
 
 import facsanadu.gates.Gate;
 import facsanadu.gates.GateRect;
@@ -52,7 +52,7 @@ public class ViewToolDrawRect implements ViewTool
 			{
 			GateRect grect=(GateRect)isDrawing;
 			
-			QPointF p = w.trans.mapScreenToFcs(event.posF()); 
+			QPointF p = w.trans.mapScreenToFcs(event.position());
 			
 			grect.x2=p.x();
 			grect.y2=p.y();
@@ -69,7 +69,7 @@ public class ViewToolDrawRect implements ViewTool
 		{
 		if(event.button()==MouseButton.LeftButton && !w.viewsettings.isHistogram())
 			{
-			QPointF p = w.trans.mapScreenToFcs(event.posF()); 
+			QPointF p = w.trans.mapScreenToFcs(event.position());
 			
 			GateRect grect=new GateRect();
 			grect.indexX=w.getIndexX();

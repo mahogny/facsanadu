@@ -3,12 +3,12 @@ package facsanadu.gui.qt;
 import java.util.LinkedList;
 import java.util.TreeSet;
 
-import com.trolltech.qt.core.QModelIndex;
-import com.trolltech.qt.core.Qt;
-import com.trolltech.qt.gui.QApplication;
-import com.trolltech.qt.gui.QTableWidget;
-import com.trolltech.qt.gui.QKeySequence.StandardKey;
-import com.trolltech.qt.gui.QTableWidgetItem;
+import io.qt.core.QModelIndex;
+import io.qt.core.Qt;
+import io.qt.widgets.QApplication;
+import io.qt.widgets.QTableWidget;
+import io.qt.gui.QKeySequence.StandardKey;
+import io.qt.widgets.QTableWidgetItem;
 
 /**
  * 
@@ -20,7 +20,7 @@ import com.trolltech.qt.gui.QTableWidgetItem;
  */
 public class QTableWidgetWithCSVcopy extends QTableWidget
 	{
-	protected void keyPressEvent(com.trolltech.qt.gui.QKeyEvent event) 
+	protected void keyPressEvent(io.qt.gui.QKeyEvent event)
 		{
 		if(event.matches(StandardKey.Copy) )
 			copy();

@@ -4,17 +4,18 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import com.trolltech.qt.core.Qt;
-import com.trolltech.qt.gui.QIcon;
-import com.trolltech.qt.gui.QInputDialog;
-import com.trolltech.qt.gui.QPushButton;
-import com.trolltech.qt.gui.QTreeWidget;
-import com.trolltech.qt.gui.QTreeWidgetItem;
-import com.trolltech.qt.gui.QVBoxLayout;
-import com.trolltech.qt.gui.QAbstractItemView.SelectionBehavior;
-import com.trolltech.qt.gui.QAbstractItemView.SelectionMode;
-import com.trolltech.qt.gui.QLineEdit.EchoMode;
-import com.trolltech.qt.gui.QSizePolicy.Policy;
+import io.qt.core.Qt;
+import io.qt.gui.QIcon;
+import io.qt.gui.QColor;
+import io.qt.widgets.QInputDialog;
+import io.qt.widgets.QPushButton;
+import io.qt.widgets.QTreeWidget;
+import io.qt.widgets.QTreeWidgetItem;
+import io.qt.widgets.QVBoxLayout;
+import io.qt.widgets.QAbstractItemView.SelectionBehavior;
+import io.qt.widgets.QAbstractItemView.SelectionMode;
+import io.qt.widgets.QLineEdit.EchoMode;
+import io.qt.widgets.QSizePolicy.Policy;
 
 import facsanadu.gates.Gate;
 import facsanadu.gates.measure.GateMeasure;
@@ -52,7 +53,7 @@ public class GatesListWidget extends QVBoxLayout
 	public GatesListWidget(MainWindow mw)
 		{
 		this.mw=mw;
-		setMargin(0);
+		setContentsMargins(0,0,0,0);
 		
 		treeGates.setHeaderLabels(Arrays.asList(tr("Gate"),tr("Color")));
 		treeGates.setSelectionBehavior(SelectionBehavior.SelectRows);

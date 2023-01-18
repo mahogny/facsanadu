@@ -3,20 +3,21 @@ package facsanadu.gui.view;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import com.trolltech.qt.core.QPoint;
-import com.trolltech.qt.core.QPointF;
-import com.trolltech.qt.core.QRectF;
-import com.trolltech.qt.core.Qt.MouseButton;
-import com.trolltech.qt.gui.QBrush;
-import com.trolltech.qt.gui.QColor;
-import com.trolltech.qt.gui.QImage;
-import com.trolltech.qt.gui.QMenu;
-import com.trolltech.qt.gui.QMouseEvent;
-import com.trolltech.qt.gui.QPaintEvent;
-import com.trolltech.qt.gui.QPainter;
-import com.trolltech.qt.gui.QWidget;
-import com.trolltech.qt.gui.QImage.Format;
-import com.trolltech.qt.gui.QSizePolicy.Policy;
+import io.qt.core.QPoint;
+import io.qt.core.QPointF;
+import io.qt.core.QRectF;
+import io.qt.core.Qt.MouseButton;
+import io.qt.gui.QBrush;
+import io.qt.gui.QColor;
+import io.qt.gui.QCursor;
+import io.qt.gui.QImage;
+import io.qt.widgets.QMenu;
+import io.qt.gui.QMouseEvent;
+import io.qt.gui.QPaintEvent;
+import io.qt.gui.QPainter;
+import io.qt.widgets.QWidget;
+import io.qt.gui.QImage.Format;
+import io.qt.widgets.QSizePolicy.Policy;
 
 import facsanadu.data.ChannelInfo;
 import facsanadu.data.Dataset;
@@ -95,7 +96,7 @@ public class ViewWidget extends QWidget
 			System.out.println("update cache");
 			img=new QImage(width(),height(), Format.Format_RGB32);
 			QPainter pm2=new QPainter(img);
-			pm2.setBrush(new QBrush(QColor.white));
+			pm2.setBrush(new QBrush((QColor.fromRgb(255,255,255)))); //solid white
 			pm2.drawRect(-5,-5,10000,10000);
 			ViewRenderer.renderData(viewsettings, dataset, gr, trans, pm2, maxevents); 
 			pm2.end();
@@ -128,8 +129,8 @@ public class ViewWidget extends QWidget
 		//Now render handles?
 		for(GateHandle h:handles)
 			{
-			pm.setBrush(new QBrush(QColor.transparent));
-			pm.setPen(QColor.red);
+			pm.setBrush(new QBrush(QColor.fromRgb(0,0,0,0))); //transparent
+			pm.setPen(QColor.fromRgb(255,0,0)); //solid red
 
 			int size=2;
 			pm.drawRect(new QRectF(h.getX()-size, h.getY()-size,2*size,2*size));
@@ -166,12 +167,12 @@ public class ViewWidget extends QWidget
 	@Override
 	protected void mousePressEvent(QMouseEvent event)
 		{
-		pointLast=event.posF();
+		pointLast=event.globalPosition();
 		super.mousePressEvent(event);
 		if(event.button()==MouseButton.LeftButton)
 			{
 			curhandle=null;
-			GateHandle handle=getClosestHandle(event.posF(), 10);
+			GateHandle handle=getClosestHandle(event.globalPosition(), 10);
 			if(handle!=null)
 				{
 				//Move a handle
@@ -254,7 +255,7 @@ public class ViewWidget extends QWidget
 				menu.addMenu(menuHist);
 				menu.addMenu(mHistBins);
 				
-				menu.exec(event.globalPos());
+				menu.exec(QCursor.pos());
 				}
 			else
 				{
@@ -287,12 +288,12 @@ public class ViewWidget extends QWidget
 		super.mouseMoveEvent(event);
 		if(curhandle!=null)
 			{
-			QPointF p=trans.mapScreenToFcs(event.posF());
+			QPointF p=trans.mapScreenToFcs(event.globalPosition());
 			curhandle.move2(mainWindow, p.x(), p.y());
 			}
 		else
 			tool.mouseMoveEvent(event);
-		pointLast=event.posF();
+		pointLast=event.globalPosition();
 		}
 
 

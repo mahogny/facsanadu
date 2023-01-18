@@ -7,24 +7,29 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import com.trolltech.qt.core.QCoreApplication;
-import com.trolltech.qt.core.QUrl;
-import com.trolltech.qt.gui.QApplication;
-import com.trolltech.qt.gui.QCloseEvent;
-import com.trolltech.qt.gui.QFileDialog;
-import com.trolltech.qt.gui.QFileDialog.AcceptMode;
-import com.trolltech.qt.gui.QFileDialog.FileMode;
-import com.trolltech.qt.gui.QDesktopServices;
-import com.trolltech.qt.gui.QHBoxLayout;
-import com.trolltech.qt.gui.QInputDialog;
-import com.trolltech.qt.gui.QMainWindow;
-import com.trolltech.qt.gui.QMenu;
-import com.trolltech.qt.gui.QMenuBar;
-import com.trolltech.qt.gui.QResizeEvent;
-import com.trolltech.qt.gui.QDropEvent;
-import com.trolltech.qt.gui.QTabWidget;
-import com.trolltech.qt.gui.QVBoxLayout;
-import com.trolltech.qt.gui.QWidget;
+import io.qt.core.QCoreApplication;
+import io.qt.core.QUrl;
+import io.qt.core.QItemSelectionModel;
+import io.qt.core.QThread;
+import io.qt.core.QMetaObject;
+import io.qt.core.Qt;
+import io.qt.core.Qt.ConnectionType;
+import io.qt.widgets.QApplication;
+import io.qt.gui.QCloseEvent;
+import io.qt.widgets.QFileDialog;
+import io.qt.widgets.QFileDialog.AcceptMode;
+import io.qt.widgets.QFileDialog.FileMode;
+import io.qt.gui.QDesktopServices;
+import io.qt.widgets.QHBoxLayout;
+import io.qt.widgets.QInputDialog;
+import io.qt.widgets.QMainWindow;
+import io.qt.widgets.QMenu;
+import io.qt.widgets.QMenuBar;
+import io.qt.gui.QResizeEvent;
+import io.qt.gui.QDropEvent;
+import io.qt.widgets.QTabWidget;
+import io.qt.widgets.QVBoxLayout;
+import io.qt.widgets.QWidget;
 
 import facsanadu.data.Dataset;
 import facsanadu.data.ExportFcsToCSV;
@@ -69,14 +74,7 @@ public class MainWindow extends QMainWindow
 			}
 		public void callbackDoneCalc(Dataset dataset)
 			{
-			 QApplication.invokeLater(new Runnable()
-         {
-         public void run()
-           {
-           updateall();
-           //System.out.println("Thread called");
-           }
-         });
+			QMetaObject.invokeMethod(MainWindow.this::updateall, Qt.ConnectionType.QueuedConnection);
 			}
 		public Collection<Dataset> getCurrentDatasets()
 			{
@@ -388,7 +386,7 @@ public class MainWindow extends QMainWindow
 				// Export a list of datasets
 				
 				QFileDialog dia=new QFileDialog();
-				dia.setFileMode(FileMode.DirectoryOnly);
+				dia.setFileMode(FileMode.Directory);
 				//dia.setNameFilter(tr("CSV files (*.csv)"));
 				dia.setAcceptMode(AcceptMode.AcceptSave);
 				//dia.setDefaultSuffix("csv");
@@ -572,7 +570,7 @@ public class MainWindow extends QMainWindow
 	/**
 	 * Event: User drags something onto widget
 	 */
-	protected void dragEnterEvent(com.trolltech.qt.gui.QDragEnterEvent event) 
+	protected void dragEnterEvent(io.qt.gui.QDragEnterEvent event)
 		{
 	   if(event.mimeData().hasFormat("text/uri-list"))
        event.acceptProposedAction();

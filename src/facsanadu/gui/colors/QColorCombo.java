@@ -1,12 +1,11 @@
 package facsanadu.gui.colors;
 
-import com.trolltech.qt.QSignalEmitter;
-import com.trolltech.qt.gui.QColor;
-import com.trolltech.qt.gui.QIcon;
-import com.trolltech.qt.gui.QPainter;
-import com.trolltech.qt.gui.QPixmap;
-import com.trolltech.qt.gui.QPushButton;
-import com.trolltech.qt.gui.QSizePolicy.Policy;
+import io.qt.gui.QColor;
+import io.qt.gui.QIcon;
+import io.qt.gui.QPainter;
+import io.qt.gui.QPixmap;
+import io.qt.widgets.QPushButton;
+import io.qt.widgets.QSizePolicy.Policy;
 
 import facsanadu.gates.GateColor;
 
@@ -23,8 +22,8 @@ public class QColorCombo extends QPushButton
 	GateColor currentColor=colorset.get(0);
 	
 	int size=12;
-	
-	public QSignalEmitter.Signal0 currentIndexChanged=new QSignalEmitter.Signal0();
+
+	public final Signal0 currentIndexChanged=new Signal0();
 	
 	
 

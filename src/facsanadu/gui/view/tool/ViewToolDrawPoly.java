@@ -1,8 +1,8 @@
 package facsanadu.gui.view.tool;
 
-import com.trolltech.qt.core.QPointF;
-import com.trolltech.qt.core.Qt.MouseButton;
-import com.trolltech.qt.gui.QMouseEvent;
+import io.qt.core.QPointF;
+import io.qt.core.Qt.MouseButton;
+import io.qt.gui.QMouseEvent;
 
 import facsanadu.gates.GatePolygon;
 import facsanadu.gui.events.EventGatesChanged;
@@ -35,7 +35,7 @@ public class ViewToolDrawPoly implements ViewTool
 		{
 		if(event.button()==MouseButton.LeftButton && !w.viewsettings.isHistogram())
 			{
-			QPointF p = w.trans.mapScreenToFcs(event.posF()); 
+			QPointF p = w.trans.mapScreenToFcs(event.position());
 			
 			boolean justcreated=false;
 			GatePolygon g;
@@ -86,7 +86,7 @@ public class ViewToolDrawPoly implements ViewTool
 			{
 			GatePolygon g=isDrawing;
 			
-			QPointF p = w.trans.mapScreenToFcs(event.posF()); 
+			QPointF p = w.trans.mapScreenToFcs(event.position());
 
 			g.setPoint(g.getNumPoints()-1, p.x(), p.y());
 			g.updateInternal();

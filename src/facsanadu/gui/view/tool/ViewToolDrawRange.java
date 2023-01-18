@@ -1,8 +1,8 @@
 package facsanadu.gui.view.tool;
 
-import com.trolltech.qt.core.QPointF;
-import com.trolltech.qt.core.Qt.MouseButton;
-import com.trolltech.qt.gui.QMouseEvent;
+import io.qt.core.QPointF;
+import io.qt.core.Qt.MouseButton;
+import io.qt.gui.QMouseEvent;
 
 import facsanadu.gates.Gate;
 import facsanadu.gates.GateRange;
@@ -53,7 +53,7 @@ public class ViewToolDrawRange implements ViewTool
 			{
 			GateRange grect=(GateRange)isDrawing;
 			
-			QPointF p = w.trans.mapScreenToFcs(event.posF()); 
+			QPointF p = w.trans.mapScreenToFcs(event.position());
 			
 			grect.x2=p.x();
 			grect.updateInternal();
@@ -69,7 +69,7 @@ public class ViewToolDrawRange implements ViewTool
 		{
 		if(event.button()==MouseButton.LeftButton)
 			{
-			QPointF p = w.trans.mapScreenToFcs(event.posF()); 
+			QPointF p = w.trans.mapScreenToFcs(event.position());
 			
 			GateRange grect=new GateRange();
 			grect.index=w.getIndexX();

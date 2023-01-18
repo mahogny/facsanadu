@@ -1,11 +1,11 @@
 package facsanadu.gui;
 
-import com.trolltech.qt.gui.QButtonGroup;
-import com.trolltech.qt.gui.QDialog;
-import com.trolltech.qt.gui.QLayout;
-import com.trolltech.qt.gui.QPushButton;
-import com.trolltech.qt.gui.QRadioButton;
-import com.trolltech.qt.gui.QSpinBox;
+import io.qt.widgets.QButtonGroup;
+import io.qt.widgets.QDialog;
+import io.qt.widgets.QLayout;
+import io.qt.widgets.QPushButton;
+import io.qt.widgets.QRadioButton;
+import io.qt.widgets.QSpinBox;
 import facsanadu.gui.qt.QTutil;
 
 /**

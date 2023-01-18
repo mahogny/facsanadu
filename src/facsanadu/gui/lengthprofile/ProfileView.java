@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.trolltech.qt.core.QPointF;
-import com.trolltech.qt.core.QRect;
-import com.trolltech.qt.core.Qt.MouseButton;
-import com.trolltech.qt.gui.QBrush;
-import com.trolltech.qt.gui.QColor;
-import com.trolltech.qt.gui.QMouseEvent;
-import com.trolltech.qt.gui.QPaintEvent;
-import com.trolltech.qt.gui.QPainter;
-import com.trolltech.qt.gui.QPainterPath;
-import com.trolltech.qt.gui.QPen;
-import com.trolltech.qt.gui.QWidget;
+import io.qt.core.QPointF;
+import io.qt.core.QRect;
+import io.qt.core.Qt.MouseButton;
+import io.qt.gui.QBrush;
+import io.qt.gui.QColor;
+import io.qt.gui.QMouseEvent;
+import io.qt.gui.QPaintEvent;
+import io.qt.gui.QPainter;
+import io.qt.gui.QPainterPath;
+import io.qt.gui.QPen;
+import io.qt.widgets.QWidget;
 
 import facsanadu.data.Dataset;
 import facsanadu.data.LengthProfileData;
@@ -138,20 +138,6 @@ public class ProfileView extends QWidget
 		eventid.addAll(ids);
 		update();
 		}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	QPointF pointLast=new QPointF();
 	int moveBoundary=-1;
@@ -159,7 +145,7 @@ public class ProfileView extends QWidget
 	@Override
 	protected void mousePressEvent(QMouseEvent event)
 		{
-		pointLast=event.posF();
+		pointLast=event.globalPosition();
 		super.mousePressEvent(event);
 		if(event.button()==MouseButton.LeftButton)
 			{
@@ -170,10 +156,10 @@ public class ProfileView extends QWidget
 						toViewX(curchannel.from),
 						toViewX(curchannel.to)};
 				int si=-1;
-				int smallest=100000;
+				double smallest=100000;
 				for(int i=0;i<x.length;i++)
 					{
-					int dx=Math.abs(event.x()-x[i]);
+					double dx=Math.abs(event.globalPosition().x()-x[i]);
 					if(si==-1 || dx<smallest)
 						{
 						smallest=dx;
@@ -227,14 +213,14 @@ public class ProfileView extends QWidget
 		if(moveBoundary!=-1 && curchannel!=null)
 			{
 
-			int newx=fromViewX(event.pos().x());
+			int newx=fromViewX((int) event.globalPosition().x());
 			if(moveBoundary==0)
 				curchannel.from=clamp(newx,0,curchannel.to-1);
 			else if(moveBoundary==1)
 				curchannel.to=clamp(newx,curchannel.from+1,1050);
 			update();
 			}
-		pointLast=event.posF();
+		pointLast=event.globalPosition();
 		}
 
 	

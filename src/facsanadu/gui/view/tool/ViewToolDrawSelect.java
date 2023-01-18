@@ -1,6 +1,6 @@
 package facsanadu.gui.view.tool;
 
-import com.trolltech.qt.gui.QMouseEvent;
+import io.qt.gui.QMouseEvent;
 
 import facsanadu.gui.view.ViewWidget;
 

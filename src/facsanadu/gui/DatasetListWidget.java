@@ -5,19 +5,19 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import com.trolltech.qt.QSignalEmitter;
-import com.trolltech.qt.core.QModelIndex;
-import com.trolltech.qt.core.Qt;
-import com.trolltech.qt.gui.QFileDialog;
-import com.trolltech.qt.gui.QPushButton;
-import com.trolltech.qt.gui.QTableWidget;
-import com.trolltech.qt.gui.QTableWidgetItem;
-import com.trolltech.qt.gui.QVBoxLayout;
-import com.trolltech.qt.gui.QAbstractItemView.SelectionBehavior;
-import com.trolltech.qt.gui.QFileDialog.FileMode;
-import com.trolltech.qt.gui.QHeaderView.ResizeMode;
-import com.trolltech.qt.gui.QIcon;
-import com.trolltech.qt.gui.QSizePolicy.Policy;
+import io.qt.core.QModelIndex;
+import io.qt.core.Qt;
+import io.qt.core.QItemSelection;
+import io.qt.widgets.QFileDialog;
+import io.qt.widgets.QPushButton;
+import io.qt.widgets.QTableWidget;
+import io.qt.widgets.QTableWidgetItem;
+import io.qt.widgets.QVBoxLayout;
+import io.qt.widgets.QAbstractItemView.SelectionBehavior;
+import io.qt.widgets.QFileDialog.FileMode;
+import io.qt.widgets.QHeaderView.ResizeMode;
+import io.qt.gui.QIcon;
+import io.qt.widgets.QSizePolicy.Policy;
 
 import facsanadu.data.Dataset;
 import facsanadu.gui.events.EventDatasetsChanged;
@@ -40,18 +40,18 @@ public class DatasetListWidget extends QVBoxLayout
 
 	private QTableWidget tableDatasets=new QTableWidget();
 
-	public QSignalEmitter.Signal0 selectionChanged=new QSignalEmitter.Signal0();
+	public final Signal0 selectionChanged=new Signal0();
 	
 	public DatasetListWidget(MainWindow mw)
 		{
 		this.mw=mw;
-		setMargin(0);
+		setContentsMargins(0,0,0,0);
 		
 		tableDatasets.setColumnCount(1);
 		tableDatasets.verticalHeader().hide();
 		tableDatasets.setHorizontalHeaderLabels(Arrays.asList(tr("Dataset")));
 		tableDatasets.setSelectionBehavior(SelectionBehavior.SelectRows);
-		tableDatasets.horizontalHeader().setResizeMode(ResizeMode.ResizeToContents);
+		tableDatasets.horizontalHeader().setSectionResizeMode(ResizeMode.ResizeToContents);
 		tableDatasets.horizontalHeader().setStretchLastSection(true);		
 		tableDatasets.selectionModel().selectionChanged.connect(this,"dothelayout()");
 
